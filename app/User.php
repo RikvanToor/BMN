@@ -12,13 +12,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable;
 
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email','username','is_active'
+        'name', 'email', 'username', 'is_active', 'is_admin', 'password'
     ];
 
     /**
@@ -29,4 +31,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    public function songs()
+    {
+        return $this->belongsToMany(Song::class, 'plays')
+            ->withPivot('instrument');
+    }
 }
