@@ -32,9 +32,25 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
+    /**
+     * The songs that the user plays
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function songs()
     {
         return $this->belongsToMany(Song::class, 'plays')
             ->withPivot('instrument');
+    }
+
+    /**
+     * The rehearsals that the user has specified their availabilities for.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function availabilities()
+    {
+        return $this->belongsToMany(Rehearsal::class, 'availability')
+            ->withPivot('start','end');
     }
 }
