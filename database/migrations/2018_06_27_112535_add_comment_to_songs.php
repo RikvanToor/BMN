@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSongsTable extends Migration
+class AddCommentToSongs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateSongsTable extends Migration
      */
     public function up()
     {
-        Schema::create('songs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->string('artist');
-            $table->string('spotify_link');
-            $table->timestamps();
+        Schema::table('songs', function (Blueprint $table) {
+            $table->string('comment');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateSongsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('songs');
+        Schema::table('songs', function (Blueprint $table) {
+            $table->dropColumn('comment');
+        });
     }
 }
