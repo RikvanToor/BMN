@@ -51,6 +51,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function availabilities()
     {
         return $this->belongsToMany(Rehearsal::class, 'availability')
-            ->withPivot('start','end');
+            ->withPivot('start', 'end');
+    }
+
+    /**
+     * The news articles this user wrote.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function news()
+    {
+        return $this->hasMany(News::class);
     }
 }

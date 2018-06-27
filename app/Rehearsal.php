@@ -37,6 +37,6 @@ class Rehearsal extends Model
     public function availabilities()
     {
         return $this->belongsToMany(User::class, 'availability')
-            ->withPivot('start','end');
+            ->withPivot('start', 'end');
     }
 }

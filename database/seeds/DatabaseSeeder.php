@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\User;
+use App\News;
+use App\Rehearsal;
+use App\Song;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +21,7 @@ class DatabaseSeeder extends Seeder
          * - User1
          * - User2
          */
-        User::create([
+        $admin = User::create([
             'username' => 'admin',
             'password' => 'password',
             'name' => 'Administrator',
@@ -79,6 +83,29 @@ class DatabaseSeeder extends Seeder
                 'start' => date_create('2018-07-01 18:00:00'),
                 'end' => date_create('2018-07-01 19:00:00')
             ]
+        ]);
+
+        /*
+         * Add some example availabilities.
+         */
+        $example_availability = [
+            'start' => date_create('2018-07-01 18:00:00'),
+            'end' => date_create('2018-07-01 21:00:00')
+        ];
+
+        $rehearsal->availabilities()->sync([
+            $admin->id => $example_availability,
+            $user1->id => $example_availability,
+            $user2->id =>$example_availability
+        ]);
+
+        /*
+         * Create an example news article.
+         */
+        News::create([
+            'user_id' => $admin->id,
+            'title' => 'An example title',
+            'content' => "## Some content\n\nThis content includes markdown.\n\n* Item 1\n* Item 2"
         ]);
     }
 }
