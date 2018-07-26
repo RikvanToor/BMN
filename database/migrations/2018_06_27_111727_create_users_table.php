@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSongsTable extends Migration
+class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateSongsTable extends Migration
      */
     public function up()
     {
-        Schema::create('songs', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->string('artist');
-            $table->string('spotify_link');
+            $table->string('username');
+            $table->string('password');
+            $table->string('name');
+            $table->string('email');
+            $table->boolean('is_admin');
+            $table->boolean('is_active');
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CreateSongsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('songs');
+        Schema::dropIfExists('users');
     }
 }

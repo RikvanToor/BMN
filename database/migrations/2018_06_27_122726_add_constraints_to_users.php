@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSongsTable extends Migration
+class AddConstraintsToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateSongsTable extends Migration
      */
     public function up()
     {
-        Schema::create('songs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->string('artist');
-            $table->string('spotify_link');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('username');
+            $table->unique('email');
         });
     }
 
@@ -29,6 +26,9 @@ class CreateSongsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('songs');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropUnique('users_username_unique');
+            $table->dropUnique('users_email_unique');
+        });
     }
 }
