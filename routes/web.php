@@ -14,3 +14,8 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->get('/songs', 'SongsController@index');
+$router->get('/songs/add', 'SongsController@create');
+$router->post('/songs/store', 'SongsController@store');
+$router->get('/songs/delete/{id}', 'SongsController@destroy');
