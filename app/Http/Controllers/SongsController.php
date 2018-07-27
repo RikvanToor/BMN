@@ -3,33 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Song;
-use DB;
+use App\Models\Song;
 
 class SongsController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+
+    public function showAllSongs()
     {
-        //
+        $songs = Song::all();
+        return response()->json($songs, 200);
     }
 
-    public function index()
-    {
-        $songs = Song::orderBy('created_at', 'asc')->paginate(10);
-        return view('songs.index')->with('songs', $songs);
-    }
 
-    public function create()
-    {
-        return view('songs.add');
-    }
-
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $this->validate($request, [
             'title' => 'required',
@@ -37,27 +23,21 @@ class SongsController extends Controller
             'spotify_link' => 'required'
         ]);
 
-        //Create
-        $song = new Song;
-        $song->title = $request->input('title');
-        $song->artist = $request->input('artist');
-        $song->spotify_link = $request->input('spotify_link');
-        $song->save();
-
-        return redirect('/songs');
+        $song = Song::create($request->all());
+        return response()->json($song, 201);
     }
 
-    public function show($id)
+    public function showOneSong($id)
     {
         $song = Song::find($id);
-        return view('songs.song')->with('song', $song);
+        return response()->json($song, 200);
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
-        $song = Song::find($id);
+        $song = Song::findOrFail($id);
         $song->delete();
 
-        return redirect('/songs');
+        return response()->json('Deleted succesfully', 200);
     }
 }

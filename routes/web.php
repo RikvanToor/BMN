@@ -15,7 +15,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/songs', 'SongsController@index');
-$router->get('/songs/add', 'SongsController@create');
-$router->post('/songs/store', 'SongsController@store');
-$router->get('/songs/delete/{id}', 'SongsController@destroy');
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->group(['prefix' => 'songs'], function() use ($router) {
+        $router->get('', 'SongsController@showAllSongs');
+        $router->get('/{id}', 'SongsController@showOneSong');
+        $router->post('/create', 'SongsController@create');
+        $router->get('/delete/{id}', 'SongsController@delete');
+    });
+});
