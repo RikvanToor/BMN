@@ -15,11 +15,21 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api'], function () use ($router) {
-    $router->group(['prefix' => 'songs'], function() use ($router) {
-        $router->get('', 'SongsController@showAllSongs');
-        $router->get('/{id}', 'SongsController@showOneSong');
-        $router->post('/create', 'SongsController@create');
-        $router->get('/delete/{id}', 'SongsController@delete');
-    });
+$router->group(['prefix' => '/songs'], function() use ($router) {
+    $router->get('', 'SongsController@showAllSongs');
+    $router->get('/{id}', 'SongsController@showOneSong');
+    $router->post('/create', 'SongsController@create');
+    $router->get('/delete/{id}', 'SongsController@delete');
+    $router->post('/addtosong/{user_id}&{song_id}&{instrument}', 'SongsController@addUserToSong');
+    $router->get('/removefromsong/{user_id}&{song_id}', 'SongsController@removeUserFromSong');
+    $router->post('/addsinger/{user_id}&{song_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
+    $router->get('/addsinger/{user_id}&{song_id}', 'SongsController@removeSingerToSong');
+});
+
+$router->group(['prefix' => '/users'], function() use ($router) {
+    $router->get('', 'UsersController@showAllUsers');
+    $router->get('/{id}', 'UsersController@showOneUser');
+    $router->post('/create', 'UsersController@create');
+    $router->get('/delete/{id}', 'UsersController@delete');
+    $router->get('/showsongs/{id}', 'UsersController@showUserSongs');
 });

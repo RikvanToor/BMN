@@ -29,6 +29,17 @@ class Song extends Model
             ->withPivot('instrument');
     }
 
+     /**
+     * The users can sing this song.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function singers()
+    {
+        return $this->belongsToMany(User::class, 'can_sing')
+            ->withPivot('yes_or_maybe');        
+    }
+
     /**
      * The rehearsals where this song will be rehearsed.
      *
