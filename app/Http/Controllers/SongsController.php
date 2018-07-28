@@ -80,4 +80,11 @@ class SongsController extends Controller
         $song->players()->detach($user_id);
         return response()->json('Removed succesfully', 200);
     }
+
+    // Show songs with genre
+    public function showGenre($genre)
+    {
+        $songs = Song::where($genre);
+        return response()->json($songs, 200);
+    }
 }

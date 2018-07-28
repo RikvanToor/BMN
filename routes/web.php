@@ -24,6 +24,8 @@ $router->group(['prefix' => '/songs'], function() use ($router) {
     $router->get('/removefromsong/{user_id}&{song_id}', 'SongsController@removeUserFromSong');
     $router->post('/addsinger/{user_id}&{song_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
     $router->get('/addsinger/{user_id}&{song_id}', 'SongsController@removeSingerToSong');
+    $router->get('/showSingerSongs/{id}', 'SongsController@showSingerSongs');
+    $router->get('/showSingerGenreSongs/{id}&{genre}', 'SongsController@showSingerGenreSongs');
 });
 
 $router->group(['prefix' => '/users'], function() use ($router) {
@@ -32,4 +34,5 @@ $router->group(['prefix' => '/users'], function() use ($router) {
     $router->post('/create', 'UsersController@create');
     $router->get('/delete/{id}', 'UsersController@delete');
     $router->get('/showsongs/{id}', 'UsersController@showUserSongs');
+    $router->get('showgenre/{genre}', 'UsersController@showGenre');
 });

@@ -50,4 +50,18 @@ class UsersController extends Controller
         $songs = User::find($id)->songs()->orderBy('title')->get();
         return response()->json($songs, 200);
     }
+
+    // Show singer's possible songs
+    public function showSingerSongs($id)
+    {
+        $songs = User::find($id)->singers()->orderBy('title')->get();
+        return response()->json($songs, 200);
+    }
+
+    // Show singer's possible songs with genre
+    public function showSingerGenreSongs($id, $genre)
+    {
+        $songs = User::find($id)->where($genre)->singers()->orderBy('title')->get();
+        return response()->json($songs, 200);
+    }
 }
