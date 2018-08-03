@@ -9,30 +9,40 @@
 | It is a breeze. Simply tell Lumen the URIs it should respond to
 | and give it the Closure to call when that URI is requested.
 |
-*/
+ */
 
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => '/songs'], function() use ($router) {
-    $router->get('', 'SongsController@showAllSongs');
-    $router->get('/{id}', 'SongsController@showOneSong');
-    $router->post('/create', 'SongsController@create');
-    $router->get('/delete/{id}', 'SongsController@delete');
-    $router->post('/addtosong/{user_id}&{song_id}&{instrument}', 'SongsController@addUserToSong');
-    $router->get('/removefromsong/{user_id}&{song_id}', 'SongsController@removeUserFromSong');
-    $router->post('/addsinger/{user_id}&{song_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
-    $router->get('/addsinger/{user_id}&{song_id}', 'SongsController@removeSingerToSong');
-    $router->get('/showSingerSongs/{id}', 'SongsController@showSingerSongs');
-    $router->get('/showSingerGenreSongs/{id}&{genre}', 'SongsController@showSingerGenreSongs');
-});
+$router->group(['prefix' => '/api'], function () use ($router) {
+    $router->group(['prefix' => '/songs'], function () use ($router) {
+        $router->get('', 'SongsController@showAllSongs');
+        $router->post('/create', 'SongsController@create');
 
-$router->group(['prefix' => '/users'], function() use ($router) {
-    $router->get('', 'UsersController@showAllUsers');
-    $router->get('/{id}', 'UsersController@showOneUser');
-    $router->post('/create', 'UsersController@create');
-    $router->get('/delete/{id}', 'UsersController@delete');
-    $router->get('/showsongs/{id}', 'UsersController@showUserSongs');
-    $router->get('showgenre/{genre}', 'UsersController@showGenre');
+        $router->group(['prefix' => '/{id}'], function () use ($router) {
+            $router->get('', 'SongsController@showOneSong');
+            $router->get('/delete', 'SongsController@delete');
+            $router->get('/users', 'SongsController@showUsers');
+            $router->get('/withusers', 'SongsController@showSongWithUsers');
+            $router->put('/adduser/{user_id}&{instrument}', 'SongsController@addUserToSong');
+            $router->delete('/removeuser/{user_id}', 'SongsController@removeUserFromSong');
+            $router->put('/addsinger/{user_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
+            $router->delete('/removesinger/{user_id}', 'SongsController@removeSingerToSong');
+            $router->get('/singers', 'SongsController@showSingerSongs');
+            $router->get('/singers/{genre}', 'SongsController@showSingerGenreSongs');
+        });
+    });
+
+    $router->group(['prefix' => '/users'], function () use ($router) {
+        $router->get('', 'UsersController@showAllUsers');
+        $router->post('/create', 'UsersController@create');
+
+        $router->group(['prefix' => '/{id}'], function () use ($router) {
+            $router->get('', 'UsersController@showOneUser');
+            $router->delete('/delete', 'UsersController@delete');
+            $router->get('/songs', 'UsersController@showUserSongs');
+            $router->get('showgenre/{genre}', 'UsersController@showGenre');
+        });
+    });
 });
