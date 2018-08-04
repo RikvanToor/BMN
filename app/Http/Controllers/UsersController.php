@@ -59,7 +59,7 @@ class UsersController extends Controller {
      * Show singer's possible songs
      */
     public function showSingerSongs($id) {
-        $songs = User::find($id)->singers()->orderBy('title')->get();
+        $songs = User::find($id)->singingSongs()->orderBy('title')->get();
         return response()->json($songs, 200);
     }
 
@@ -67,7 +67,7 @@ class UsersController extends Controller {
      * Show singer's possible songs with genre
      */
     public function showSingerGenreSongs($id, $genre) {
-        $songs = User::find($id)->where($genre)->singers()->orderBy('title')->get();
+        $songs = User::find($id)->singingSongs()->where('genre', $genre)->orderBy('title')->get();
         return response()->json($songs, 200);
     }
 }

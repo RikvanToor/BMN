@@ -66,8 +66,8 @@ class SongsController extends Controller {
     /**
      * Add a musician to a song (add entry 'plays' table)
      */
-    public function addUserToSong($song_id, $user_id, $instrument) {
-        $song = Song::find($song_id);
+    public function addUserToSong($id, $user_id, $instrument) {
+        $song = Song::find($id);
 
         $song->players()->attach($user_id, ['instrument' => $instrument]);
 
@@ -85,12 +85,20 @@ class SongsController extends Controller {
     }
 
     /**
+     * Show a songs possible singers
+     */
+    public function showSingers($id) {
+        $singers = Song::find($id)->singers()->get();
+        return response()->json($singers, 200);
+    }
+
+    /**
      * Add a singer to a song (add entry 'can_sing' table)
      */
     public function addSingerToSong($user_id, $id, $yes_or_maybe) {
         $song = Song::find($id);
 
-        $song->players()->attach($user_id, ['yes_or_maybe' => $yes_or_maybe]);
+        $song->singers()->attach($user_id, ['yes_or_maybe' => $yes_or_maybe]);
 
         return response()->json('Added succesfully', 201);
     }
@@ -101,7 +109,7 @@ class SongsController extends Controller {
     public function removeSingerFromSong($user_id, $id) {
         $song = Song::find($id);
 
-        $song->players()->detach($user_id);
+        $song->singers()->detach($user_id);
         return response()->json('Removed succesfully', 200);
     }
 
@@ -109,7 +117,7 @@ class SongsController extends Controller {
      * Show songs with genre
      */
     public function showGenre($genre) {
-        $songs = Song::where($genre);
+        $songs = Song::where('genre', $genre);
         return response()->json($songs, 200);
     }
 }

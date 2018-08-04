@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Lumen\Auth\Authorizable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
-{
+class User extends Model implements AuthenticatableContract, AuthorizableContract {
     use Authenticatable, Authorizable;
 
     protected $table = 'users';
@@ -20,7 +19,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'is_active', 'is_admin', 'password'
+        'name', 'email', 'username', 'is_active', 'is_admin', 'password',
     ];
 
     /**
@@ -29,7 +28,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'password', 'email', 'is_active',
     ];
 
     /**
@@ -37,10 +36,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function songs()
-    {
+    public function songs() {
         return $this->belongsToMany(Song::class, 'plays')
             ->withPivot('instrument');
+    }
+
+    /**
+     * The songs that the user could or could maybe sing.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function singingSongs() {
+        return $this->belongsToMany(Song::class, 'can_sing')
+            ->withPivot('yes_or_maybe');
     }
 
     /**
@@ -48,8 +56,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function availabilities()
-    {
+    public function availabilities() {
         return $this->belongsToMany(Rehearsal::class, 'availability')
             ->withPivot('start', 'end');
     }
@@ -59,8 +66,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function news()
-    {
+    public function news() {
         return $this->hasMany(News::class);
     }
 }

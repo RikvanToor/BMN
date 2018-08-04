@@ -19,18 +19,19 @@ $router->group(['prefix' => '/api'], function () use ($router) {
     $router->group(['prefix' => '/songs'], function () use ($router) {
         $router->get('', 'SongsController@showAllSongs');
         $router->post('/create', 'SongsController@create');
+        $router->get('/genre/{genre}', 'SongsController@showGenre');
 
         $router->group(['prefix' => '/{id}'], function () use ($router) {
             $router->get('', 'SongsController@showOneSong');
-            $router->get('/delete', 'SongsController@delete');
+            $router->delete('', 'SongsController@delete');
             $router->get('/users', 'SongsController@showUsers');
             $router->get('/withusers', 'SongsController@showSongWithUsers');
-            $router->put('/adduser/{user_id}&{instrument}', 'SongsController@addUserToSong');
-            $router->delete('/removeuser/{user_id}', 'SongsController@removeUserFromSong');
-            $router->put('/addsinger/{user_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
-            $router->delete('/removesinger/{user_id}', 'SongsController@removeSingerToSong');
-            $router->get('/singers', 'SongsController@showSingerSongs');
-            $router->get('/singers/{genre}', 'SongsController@showSingerGenreSongs');
+            $router->put('/users/{user_id}&{instrument}', 'SongsController@addUserToSong');
+            $router->delete('/users/{user_id}', 'SongsController@removeUserFromSong');
+
+            $router->get('/singers', 'SongsController@showSingers');
+            $router->put('/singers/{user_id}&{yes_or_maybe}', 'SongsController@addSingerToSong');
+            $router->delete('/singers/{user_id}', 'SongsController@removeSingerToSong');
         });
     });
 
@@ -42,7 +43,8 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('', 'UsersController@showOneUser');
             $router->delete('/delete', 'UsersController@delete');
             $router->get('/songs', 'UsersController@showUserSongs');
-            $router->get('showgenre/{genre}', 'UsersController@showGenre');
+            $router->get('/singersongs', 'UsersController@showSingerSongs');
+            $router->get('/singersongs/genre/{genre}', 'UsersController@showSingerGenreSongs');
         });
     });
 });
