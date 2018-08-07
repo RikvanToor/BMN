@@ -7,7 +7,8 @@ use Closure;
 class Committee {
 
     /**
-     * Handle an incoming request.
+     * Handle an incoming request. Returns 401 unauthorized if the user
+     * is not part of the committee.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
