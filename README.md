@@ -49,6 +49,8 @@ Okay, tijd voor het
     a. Zit je op Linux? Installeer dan gewoon composer zoals je dat met iedere andere package zou doen. Fixed. Ga naar b. Gebruik je Windows? Volg dan [dit](https://getcomposer.org/download/) óf download PHPStorm en open de map van dit project in het programma. Druk dan bovenin op `Tools > Composer > Init Composer`. Er wordt nu een bestand genaamd `composer.phar` in je projectmap neergezet. Iedere keer dat je vanaf nu een commando wat begint met `composer` moet uitvoeren, moet jij in plaats daarvan `php composer.phar` doen. Ja? Oke, ga door naar b.
     b. Run `composer install`. Alle Lumen dependencies worden nu geïnstalleerd.
 10. Run `php artisan migrate`. De database wordt nu aangemaakt.
+10. Run `php artisan db:seed`. Er worden nu voorbeeld rijen in de 
+    databasetabellen toegevoegd.
 11. Run `php -S localhost:8080 -t public`. Als je nu in je browser naar `localhost:8080` gaat, krijg je de indexpagina te zien. Lekker.
 
 # Bijdragen
