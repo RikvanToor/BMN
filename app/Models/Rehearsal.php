@@ -27,6 +27,7 @@ class Rehearsal extends Model {
             ->withPivot('start', 'end');
     }
 
+    
     /**
      * The users that have specified their availabilities for the rehearsal.
      *
@@ -34,6 +35,18 @@ class Rehearsal extends Model {
      */
     public function availabilities() {
         return $this->belongsToMany(User::class, 'availability')
-            ->withPivot('start', 'end');
+        ->withPivot('start', 'end');
+    }
+
+    /**
+     * Get the rehearsal's songs and their players.
+     * 
+     * @return array
+     */
+    public function schedule() {
+        $result          = $this->toArray();
+        $songs           = $this->songs()->with('players')->get();
+        $result['songs'] = $songs->toArray();
+        return $result;
     }
 }

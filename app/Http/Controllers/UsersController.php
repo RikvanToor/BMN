@@ -12,7 +12,7 @@ class UsersController extends Controller {
     public function create(Request $request) {
         $this->validate($request, [
             'name'     => 'required',
-            'email'    => 'required',
+            'email'    => 'required|email',
             'username' => 'required',
             'password' => 'required',
         ]);

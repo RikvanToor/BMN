@@ -68,5 +68,10 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->get('/singersongs/genre/{genre}', 'UsersController@showSingerGenreSongs');
             });
         });
+
+        $router->group(['prefix' => '/rehearsals'], function() use ($router) {
+            $router->get('', 'RehearsalsController@showFutureRehearsals');
+            $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
+        });
     });
 });
