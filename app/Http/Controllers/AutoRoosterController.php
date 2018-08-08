@@ -3,27 +3,28 @@
 namespace App\Http\Controllers;
 
 //use App\Rooster\AutoRoosterTest;
+use App\Models\Song;
+use App\Models\User;
 
 class AutoRoosterController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
+	/**
+	 * Generate rooster with 20 minutes for each song because implementing different timings is difficult for now. Returns string with printed result.
+	 */
+    public function GenerateRooster($songs, $starttime, $endtime, $numberOfStages) {
+		$timedSongs = array();
+		for($i = 0; $i < count($songs); $i++) {
+			$timedSongs[$i] = new TimedSong($songs[$i], 20);
+		}
 
-    public function GenerateRooster() {
-        $art = new AutoRoosterTest();
-        $art->Test();
+		return AutoRooster::MaakRooster($timedSongs, $starttime, $endtime, $numberOfStages);
+        //$art = new AutoRoosterTest();
+        //$art->Test();
     }
 }
 
 //250 regels code die maar 2x per jaar gebruikt worden :P
-class AutoRoosterTest{
+/*class AutoRoosterTest{
 	public static function Test() {
 		$Niels = new Player();
 		$Sander = new Player();
@@ -57,27 +58,33 @@ class Player {
 	
 	public function __construct() {
 	}
-}
+}*/
+
 class TimedSong {
-	public $players;
-	public $name;
+	//public $players;
+	//public $name;
+	public $song;
 	public $time;
 	
-	public function __construct($name, $players, $time) {
-		$this->name = $name;
-		$this->players = $players;
+	//public function __construct($name, $players, $time) {
+	//	$this->name = $name;
+	//	$this->players = $players;
+	//	$this->time = $time;
+	//}
+	public function __construct($song, $time) {
+		$this->song = $song;
 		$this->time = $time;
 	}
 	
 	public function players() {
-		return $this->players;
+		return $this->song->players();
 	}
 }
 
 
 class AutoRooster {
-	// Maakt een rooster voor een bepaald $aantalOefenruimtes. $nummers is een array van 'Song's,
-	// $start en $eind zijn resp. de begin- en eindtijd van de repetitie, in minuten (!!) - dus bijv: 17:30 wordt 17*60 + 30 = 1050.
+	// Maakt een rooster voor een bepaald $aantalOefenruimtes. $nummers is een array van 'timedsong's
+	// $start en $eind zijn resp. de begin- en eindtijd van de repetitie, in minuten sinds middernacht (!!) - dus bijv: 17:30 wordt 17*60 + 30 = 1050.
 	public static function MaakRooster($nummers, $start, $eind, $aantalOefenruimtes)
 		{
 			$duur = $eind - $start;
@@ -174,9 +181,10 @@ class AutoRooster {
 			}
 			
 			//Output
+			$outputString = "";
 			for ($i = 0; $i < $aantalOefenruimtes; $i++) 
 			{
-				echo "   --- Oefenruimte " . ($i + 1) . " ---</br>";
+				$outputString .= "   --- Oefenruimte " . ($i + 1) . " ---</br>";
                 $nummer = NULL;
 				for ($j = 0; $j < $duur; $j++)
 				{
@@ -186,22 +194,24 @@ class AutoRooster {
                         //$tijdString = gmdate("H:i", $begintijd + $j);
                         $tijdString = $start + $j;
 						
-						if ($nummer != null) { echo "    " . $tijdString . " - " . $nummer->name . "</br>"; }
+						if ($nummer != null) { $outputString .= "    " . $tijdString . " - " . $nummer->song->fillable[0] . "</br>"; }
 					}
 				}
 				
-				echo "</br>";
+				$outputString .= "</br>";
 			}
 
-			if (count($besteRooster->nietIngepland) == 0) { echo "Alle nummers konden worden ingepland.</br>"; }
+			if (count($besteRooster->nietIngepland) == 0) { $outputString .= "Alle nummers konden worden ingepland.</br>"; }
 			else
 			{
-				echo "De volgende nummers konden niet ingepland worden:</br>";
+				$outputString .= "De volgende nummers konden niet ingepland worden:</br>";
 				foreach ($besteRooster->nietIngepland as $n)
 				{
-					echo "- " . $n->name . "</br>";
+					$outputString .= "- " . $n->name . "</br>";
 				}
 			}
+
+			return outputString;
 		}
 	
 	//Kijkt of er overlap zit in de muzikanten van twee nummers en output dit als een bool
