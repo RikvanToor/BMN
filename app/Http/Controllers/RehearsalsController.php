@@ -11,7 +11,7 @@ class RehearsalsController extends Controller {
      */
     public function create(Request $request) {
         $this->validate($request, [
-            'locatoin' => 'required',
+            'location' => 'required',
             'start'    => 'required|date',
             'end'      => 'required|date',
         ]);
