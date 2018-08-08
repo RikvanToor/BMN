@@ -1,11 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Song extends Model
-{
+class Song extends Model {
 
     protected $table = 'songs';
 
@@ -15,7 +14,8 @@ class Song extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'artist', 'spotify_link', 'comment'
+        'title', 'artist', 'spotify_link', 'comment',
+        'genre', 'vocals', 'backing', 'duet',
     ];
 
     /**
@@ -23,10 +23,19 @@ class Song extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function players()
-    {
+    public function players() {
         return $this->belongsToMany(User::class, 'plays')
             ->withPivot('instrument');
+    }
+
+    /**
+     * The users can sing this song.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function singers() {
+        return $this->belongsToMany(User::class, 'can_sing')
+            ->withPivot('yes_or_maybe');
     }
 
     /**
@@ -34,8 +43,7 @@ class Song extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function rehearsals()
-    {
+    public function rehearsals() {
         return $this->belongsToMany(Rehearsal::class, 'schedule')
             ->withPivot('start', 'end');
     }
