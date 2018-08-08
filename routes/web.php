@@ -53,14 +53,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('', 'UsersController@showAllUsers');
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'UsersController@create');
+                $router->delete('/{id}/delete', 'UsersController@delete');
             });
 
             $router->group(['prefix' => '/{id}'], function () use ($router) {
                 $router->get('', 'UsersController@showOneUser');
-
-                $router->group(['middleware' => 'committee'], function () use ($router) {
-                    $router->delete('/delete', 'UsersController@delete');
-                });
 
                 $router->get('/songs', 'UsersController@showUserSongs');
                 
@@ -72,6 +69,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
         $router->group(['prefix' => '/rehearsals'], function() use ($router) {
             $router->get('', 'RehearsalsController@showFutureRehearsals');
             $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
+            $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->post('/create', 'RehearsalsController@create');
+                $router->post('{id}/addsong', 'RehearsalsController@addSong');
+                $router->delete('{id}/removesong/{song_id}', 'RehearsalsController@removeSong');
+            });
         });
     });
 });
