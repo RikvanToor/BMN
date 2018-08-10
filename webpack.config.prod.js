@@ -1,6 +1,7 @@
 'use strict';
-const CleanWebpackPlugin = require('clean-webpack-plugin'); //installed via npm
 const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin'); 
+const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
 
 const BUILD_DIR = path.resolve(__dirname, 'public/js');
@@ -37,14 +38,27 @@ const config = {
 	    }
         ]
     },
+    plugins: [
+        new webpack.DefinePlugin({
+	    'process.env': {
+		'NODE_ENV': JSON.stringify('production')
+	    }
+        }),
+        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.AggressiveMergingPlugin(),
+//         new CompressionPlugin({
+//             asset: "[path].gz[query]",
+//             algorithm: "gzip",
+//             test: /\.js$|\.css$|\.html$/,
+//             threshold: 10240,
+//             minRatio: 0.8
+//         }),
+        new CleanWebpackPlugin(BUILD_DIR, [])
+    ],
     devServer: {
         contentBase: __dirname + '/public/js'
     },
-    devtool: "eval-source-map",
-    plugins: [
-        new CleanWebpackPlugin(BUILD_DIR, [])
-    ]
+    devtool: "eval-source-map"
 };
 
 module.exports = config;
-
