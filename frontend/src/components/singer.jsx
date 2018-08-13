@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 
 class Singer extends Component {
-  state = { color: this.props.color };
-
-  handleSwitch = () => {
+  constructor(props) {
+    super(props);
+    this.state = { color: this.props.color };
+  }
+  handleSwitch() {
     if (parseInt(this.state.color) === 2) this.setState({ color: 0 });
     else this.setState({ color: parseInt(this.state.color) + 1 });
   };

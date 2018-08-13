@@ -5,7 +5,10 @@ import bg3  from "../images/bg_3.jpg";
 import logo from "../images/logo.png";
 
 class Carousel extends Component {
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
   render() {
     return (
       <div

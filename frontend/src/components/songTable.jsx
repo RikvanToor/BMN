@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Song from "./song.jsx";
 
 class SongTable extends Component {
-  state = {};
   render() {
     return (
       <div>

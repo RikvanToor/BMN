@@ -1,16 +1,14 @@
 'use strict';
-const CleanWebpackPlugin = require('clean-webpack-plugin'); //installed via npm
 const webpack = require('webpack');
 const path = require('path');
 
-const BUILD_DIR = path.resolve(__dirname, 'public/js');
+const BUILD_DIR = path.resolve(__dirname, 'frontend/public/js');
 const APP_DIR = path.resolve(__dirname, 'frontend/src');
 
 const config = {
+    mode: 'production',
     context: APP_DIR,
-    entry: {
-        app: './index.js'
-    },
+    entry: './index.js',
     output: {
         path: BUILD_DIR,
         filename: 'bundle.js',
@@ -21,9 +19,8 @@ const config = {
             {
                 test: /\.(js|jsx)$/, //Check for all js files
                 exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader?-babelrc,+cacheDirectory,presets[]=es2015,presets[]=stage-0,presets[]=react',
-                }]
+		loader: 'babel-loader',
+		query: { presets: [ 'es2015', 'react' ] }
             },
 	    {
 		test: /\.(png|jpg)$/,
@@ -38,12 +35,10 @@ const config = {
         ]
     },
     devServer: {
-        contentBase: __dirname + '/public/js'
-    },
-    devtool: "eval-source-map",
-    plugins: [
-        new CleanWebpackPlugin(BUILD_DIR, [])
-    ]
+        contentBase: __dirname + '/frontend/public',
+	compress: true,
+	port: 9000
+    }
 };
 
 module.exports = config;
