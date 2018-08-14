@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import Song from "./song.jsx";
+import Table from 'react-bootstrap/lib/Table';
 
 class SongTable extends Component {
   render() {
     return (
       <div>
-        <table className="table table-striped table-hover table-sm">
+        <Table striped hover responsive>
           <thead className="thead-dark">
             <tr>
               <th scope="col" className="pl-2 align-middle">
@@ -64,7 +65,7 @@ class SongTable extends Component {
             <Song />
             <Song />
           </tbody>
-        </table>
+        </Table>
       </div>
     );
   }

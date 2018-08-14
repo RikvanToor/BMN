@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import bg1 from "../images/bg_1.jpg";
 import bg2 from "../images/bg_2.jpg";
 import bg3 from "../images/bg_3.jpg";
-import logo from "../images/logo.png";
 import CarouselComp from 'react-bootstrap/lib/Carousel';
 
 class Carousel extends Component {

@@ -3,6 +3,7 @@ import Navigation from "./components/navigation.jsx";
 import Footer from "./components/footer.jsx";
 import SongTable from "./components/songTable.jsx";
 import Carousel from "./components/carousel.jsx";
+import CSS from './App.css';
 
 class App extends Component {
   render() {

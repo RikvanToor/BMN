@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Singer from "./singer.jsx";
+import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 
 class Singers extends Component {
   constructor(props) {
@@ -9,7 +10,7 @@ class Singers extends Component {
 
   render() {
     return (
-      <div className="btn-group" role="group" aria-label="Singers">
+      <ButtonGroup>
         <Singer initials="DC" color="0" />
         <Singer initials="HdH" color="0" />
         <Singer initials="HN" color="1" />
@@ -19,7 +20,7 @@ class Singers extends Component {
         <Singer initials="MW" color="0" />
         <Singer initials="RM" color="2" />
         <Singer initials="SV" color="2" />
-      </div>
+      </ButtonGroup>
     );
   }
 }

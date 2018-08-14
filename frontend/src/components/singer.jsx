@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Button from 'react-bootstrap/lib/Button';
 
 class Singer extends Component {
   constructor(props) {
@@ -11,35 +12,35 @@ class Singer extends Component {
   };
 
   color() {
-    let result = "btn p-1 ";
+    let result;
 
     switch (parseInt(this.state.color)) {
       case 0:
-        result += "btn-success";
+        result= "success";
         break;
       case 1:
-        result += "btn-warning";
+        result= "warning";
         break;
       case 2:
-        result += "btn-danger";
+        result= "danger";
         break;
       default:
-        result += "btn-secondary";
+        result= "info";
         break;
     }
 
-    return result;
+    return result + " p-1";
   }
 
   render() {
     return (
-      <button
-        className={this.color()}
-        onClick={this.handleSwitch}
+      <Button
+        bsStyle={this.color()}
+        onClick={this.handleSwitch.bind(this)}
         style={{ outline: "none" }}
       >
         {this.props.initials}
-      </button>
+      </Button>
     );
   }
 }
