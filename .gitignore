@@ -26,3 +26,6 @@ public/js
 .idea/*
 composer.phar
 package-lock.json
+nbproject/project.xml
+nbproject/project.properties
+nbproject/

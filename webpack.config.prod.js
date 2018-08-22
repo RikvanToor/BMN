@@ -7,6 +7,8 @@ const path = require('path');
 const BUILD_DIR = path.resolve(__dirname, 'public/js');
 const APP_DIR = path.resolve(__dirname, 'frontend/src');
 
+console.log("Running production build");
+
 const config = {
     context: APP_DIR,
     entry: {
@@ -16,6 +18,14 @@ const config = {
         path: BUILD_DIR,
         filename: 'bundle.js',
         publicPath: "/"
+    },
+    //Add path aliases here for easier access in frontend imports
+    resolve:{
+        alias:{
+            '@Routes' : path.resolve(__dirname,'frontend/src/routes'),
+            '@Components' : path.resolve(__dirname,'frontend/src/components'),
+            '@Services' : path.resolve(__dirname,'frontend/src/services'),
+        }
     },
     module: {
         rules: [
