@@ -11,10 +11,30 @@
 |
  */
 
+/**
+ * 
+ * Route all relevant links to the index. There, the routing will be handled via the React
+ * Router. 
+ */
 $router->get('/', function () use ($router) {
     return view('index');
 });
 
+$router->get('/home', function () use ($router) {
+    return view('index');
+});
+
+$router->get('/nummers', function () use ($router) {
+    return view('index');
+});
+
+$router->get('/suggesties', function () use ($router) {
+    return view('index');
+});
+
+/**
+ * API routing
+ */
 $router->group(['prefix' => '/api'], function () use ($router) {
     $router->post('auth/login', 'AuthController@login');
 

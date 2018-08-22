@@ -4,34 +4,28 @@ import Footer from "./components/footer.jsx";
 import SongTable from "./components/songTable.jsx";
 import Carousel from "./components/carousel.jsx";
 import CSS from './App.css';
+import {BrowserRouter, Route} from "react-router-dom";
 
+/**
+ * Main routes in the application
+ */
+import Home from '@Routes/Home.jsx';
+import SuggestionList from '@Routes/SuggestionList.jsx';
+
+/*
+ * Main entry point of the BMN frontend.
+ */
 class App extends Component {
   render() {
     return (
-      <div className="bg-light">
-        <Navigation active="tools" />
-        <Carousel />
-        <div className="container pt-5 bg-light">
-          <div className="text-center">
-            <h2>Suggesties</h2>
-            <p>
-              Deze tool helpt bij setlistvergaderingen om makkelijk door de
-              suggesties heen te gaan.
-            </p>
-            <hr />
-          </div>
-          <div className="form-group mx-sm-3 mb-2">
-            <input
-              type="text"
-              className="form-control"
-              id="searchquery"
-              placeholder="Search..."
-            />
-          </div>
-          <SongTable />
+     <BrowserRouter>
+        <div className="bg-light">
+            <Navigation active="tools" />
+            <Route exact path="/home" component={Home}/>
+            <Route exact path="/suggesties" component={SuggestionList}/>
+            <Footer />
         </div>
-        <Footer />
-      </div>
+      </BrowserRouter>
     );
   }
 }
