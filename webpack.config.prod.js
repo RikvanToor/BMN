@@ -3,29 +3,16 @@ const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin'); 
 const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
+const webpackMerge = require('webpack-merge');
+const common = require('./webpack.config.common.js');
 
 const BUILD_DIR = path.resolve(__dirname, 'public/js');
-const APP_DIR = path.resolve(__dirname, 'frontend/src');
 
 console.log("Running production build");
 
 const config = {
-    context: APP_DIR,
-    entry: {
-        app: './index.js'
-    },
     output: {
-        path: BUILD_DIR,
-        filename: 'bundle.js',
-        publicPath: "/"
-    },
-    //Add path aliases here for easier access in frontend imports
-    resolve:{
-        alias:{
-            '@Routes' : path.resolve(__dirname,'frontend/src/routes'),
-            '@Components' : path.resolve(__dirname,'frontend/src/components'),
-            '@Services' : path.resolve(__dirname,'frontend/src/services'),
-        }
+        path: BUILD_DIR
     },
     module: {
         rules: [
@@ -35,17 +22,7 @@ const config = {
                 use: [{
                     loader: 'babel-loader?-babelrc,+cacheDirectory,presets[]=es2015,presets[]=stage-0,presets[]=react',
                 }]
-            },
-	    {
-		test: /\.(png|jpg)$/,
-		use: [{
-		    loader: 'url-loader'
-		}]
-	    },
-	    {
-		test: /\.css$/,
-		use: ["style-loader", "css-loader"]
-	    }
+            }
         ]
     },
     plugins: [
@@ -71,4 +48,4 @@ const config = {
     devtool: "eval-source-map"
 };
 
-module.exports = config;
+module.exports = webpackMerge(common, config);
