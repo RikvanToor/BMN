@@ -1,11 +1,8 @@
 import {Store} from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-
-const UserActions = {
-    LOG_IN : 'LOG_IN',
-    UPDATE_PASSWORD: 'UPDATE_PASSWORD'
-};
+import {UserActions, loggedInAction, logInFailAction} from '@Actions/UserActions.js';
+import User from '@Models/User.js';
 
 let inst = null;
 
@@ -13,24 +10,17 @@ let inst = null;
  * Stores retrieved data with respect to user
  */
 class UserStore extends Store{
+    static get userInfoPoint() {
+        return 'auth/me';
+    }
     //Pass global dispatcher to parent class
     constructor(dispatcher){
         super(dispatcher);
-        this.userName = "";
-        this.jwtToken = "";
         
-        //Flags that the user is a committee member. Since this is easily hackable,
-        //make sure to not expose any sensitive data based on this flag only.
-        this.isCommittee = false;
-        
+        this.user = new User();
+
+        //Possible error during authentication process
         this.error = '';
-    }
-    /**
-     * Returns whether the current user is authenticated.
-     * @returns {Boolean}
-     */
-    isAuthenticated(){
-        return this.userName !== "" && this.jwtToken;
     }
     /**
      * Override of base class that is called when handling actions. Remember to not 
@@ -44,19 +34,37 @@ class UserStore extends Store{
             case UserActions.LOG_IN:
                 console.log('Sending login request');
                 
-                //Perform the special Auth request
-                ApiService.authRequest(payload.username, payload.password)
-                .then(responseData =>{
-                    this.userName = payload.username;
-                    this.jwtToken = responseData.token;
-
-                })
-                .catch(errData =>{
-                    this.error = errData.msg;
+                AppDispatcher.dispatchPromisedFn(
+                    ApiService.authRequest(payload.username, payload.password) //Send auth request
+                    .then(()=>{
+                        console.log('Sending auth/me request');
+                        return ApiService.readData(UserStore.userInfoPoint,{}, true); //Afterwards, read user data
+                    }),
+                    data=>{
+                        console.log('Auth/me data');
+                        console.log(data);
+                        return loggedInAction(data.username, data.name, data.id, data.is_admin != 0);
+                    }, //Success action
+                    errData=> { 
+                        return logInFailAction(errData.msg);
+                    } //Fail action
+                );
+                break;
+            case UserActions.LOG_IN_FAIL:
+                console.log("Failed action");
+                console.log(payload);
+                break;
+            case UserActions.LOGGED_IN:
+                //Merge the immutable with new data
+                this.user = this.user.merge({
+                    userName : payload.userName,
+                    isCommittee: payload.isCommittee,
+                    isLoggedIn: true,
+                    id: payload.id,
+                    name: payload.name
                 });
-            
-            
-                //The store changes anyway
+                console.log(this.user.toJS());
+                //Emit the change
                 this.__emitChange();
                 break;
             //Handle update password action
@@ -65,6 +73,7 @@ class UserStore extends Store{
                 break;
                 
         }
+        console.log('Done handling ' + payload.action);
     }
 }
 

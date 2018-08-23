@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import Navigation from "./components/navigation.jsx";
 import Footer from "./components/footer.jsx";
 import SongTable from "./components/songTable.jsx";
-import Carousel from "./components/carousel.jsx";
 import CSS from './App.css';
-import LoginPage from "@Routes/LoginPage.jsx";
+import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
+import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import {BrowserRouter, Route} from "react-router-dom";
 
 /**
@@ -25,7 +25,8 @@ class App extends Component {
             <NavigationContainer/>
             <Route exact path="/home" component={Home}/>
             <Route exact path="/suggesties" component={SuggestionList}/>
-            <Route exact path="/login" component={LoginPage}/>
+            <Route exact path="/login" component={LoginContainer}/>
+            <Route exact path="/homeParticipant" component={ParticipantHome}/>
             <Footer />
         </div>
       </BrowserRouter>

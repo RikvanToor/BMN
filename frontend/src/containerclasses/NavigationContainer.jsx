@@ -9,7 +9,7 @@ class NavigationContainer extends Component {
     } 
     static calculateState(prevState) { 
         return {
-            isCommittee: UserStore.isCommittee
+            isCommittee: UserStore.user.isCommittee
         }; 
     }
     render() {
