@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Navigation from '@Components/navigation.jsx';
 import UserStore from '@Stores/UserStore.js';
-import {Container} from 'flux-utils';
+import {Container} from 'flux/utils';
 
 class NavigationContainer extends Component {
     static getStores() { 

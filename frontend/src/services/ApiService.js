@@ -24,18 +24,18 @@ class ApiError{
  */
 class ApiService{
     static get authPath(){
-        return '';
+        return 'auth/login';
     }
     constructor(){
-        //Save the JWT token here
+        //Save the JWT token here when acquired
         this.jwtToken = "";
         
-        //API basepath
+        //API basepath, will be processed by webpack accordingly
         if (process.env.NODE_ENV === "production"){
             this.basePath = "https://bmn.a-eskwadraat.nl/api/";
         }
         else{
-            this.basePath = "http://localhost:8080";
+            this.basePath = "http://localhost:8080/api/";
         }
     }
     /**
@@ -63,35 +63,63 @@ class ApiService{
      * TODO: does JWT expire?
      * @param {string} user
      * @param {string} pass
-     * @returns {Promise}
+     * @returns {Promise} Promise that is resolved with a JS object with token and username, or rejected
+     *  with an ApiError class instance.
      */
     authRequest(user, pass){
-        return sendRequest(Methods.POST, ApiService.authPath, {username: user, password: pass}, false)
-            .then(data=>{
-           this.jwtToken = data.token; //Check specifics of API     
+        return this.sendRequest('POST', ApiService.authPath, {username: user, password: pass}, false)
+        .then(data=>{
+            try{
+                this.jwtToken = data.token;
+            }
+            catch(e){
+                return Promise.reject(new ApiError("Could not decode JSON response for authentication",-1));
+            }
+           
+           //Return meaningful data to 
+           return Promise.resolve({token:data.token, username:user});
         });
+    }
+    
+    /**
+     * Specialized version sending CRUD requests
+     * @param {int} crudMethod The crud method, one of the enum Methods.
+     * @param {string} endpoint API endpoint to send request to
+     * @param {object} params Data to send with the request
+     * @param {boolean} requiresAuth Whether the request requires authentication in the form of a JWT token
+     * @returns {Promise} Promise resolving to JSON parsed response object or rejecting with an API error 
+     * object describing the problem
+     */
+    sendCrudRequest(crudMethod, endpoint, params, requiresAuth){
+        return this.sendRequest(ApiService.getRequestMethod(crudMethod), endpoint, params, requiresAuth)
     }
     /**
      * Sends an asynchronous request to the server with the given parameters. Returns a 
      * promise with the result.
-     * @param {int} crudMethod The method to use. On of the Methods enumeration.
+     * @param {int} sendMethod The request method to use (i.e. 'GET','POSt', etc.)
      * @param {string} endpoint The endpoint to send the request to. Omit slash at start!
      * @param {object} params Parameters to send with the request
      * @param {boolean} requiresAuth Whether the request requires authentication in the form of a JWT token
-     * @returns {Promise} 
+     * @returns {Promise} Promise resolving to JSON parsed response object or rejecting with an API error 
+     * object describing the problem
      */
-    sendRequest(crudMethod, endpoint, params, requiresAuth) {
+    sendRequest(sendMethod, endpoint, params, requiresAuth) {
         // Return a new promise.
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             //Setup the XHR object
             var req = new XMLHttpRequest();
-
             //TODO: validate endpoint here? Or let it fail with the request
-            req.open(ApiService.getRequestMethod(crudMethod), this.basePath + endpoint);
+            req.open(sendMethod, this.basePath + endpoint);
+            
+            console.log('Sending request to ' + this.basePath + endpoint);
+            
+            //Add headers
+            req.setRequestHeader('Accept','application/json');
 
+            //Setup authorized request if needed
             if(requiresAuth){
                 if(!this.jwtToken){
-                    reject(ApiError('Trying to send authenticated request without token.',-1));
+                    reject(new ApiError('Trying to send authenticated request without token.',-1));
                 }
                 else{
                     //Send the JWT token
@@ -103,28 +131,36 @@ class ApiService{
             req.onload = function() {
               //Check the status code, since this is called on all responses.
               if (req.status === 200) {
-                // Resolve the promise with the response text
-                resolve(req.response);
+                console.log("Response:" + req.response);
+                
+                try{
+                    //Parse JSON automatically.
+                    let data = JSON.parse(req.response);
+                    resolve(data);
+                }
+                catch(e){
+                    reject(new ApiError('Failed to decode response', -1));
+                }
               }
               else {
                 // Otherwise reject with the status text
                 // which will hopefully be a meaningful error
-                reject(Error(req.statusText));
+                reject(new ApiError(req.statusText, req.status));
               }
             };
 
             // Handle network errors
             req.onerror = function() {
-              reject(Error("Network Error"));
+              reject(new ApiError("Network Error", -1));
             };
 
             //Setup content type for parameters
             if(Object.keys(params).length > 0){
                 req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); //Is this appropriate?
-                paramsStringArray = Object.keys(params).map(function(key){
+                const paramsStringArray = Object.keys(params).map(function(key){
                     return key + '=' + params[key];
                 });
-                paramsString = encodeURIComponent(paramsStringArray.join('&'));
+                const paramsString = paramsStringArray.join('&');
                 req.send(paramsString);
             }
             //Regular parameterless request
@@ -136,7 +172,7 @@ class ApiService{
       }
     
     readData(apiEndpoint, params, requiresAuth){
-        return sendRequest(Methods.READ, apiEndpoint, params, requiresAuth);
+        return this.sendCrudRequest(Methods.READ, apiEndpoint, params, requiresAuth);
     }  
     
     //For now, assume all update, create and delete actions require an authorized user.
@@ -144,13 +180,13 @@ class ApiService{
     
     
     updateData(apiEndpoint, params){
-        return sendRequest(Methods.UPDATE, apiEndpoint, params, true);
+        return this.sendCrudRequest(Methods.UPDATE, apiEndpoint, params, true);
     }
     createData(apiEndpoint, params){
-        return sendRequest(Methods.CREATE, apiEndpoint, params, true);
+        return this.sendCrudRequest(Methods.CREATE, apiEndpoint, params, true);
     }
     deleteData(apiEndpoint, params){
-        return sendRequest(Methods.DELETE, apiEndpoint, params, true); 
+        return this.sendCrudRequest(Methods.DELETE, apiEndpoint, params, true); 
     }
 }
 //Singleton

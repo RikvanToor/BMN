@@ -1,4 +1,4 @@
-import {Dispatcher} from 'flux-utils';
+import {Dispatcher} from 'flux';
 
 const AppDispatcher = new Dispatcher();
 

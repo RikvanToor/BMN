@@ -31,13 +31,18 @@ $router->get('/nummers', function () use ($router) {
 $router->get('/suggesties', function () use ($router) {
     return view('index');
 });
+$router->get('/login', function () use ($router) {
+    return view('index');
+});
 
 /**
  * API routing
  */
 $router->group(['prefix' => '/api'], function () use ($router) {
+    // prefix /api
     $router->post('auth/login', 'AuthController@login');
 
+    
     $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('auth/me', 'AuthController@getUser');
 

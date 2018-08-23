@@ -1,4 +1,4 @@
-import {Store} from 'flux-utils';
+import {Store} from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 
@@ -38,15 +38,17 @@ class UserStore extends Store{
      * @param {object} payload
      */
     __onDispatch(payload){
+        console.log('Handling payload ' + payload.action);
         switch(payload.action){
             //Handle the login action
             case UserActions.LOG_IN:
+                console.log('Sending login request');
+                
                 //Perform the special Auth request
-                ApiService.authRequest(payload.user, payload.password)
+                ApiService.authRequest(payload.username, payload.password)
                 .then(responseData =>{
-                    this.userName = responseData.userName;
+                    this.userName = payload.username;
                     this.jwtToken = responseData.token;
-                    this.userName = responseData.userName;
 
                 })
                 .catch(errData =>{
@@ -55,7 +57,7 @@ class UserStore extends Store{
             
             
                 //The store changes anyway
-                __emitChange();
+                this.__emitChange();
                 break;
             //Handle update password action
             case UserActions.UPDATE_PASSWORD:

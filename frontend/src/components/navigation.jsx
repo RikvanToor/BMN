@@ -54,6 +54,11 @@ class Navigation extends Component {
               <MenuItem eventKey={5.4}>Tickets</MenuItem>
               <MenuItem eventKey={5.5}>Setlist</MenuItem>
             </NavDropdown>
+            <LinkContainer to="/login">
+                <NavItem eventKey={4} href="#">
+                    Log In
+                </NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
