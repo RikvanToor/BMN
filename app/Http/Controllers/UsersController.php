@@ -17,7 +17,10 @@ class UsersController extends Controller {
             'password' => 'required',
         ]);
 
-        $user = User::create($request->all());
+        $properties = $request->all();
+        $properties['password'] = app('hash')->make($request->get('password'));
+
+        $user = User::create($properties);
         return response()->json($user, 201);
     }
 

@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\User;
-use App\News;
-use App\Rehearsal;
-use App\Song;
+use App\Models\User;
+use App\Models\News;
+use App\Models\Rehearsal;
+use App\Models\Song;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        /*
+        /**
          * Create three users:
          * - Admin
          * - User1
@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
          */
         $admin = User::create([
             'username' => 'admin',
-            'password' => 'password',
+            'password' => app('hash')->make('password'),
             'name' => 'Administrator',
             'email' => 'bmn@a-es2.nl',
             'is_active' => true,
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $user1 = User::create([
             'username' => 'user1',
-            'password' => 'password',
+            'password' => app('hash')->make('password'),
             'name' => 'User1',
             'email' => 'user1@gmail.com',
             'is_active' => true,
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
 
         $user2 = User::create([
             'username' => 'user2',
-            'password' => 'password',
+            'password' => app('hash')->make('password'),
             'name' => 'User2',
             'email' => 'user2@gmail.com',
             'is_active' => true,
@@ -55,7 +55,11 @@ class DatabaseSeeder extends Seeder
             'title' => 'Song',
             'artist' => 'Artist',
             'spotify_link' => 'n/a',
-            'comment' => 'Test song'
+            'comment' => 'Test song',
+            'genre' => 'Test genre',
+            'vocals' => 'm/v',
+            'backing' => 1,
+            'duet' => false,
         ]);
 
         /*
