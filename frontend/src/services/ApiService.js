@@ -1,5 +1,6 @@
+import JSONRequest from '@Services/JSONRequest.js';
 
-const Methods = {
+export const Methods = {
     CREATE : 0,
     READ : 1,
     UPDATE: 2,
@@ -67,7 +68,10 @@ class ApiService{
      *  with an ApiError class instance.
      */
     authRequest(user, pass){
-        return this.sendRequest('POST', ApiService.authPath, {username: user, password: pass}, false)
+        //Setup request with parameters
+        let req = new JSONRequest({username: user, password: pass});
+        
+        return req.send("POST", this.basePath + ApiService.authPath)
         .then(data=>{
             try{
                 this.jwtToken = data.token;
@@ -91,89 +95,36 @@ class ApiService{
      * object describing the problem
      */
     sendCrudRequest(crudMethod, endpoint, params, requiresAuth){
-        return this.sendRequest(ApiService.getRequestMethod(crudMethod), endpoint, params, requiresAuth)
+        return this.sendRequest(ApiService.getRequestMethod(crudMethod), endpoint, params, requiresAuth);
     }
     /**
      * Sends an asynchronous request to the server with the given parameters. Returns a 
      * promise with the result.
      * @param {int} sendMethod The request method to use (i.e. 'GET','POSt', etc.)
-     * @param {string} endpoint The endpoint to send the request to. Omit slash at start!
+     * @param {string} endPoint The endpoint to send the request to. Omit slash at start!
      * @param {object} params Parameters to send with the request
      * @param {boolean} requiresAuth Whether the request requires authentication in the form of a JWT token
      * @returns {Promise} Promise resolving to JSON parsed response object or rejecting with an API error 
      * object describing the problem
      */
-    sendRequest(sendMethod, endpoint, params, requiresAuth) {
-        // Return a new promise.
-        return new Promise((resolve, reject) => {
-            //Setup the XHR object
-            var req = new XMLHttpRequest();
-            //TODO: validate endpoint here? Or let it fail with the request
-            req.open(sendMethod, this.basePath + endpoint);
-            
-            console.log('Sending request to ' + this.basePath + endpoint);
-            
-            //Add headers
-            req.setRequestHeader('Accept','application/json');
-
-            //Setup authorized request if needed
-            if(requiresAuth){
-                if(!this.jwtToken){
-                    reject(new ApiError('Trying to send authenticated request without token.',-1));
-                }
-                else{
-                    //Send the JWT token
-                    req.setRequestHeader('Authorization', 'Bearer ' + this.jwtToken);
-                }
-            }
-
-            //Handle the response
-            req.onload = function() {
-              //Check the status code, since this is called on all responses.
-              if (req.status === 200) {
-                console.log("Response:" + req.response);
-                
-                try{
-                    //Parse JSON automatically.
-                    let data = JSON.parse(req.response);
-                    resolve(data);
-                }
-                catch(e){
-                    reject(new ApiError('Failed to decode response', -1));
-                }
-              }
-              else {
-                // Otherwise reject with the status text
-                // which will hopefully be a meaningful error
-                reject(new ApiError(req.statusText, req.status));
-              }
-            };
-
-            // Handle network errors
-            req.onerror = function() {
-              reject(new ApiError("Network Error", -1));
-            };
-
-            //Setup content type for parameters
-            if(Object.keys(params).length > 0){
-                req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); //Is this appropriate?
-                const paramsStringArray = Object.keys(params).map(function(key){
-                    return key + '=' + params[key];
-                });
-                const paramsString = paramsStringArray.join('&');
-                req.send(paramsString);
-            }
-            //Regular parameterless request
-            else{
-                req.send();
-            }
-          
-        });
+    sendRequest(sendMethod, endPoint, params, requiresAuth) {
+        var req = new JSONRequest(params);
+        var absoluteEndPoint = this.basePath + endPoint;
+        if(requiresAuth){
+            req.setJWTToken(this.jwtToken);
+            return req.sendAuthenticated(sendMethod, absoluteEndPoint);
+        }
+        else{
+            return req.send(sendMethod, absoluteEndPoint);
+        }
       }
     
     readData(apiEndpoint, params, requiresAuth){
         return this.sendCrudRequest(Methods.READ, apiEndpoint, params, requiresAuth);
-    }  
+    }
+    readAuthenticatedData(apiEndpoint, params){
+        return this.readData(apiEndpoint, params, true);
+    }
     
     //For now, assume all update, create and delete actions require an authorized user.
     //This may change when we incorporate the ticketsystem or non-auth forms.

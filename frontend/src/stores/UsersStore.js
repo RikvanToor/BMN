@@ -33,7 +33,7 @@ class UsersStore extends Store{
                 
                 //Apply the auth request promise and react to it by dispatching new actions
                 AppDispatcher.dispatchPromisedFn(
-                    ApiService.readData('users',{},true), //Promise to perform
+                    ApiService.readAuthenticatedData('users'), //Promise to perform
                     data=>{return updateKnownUsersAction(data);}, //Success action
                     errData=>{ return{action:UserActions.LOG_IN_FAIL, msg:errData.msg}; } //Fail action
                 );
