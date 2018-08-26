@@ -73,19 +73,19 @@ class DatabaseSeeder extends Seeder
         /*
          * Create an example rehearsal.
          */
-        $rehearsal = Rehearsal::create([
+        $rehearsal1= Rehearsal::create([
             'location' => 'Rehearsal room',
-            'start' => date_create('2018-07-01 18:00:00'),
-            'end' => date_create('2018-07-01 21:00:00')
+            'start' => date_create('2018-12-01 18:00:00'),
+            'end' => date_create('2018-12-01 21:00:00')
         ]);
 
         /*
          * Rehearse the example song from 6 to 7 during the rehearsal.
          */
-        $rehearsal->songs()->sync([
+        $rehearsal1->songs()->sync([
             $song->id => [
-                'start' => date_create('2018-07-01 18:00:00'),
-                'end' => date_create('2018-07-01 19:00:00')
+                'start' => date_create('2018-12-01 18:00:00'),
+                'end' => date_create('2018-12-01 19:00:00')
             ]
         ]);
 
@@ -97,7 +97,7 @@ class DatabaseSeeder extends Seeder
             'end' => date_create('2018-07-01 21:00:00')
         ];
 
-        $rehearsal->availabilities()->sync([
+        $rehearsal1->availabilities()->sync([
             $admin->id => $example_availability,
             $user1->id => $example_availability,
             $user2->id =>$example_availability

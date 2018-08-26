@@ -11,13 +11,38 @@
 |
  */
 
+/**
+ * 
+ * Route all relevant links to the index. There, the routing will be handled via the React
+ * Router. 
+ */
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return view('index');
 });
 
+$router->get('/home', function () use ($router) {
+    return view('index');
+});
+
+$router->get('/nummers', function () use ($router) {
+    return view('index');
+});
+
+$router->get('/suggesties', function () use ($router) {
+    return view('index');
+});
+$router->get('/login', function () use ($router) {
+    return view('index');
+});
+
+/**
+ * API routing
+ */
 $router->group(['prefix' => '/api'], function () use ($router) {
+    // prefix /api
     $router->post('auth/login', 'AuthController@login');
 
+    
     $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('auth/me', 'AuthController@getUser');
 
@@ -53,19 +78,26 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('', 'UsersController@showAllUsers');
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'UsersController@create');
+                $router->delete('/{id}/delete', 'UsersController@delete');
             });
 
             $router->group(['prefix' => '/{id}'], function () use ($router) {
                 $router->get('', 'UsersController@showOneUser');
 
-                $router->group(['middleware' => 'committee'], function () use ($router) {
-                    $router->delete('/delete', 'UsersController@delete');
-                });
-
                 $router->get('/songs', 'UsersController@showUserSongs');
                 
                 $router->get('/singersongs', 'UsersController@showSingerSongs');
                 $router->get('/singersongs/genre/{genre}', 'UsersController@showSingerGenreSongs');
+            });
+        });
+
+        $router->group(['prefix' => '/rehearsals'], function() use ($router) {
+            $router->get('', 'RehearsalsController@showFutureRehearsals');
+            $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
+            $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->post('/create', 'RehearsalsController@create');
+                $router->post('{id}/addsong', 'RehearsalsController@addSong');
+                $router->delete('{id}/removesong/{song_id}', 'RehearsalsController@removeSong');
             });
         });
     });
