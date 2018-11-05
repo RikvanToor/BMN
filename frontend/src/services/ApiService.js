@@ -36,7 +36,7 @@ class ApiService{
             this.basePath = "https://bmn.a-eskwadraat.nl/api/";
         }
         else{
-            this.basePath = "http://localhost:8080/api/";
+            this.basePath = "http://localhost:9000/api/";
         }
     }
     /**
