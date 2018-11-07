@@ -5,6 +5,7 @@ import SongTable from "./components/songTable.jsx";
 import CSS from './App.css';
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
+import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import {BrowserRouter, Route} from "react-router-dom";
 
@@ -24,6 +25,7 @@ class App extends Component {
         <div className="bg-light">
             <NavigationContainer/>
             <Route exact path="/home" component={Home}/>
+            <Route exact path="/rooster" component={RehearsalContainer}/>
             <Route exact path="/suggesties" component={SuggestionList}/>
             <Route exact path="/login" component={LoginContainer}/>
             <Route exact path="/homeParticipant" component={ParticipantHome}/>
