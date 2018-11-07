@@ -1,6 +1,7 @@
 import React, { Component, PureComponent } from "react";
 import {dispatch} from '@Services/AppDispatcher.js';
 import {getRehearsalsAction} from '@Actions/RehearsalActions.js'
+import {Redirect} from 'react-router'
 import {Grid, Table} from 'react-bootstrap';
 
 /**
@@ -14,6 +15,9 @@ class RehearsalsPage extends PureComponent {
     }
     
     render() {
+        if(!this.props.isLoggedIn){
+            return (<Redirect to ='/login'/>);
+        }
         var r = this.props.rehearsals.map(x => {
             var startTime = new Date(x.start);
             var endTime = new Date(x.end);
