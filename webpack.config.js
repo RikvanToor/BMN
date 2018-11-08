@@ -27,6 +27,8 @@ const config = {
         contentBase: __dirname + '/frontend/public',
         compress: true,
         port: 9000,
+	publicPath: '/',
+	historyApiFallback: true,
         proxy: {
             '/api': {
 		    target: 'http://[::1]:8080',

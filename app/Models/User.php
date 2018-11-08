@@ -90,7 +90,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract, Authori
 
     /**
      * Returns whether or not a user is part of the committee.
-     * 
+     *
      * @return bool
      */
     public function isCommittee() {

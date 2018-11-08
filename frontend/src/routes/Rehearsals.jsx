@@ -11,6 +11,10 @@ import {Grid, Table} from 'react-bootstrap';
 class RehearsalsPage extends PureComponent {
 
     componentDidMount(){
+        this.getFullSchedule();
+    }
+
+    getFullSchedule() {
         dispatch(getRehearsalsAction());
     }
     
