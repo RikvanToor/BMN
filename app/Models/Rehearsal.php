@@ -50,7 +50,6 @@ class Rehearsal extends Model {
                 $a->where('rehearsal_id', $rehearsal_id);
             }]);
         }]);
-        //print_r($songs);
         $result['songs'] = $songs->get()->toArray();
         return $result;
     }

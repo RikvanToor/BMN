@@ -9,7 +9,7 @@ export const RehearsalActions = {
     REMOVE_SONG : 'REMOVE_SONG'
 };
 
-export function getRehearsalsAction(){
+export function getScheduleAction(){
     return {action: RehearsalActions.GET_REHEARSALS};
 }
 
