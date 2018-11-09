@@ -11,12 +11,13 @@ class RehearsalContainer extends Component {
     static calculateState(prevState) {
         return {
             rehearsals: RehearsalStore.rehearsals,
-            isLoggedIn: UserStore.user.isLoggedIn
+            isLoggedIn: UserStore.user.isLoggedIn,
+            userid: UserStore.user.id
         }; 
     }
     render() {
         return (
-            <RehearsalsPage rehearsals={this.state.rehearsals} isLoggedIn={this.state.isLoggedIn}/>
+            <RehearsalsPage rehearsals={this.state.rehearsals} isLoggedIn={this.state.isLoggedIn} userid={this.state.userid}/>
         );
     }
 }

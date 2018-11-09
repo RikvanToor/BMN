@@ -6,6 +6,8 @@ import {List, Record} from 'immutable';
 
 let inst = null;
 let getRehearsals = 'rehearsals/schedules';
+let getRehearsalsForPlayer = 'rehearsals/schedules/for/';
+
 
 /**
  * Stores retrieved data with respect to rehearsals
@@ -39,6 +41,16 @@ class RehearsalStore extends Store{
                     }
                 )
                 break;
+            case RehearsalActions.GET_REHEARSALS_FOR_PLAYER:
+                AppDispatcher.dispatchPromisedFn(
+                    ApiService.readAuthenticatedData(getRehearsalsForPlayer + payload.playerid, {}),
+                    data=>{
+                        return updateRehearsalsAction(data);
+                    },
+                    errData=>{
+                        this.error = errData;
+                    }
+                )
             case RehearsalActions.UPDATE_REHEARSALS:
                 this.rehearsals = new List(payload.rehearsals);
                 this.__emitChange();

@@ -1,6 +1,6 @@
 import React, { Component, PureComponent } from "react";
 import { dispatch } from '@Services/AppDispatcher.js';
-import { getScheduleAction } from '@Actions/RehearsalActions.js'
+import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
 import { Redirect } from 'react-router'
 import { Grid, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
@@ -11,11 +11,15 @@ import { Grid, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 class RehearsalsPage extends PureComponent {
 
     componentDidMount() {
-        this.getFullSchedule();
+        this.getMySchedule();
     }
 
     getFullSchedule() {
         dispatch(getScheduleAction());
+    }
+
+    getMySchedule() {
+        dispatch(getScheduleForPlayerAction(this.props.userid));
     }
 
     render() {

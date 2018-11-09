@@ -53,4 +53,23 @@ class Rehearsal extends Model {
         $result['songs'] = $songs->get()->toArray();
         return $result;
     }
+
+    /**
+     * Get the rehearsal's songs and their players that a given player plays.
+     * 
+     * @return array
+     */
+    public function scheduleForPlayer($playerid) {
+        $result       = $this->toArray();
+        $rehearsal_id = $this->id;
+        $songs        = $this->songs()->whereHas('players', function($q) use ($playerid){
+            $q->where('user_id', $playerid);
+        })->with(['players' => function ($p) use ($rehearsal_id) {
+            $p->with(['availabilities' => function ($a) use ($rehearsal_id) {
+                $a->where('rehearsal_id', $rehearsal_id);
+            }]);
+        }]);
+        $result['songs'] = $songs->get()->toArray();
+        return $result;
+    }
 }
