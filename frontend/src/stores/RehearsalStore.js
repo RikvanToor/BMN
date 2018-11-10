@@ -51,6 +51,7 @@ class RehearsalStore extends Store{
                         this.error = errData;
                     }
                 )
+                break;
             case RehearsalActions.UPDATE_REHEARSALS:
                 this.rehearsals = new List(payload.rehearsals);
                 this.__emitChange();
