@@ -143,13 +143,13 @@ class RehearsalsPage extends PureComponent {
         });
 
         return (
-            <Grid>
+            <div>
                 <ButtonGroup>
                     <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
                     <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>
                 </ButtonGroup>
                 {r}
-            </Grid>
+            </div>
         );
     }
 }

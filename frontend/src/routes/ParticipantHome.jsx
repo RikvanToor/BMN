@@ -23,7 +23,7 @@ class ParticipantHome extends Component {
     render() {
     return (
         <div>
-            <Carousel />
+            
             <h1>Hallo {this.props.userName}</h1>
             <ConditionalComponent condition={this.props.isAdmin}>
                 <div>

@@ -7,7 +7,9 @@ import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
-import {BrowserRouter, Route} from "react-router-dom";
+import Carousel from './components/carousel.jsx';
+import { BrowserRouter, Route } from "react-router-dom";
+import { Grid, Row } from 'react-bootstrap';
 
 /**
  * Main routes in the application
@@ -21,15 +23,19 @@ import SuggestionList from '@Routes/SuggestionList.jsx';
 class App extends Component {
   render() {
     return (
-     <BrowserRouter>
+      <BrowserRouter>
         <div className="bg-light">
-            <NavigationContainer/>
-            <Route exact path="/home" component={Home}/>
-            <Route exact path="/rooster" component={RehearsalContainer}/>
-            <Route exact path="/suggesties" component={SuggestionList}/>
-            <Route exact path="/login" component={LoginContainer}/>
-            <Route exact path="/homeParticipant" component={ParticipantHome}/>
-            <Footer />
+          <NavigationContainer />
+          <Grid>
+            <Row>
+              <Route exact path="/home" component={Home} />
+              <Route exact path="/rooster" component={RehearsalContainer} />
+              <Route exact path="/suggesties" component={SuggestionList} />
+              <Route exact path="/login" component={LoginContainer} />
+              <Route exact path="/homeParticipant" component={ParticipantHome} />
+            </Row>
+          </Grid>
+          <Footer />
         </div>
       </BrowserRouter>
     );
