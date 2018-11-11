@@ -1,7 +1,7 @@
-import {Store} from 'flux/utils';
+import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import {UserActions, loggedInAction, logInFailAction} from '@Actions/UserActions.js';
+import { UserActions, loggedInAction, logInFailAction } from '@Actions/UserActions.js';
 import User from '@Models/User.js';
 
 let inst = null;
@@ -9,15 +9,16 @@ let inst = null;
 /**
  * Stores retrieved data with respect to user
  */
-class UserStore extends Store{
+class UserStore extends Store {
     static get userInfoPoint() {
         return 'auth/me';
     }
     //Pass global dispatcher to parent class
-    constructor(dispatcher){
+    constructor(dispatcher) {
         super(dispatcher);
-        
+
         this.user = new User();
+        this.doneFetchingUser = false;
 
         //Possible error during authentication process
         this.error = '';
@@ -27,25 +28,25 @@ class UserStore extends Store{
      * dispatch new actions in this function.
      * @param {object} payload
      */
-    __onDispatch(payload){
+    __onDispatch(payload) {
         console.log('Handling payload ' + payload.action);
-        switch(payload.action){
+        switch (payload.action) {
             //Handle the login action
             case UserActions.LOG_IN:
                 console.log('Sending login request');
-                
+
                 AppDispatcher.dispatchPromisedFn(
                     ApiService.authRequest(payload.username, payload.password) //Send auth request
-                    .then(()=>{
-                        console.log('Sending auth/me request');
-                        return ApiService.readData(UserStore.userInfoPoint,{}, true); //Afterwards, read user data
-                    }),
-                    data=>{
+                        .then(() => {
+                            console.log('Sending auth/me request');
+                            return ApiService.readData(UserStore.userInfoPoint, {}, true); //Afterwards, read user data
+                        }),
+                    data => {
                         console.log('Auth/me data');
                         console.log(data);
                         return loggedInAction(data.username, data.name, data.id, data.is_admin != 0);
                     }, //Success action
-                    errData=> { 
+                    errData => {
                         return logInFailAction(errData.msg);
                     } //Fail action
                 );
@@ -53,25 +54,44 @@ class UserStore extends Store{
             case UserActions.LOG_IN_FAIL:
                 console.log("Failed action");
                 console.log(payload);
+                this.doneFetchingUser = true;
+                this.__emitChange();
                 break;
             case UserActions.LOGGED_IN:
                 //Merge the immutable with new data
                 this.user = this.user.merge({
-                    userName : payload.userName,
+                    userName: payload.userName,
                     isCommittee: payload.isCommittee,
                     isLoggedIn: true,
                     id: payload.id,
                     name: payload.name
                 });
+                this.doneFetchingUser = true;
                 console.log(this.user.toJS());
                 //Emit the change
                 this.__emitChange();
                 break;
+            case UserActions.CHECK_LOG_IN:
+                if (ApiService.jwtToken)
+                    AppDispatcher.dispatchPromisedFn(
+                        ApiService.readData(UserStore.userInfoPoint, {}, true),
+                        data => {
+                            return loggedInAction(data.username, data.name, data.id, data.is_admin != 0);
+                        },
+                        errData => {
+                            return logInFailAction(errData.msg);
+                        }
+                    )
+                else {
+                    this.doneFetchingUser = true;
+                    this.__emitChange();
+                }
+                break;
             //Handle update password action
             case UserActions.UPDATE_PASSWORD:
-                
+
                 break;
-                
+
         }
         console.log('Done handling ' + payload.action);
     }

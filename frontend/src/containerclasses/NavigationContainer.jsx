@@ -9,12 +9,13 @@ class NavigationContainer extends Component {
     }
     static calculateState(prevState) {
         return {
+            isLoggedIn: UserStore.user.isLoggedIn,
             isCommittee: UserStore.user.isCommittee
         };
     }
     render() {
         return (
-            <Navigation isCommittee={this.state.isComittee} />
+            <Navigation isCommittee={this.state.isCommittee} isLoggedIn={this.state.isLoggedIn} />
         );
     }
 }

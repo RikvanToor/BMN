@@ -1,8 +1,7 @@
 import React, { Component, PureComponent } from "react";
-import { dispatch } from '@Services/AppDispatcher.js';
+import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
-import { Redirect } from 'react-router'
-import { Grid, Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
 
 /**
  * The rehearsals page. Since no state is needed, this is a Pure component that is rerendered
@@ -23,23 +22,19 @@ class RehearsalsPage extends PureComponent {
     }
 
     getFullSchedule() {
-        dispatch(getScheduleAction());
+        deferredDispatch(getScheduleAction());
         this.fullStyle = 'primary';
         this.myStyle = 'default';
     }
 
     getMySchedule() {
-        dispatch(getScheduleForPlayerAction(this.props.userid));
+        deferredDispatch(getScheduleForPlayerAction(this.props.userid));
         this.myStyle = 'primary';
         this.fullStyle = 'default';
     }
 
 
     render() {
-        if (!this.props.isLoggedIn) {
-            return (<Redirect to='/login' />);
-        }
-
         /**
          * Returns a Date object as string in the format 'hh:mm'
          * @param {Date} d 
@@ -144,6 +139,7 @@ class RehearsalsPage extends PureComponent {
 
         return (
             <div>
+                <h1>Rooster</h1>
                 <ButtonGroup>
                     <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
                     <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>

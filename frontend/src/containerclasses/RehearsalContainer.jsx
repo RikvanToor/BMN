@@ -17,7 +17,11 @@ class RehearsalContainer extends Component {
     }
     render() {
         return (
-            <RehearsalsPage rehearsals={this.state.rehearsals} isLoggedIn={this.state.isLoggedIn} userid={this.state.userid}/>
+            <RehearsalsPage 
+                rehearsals={this.state.rehearsals} 
+                isLoggedIn={this.state.isLoggedIn} 
+                userid={this.state.userid}
+            />
         );
     }
 }
