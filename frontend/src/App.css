@@ -12,7 +12,22 @@ footer {
   display:flex;
   align-items:center;
 }
+
+/**
+ * For Bootstrap's LG size and up
+ */
+@media(min-width:992px) {
 .navbar-brand img {
   height:60px;
   margin-top:20px;
+}
+}
+/**
+ * For Bootstrap's XS and SM sizes
+ */
+@media(max-width:991px) {
+  .navbar-brand img{
+    height:50px;
+    padding:3px;
+  }
 }
