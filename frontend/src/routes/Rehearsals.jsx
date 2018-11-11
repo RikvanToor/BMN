@@ -141,8 +141,8 @@ class RehearsalsPage extends PureComponent {
             <div>
                 <h1>Rooster</h1>
                 <ButtonGroup>
-                    <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
                     <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>
+                    <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
                 </ButtonGroup>
                 {r}
             </div>
