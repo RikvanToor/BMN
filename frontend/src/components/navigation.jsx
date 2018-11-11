@@ -41,9 +41,9 @@ class Navigation extends PureComponent {
             </NavDropdown>
         );
 
-        if(this.props.isLoggedIn) {
+        if (this.props.isLoggedIn) {
             navs = navs.concat(usersOnly);
-            if(this.props.isCommittee) {
+            if (this.props.isCommittee) {
                 navs.push(committeeOnly);
             }
         }
@@ -56,9 +56,11 @@ class Navigation extends PureComponent {
             <Navbar inverse collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#brand">
-                            <img className="logo" src={Logo} width="75" />
-                        </a>
+                        <LinkContainer to='/home'>
+                            <NavItem href="#">
+                                <img className="logo" src={Logo} />
+                            </NavItem>
+                        </LinkContainer>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>

@@ -7,3 +7,12 @@ footer {
   padding:20px;
   margin-top:20px;
 }
+
+.navbar-brand {
+  display:flex;
+  align-items:center;
+}
+.navbar-brand img {
+  height:60px;
+  margin-top:20px;
+}
