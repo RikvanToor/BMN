@@ -1,12 +1,13 @@
 import {Store} from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import {RehearsalActions, updateRehearsalsAction} from '@Actions/RehearsalActions.js';
+import {RehearsalActions, updateRehearsalsAction, updateAvailabilitiesAction} from '@Actions/RehearsalActions.js';
 import {List, Record} from 'immutable';
 
 let inst = null;
 let getRehearsals = 'rehearsals/schedules';
 let getRehearsalsForPlayer = 'rehearsals/schedules/for/';
+let getAvailabilities = 'rehearsals/availabilities';
 
 
 /**
@@ -18,6 +19,7 @@ class RehearsalStore extends Store{
         super(dispatcher);
 
         this.rehearsals = new List();
+        this.myAvailabilities = new List();
 
         //Possible errors
         this.error = undefined;
@@ -39,7 +41,7 @@ class RehearsalStore extends Store{
                     errData=>{
                         this.error = errData;
                     }
-                )
+                );
                 break;
             case RehearsalActions.GET_REHEARSALS_FOR_PLAYER:
                 AppDispatcher.dispatchPromisedFn(
@@ -50,10 +52,25 @@ class RehearsalStore extends Store{
                     errData=>{
                         this.error = errData;
                     }
-                )
+                );
                 break;
             case RehearsalActions.UPDATE_REHEARSALS:
                 this.rehearsals = new List(payload.rehearsals);
+                this.__emitChange();
+                break;
+            case RehearsalActions.GET_AVAILABILITIES:
+                AppDispatcher.dispatchPromisedFn(
+                    ApiService.readAuthenticatedData(getAvailabilities, {}),
+                    data=>{
+                        return updateAvailabilitiesAction(data);
+                    },
+                    errData=>{
+                        this.error = errData;
+                    }
+                );
+                break;
+            case RehearsalActions.UPDATE_AVAILABILITIES:
+                this.myAvailabilities = new List(payload.availabilities);
                 this.__emitChange();
                 break;
         }

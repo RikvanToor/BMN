@@ -7,7 +7,10 @@ export const RehearsalActions = {
     GET_REHEARSAL : 'GET_REHEARSAL',
     CREATE_REHEARSAL : 'CREATE_REHEARSAL',
     ADD_SONG : 'ADD_SONG',
-    REMOVE_SONG : 'REMOVE_SONG'
+    REMOVE_SONG : 'REMOVE_SONG',
+    GET_AVAILABILITIES : 'GET_AVAILABILITIES',
+    SET_AVAILABILITIES : 'SET_AVAILABILITIES',
+    UPDATE_AVAILABILITIES : 'UPDATE_AVAILABILITIES'
 };
 
 export function getScheduleAction(){
@@ -37,4 +40,16 @@ export function ADD_SONG(rehearsalid, songid, start, end){
 
 export function REMOVE_SONG(rehearsalid, songid){
     return {action: RehearsalActions.REMOVE_SONG, rehearsalId: rehearsalid, songid: songid}
+}
+
+export function getAvailabilitiesAction() {
+    return {action: RehearsalActions.GET_AVAILABILITIES};
+}
+
+export function setAvailabilitiesAction(rehearsalid, availabilities) {
+    return {action: RehearsalActions.SET_AVAILABILITIES, rehearsalId: rehearsalid, availabilities: availabilities}
+}
+
+export function updateAvailabilitiesAction(availabilities) {
+    return {action: RehearsalActions.UPDATE_AVAILABILITIES, availabilities: availabilities}
 }

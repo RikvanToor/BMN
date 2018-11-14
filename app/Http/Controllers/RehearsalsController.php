@@ -53,6 +53,19 @@ class RehearsalsController extends Controller {
     }
 
     /**
+     * Get every rehearsal that starts after this very moment end return the availabilities
+     * for the current user for those rehearsals
+     */
+    public function showFutureRehearsalsOwnAvailabilities(Request $request) {
+        $rehearsals = Rehearsal::where('start', '>=', date('Y-m-d H:i:s'));
+        $userid = $request->user()->id;
+        $result = $rehearsals->with(['availabilities' => function ($a) use ($userid) {
+            $a->where('user_id', $userid);
+        }]);
+        return response()->json($result->get(), 200);
+    }
+
+    /**
      * Find a rehearsal and return it with its songs with their players.
      */
     public function showRehearsalWithSchedule($id) {

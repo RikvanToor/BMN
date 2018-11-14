@@ -3,6 +3,7 @@ import Footer from "./footer.jsx";
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
+import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Grid, Row } from 'react-bootstrap';
@@ -26,6 +27,7 @@ class Wrapper extends Component {
                             <Route exact path="/suggesties" component={SuggestionList} />
                             <Route exact path="/login" component={LoginContainer} />
                             <Route exact path="/homeParticipant" component={ParticipantHome} />
+                            <Route exact path="/aanwezigheid" component={AvailabilityContainer} />
                         </Row>
                     </Grid>
                     <Footer />
