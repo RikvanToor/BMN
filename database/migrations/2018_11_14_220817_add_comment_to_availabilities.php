@@ -14,7 +14,9 @@ class AddCommentToAvailabilities extends Migration
     public function up()
     {
         Schema::table('availability', function (Blueprint $table) {
-            $table->string('reason');
+            $table->string('reason')->nullable();
+            $table->dateTime('start')->nullable()->change();
+            $table->dateTime('end')->nullable()->change();
         });
     }
 
@@ -27,6 +29,8 @@ class AddCommentToAvailabilities extends Migration
     {
         Schema::table('availability', function (Blueprint $table) {
             $table->dropColumn('reason');
+            $table->dateTime('end')->nullable(false)->change();
+            $table->dateTime('start')->nullable(false)->change();
         });
     }
 }

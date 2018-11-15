@@ -46,8 +46,8 @@ export function getAvailabilitiesAction() {
     return {action: RehearsalActions.GET_AVAILABILITIES};
 }
 
-export function setAvailabilitiesAction(rehearsalid, availabilities) {
-    return {action: RehearsalActions.SET_AVAILABILITIES, rehearsalId: rehearsalid, availabilities: availabilities}
+export function setAvailabilitiesAction(rehearsalid, availabilities, callback) {
+    return {action: RehearsalActions.SET_AVAILABILITIES, rehearsalId: rehearsalid, availabilities: availabilities, callback: callback}
 }
 
 export function updateAvailabilitiesAction(availabilities) {

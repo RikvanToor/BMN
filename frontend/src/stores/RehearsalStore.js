@@ -8,6 +8,7 @@ let inst = null;
 let getRehearsals = 'rehearsals/schedules';
 let getRehearsalsForPlayer = 'rehearsals/schedules/for/';
 let getAvailabilities = 'rehearsals/availabilities';
+let setAvailabilities = rehearsalId => 'rehearsals/' + rehearsalId + '/availabilities';
 
 
 /**
@@ -72,6 +73,17 @@ class RehearsalStore extends Store{
             case RehearsalActions.UPDATE_AVAILABILITIES:
                 this.myAvailabilities = new List(payload.availabilities);
                 this.__emitChange();
+                break;
+            case RehearsalActions.SET_AVAILABILITIES:
+                AppDispatcher.dispatchPromisedFn(
+                    ApiService.updateData(setAvailabilities(payload.rehearsalId), payload.availabilities),
+                    data=>{
+                        payload.callback();
+                    },
+                    errData=>{
+                        this.error = errData;
+                    }
+                );
                 break;
         }
     }

@@ -98,8 +98,9 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('', 'RehearsalsController@showFutureRehearsals');
             $router->get('/schedules', 'RehearsalsController@showFutureRehearsalsWithSchedule');
             $router->get('/schedules/for/{id}', 'RehearsalsController@showFutureRehearsalsWithScheduleForPlayer');
-            $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
             $router->get('/availabilities', 'RehearsalsController@showFutureRehearsalsOwnAvailabilities');
+            $router->post('/{id}/availabilities/', 'RehearsalsController@saveAvailabilities');
+            $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'RehearsalsController@create');
                 $router->post('{id}/addsong', 'RehearsalsController@addSong');

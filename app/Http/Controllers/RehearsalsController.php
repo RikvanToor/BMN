@@ -65,6 +65,34 @@ class RehearsalsController extends Controller {
         return response()->json($result->get(), 200);
     }
 
+    public function saveAvailabilities($id, Request $request) {
+        $rehearsal = Rehearsal::find($id);
+        $userid = $request->user()->id;
+        $availabilities = $rehearsal->availabilities();
+        // Delete old availabilities
+        $availabilities->wherePivot('user_id', $userid)->detach();
+
+        if($request->starts == '') {
+            $availabilities->attach($userid, [
+                'reason' => $request->reason,
+                'start' => NULL,
+                'end' => NULL
+            ]);
+        }
+        else {
+            $starts = explode(',', $request->starts);
+            $ends = explode(',', $request->ends);
+            for($i = 0; $i < count($starts); $i++) {
+                $availabilities->attach($userid, [
+                    'reason' => NULL,
+                    'start' => $starts[$i],
+                    'end' => $ends[$i]
+                ]);
+            }
+        }
+        return response()->json('success', 200);
+    }
+
     /**
      * Find a rehearsal and return it with its songs with their players.
      */
