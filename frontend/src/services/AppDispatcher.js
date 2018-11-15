@@ -1,8 +1,30 @@
 import {Dispatcher} from 'flux';
 
+import ApiService from '@Services/ApiService.js';
+import {expectHasKeys} from '@Utils/TypeChecks.js';
 class AppDispatcher extends Dispatcher{
     constructor(){
         super();   
+    }
+    dispatch(action){
+        //Handle remote actions separately
+        if('remote' in action && action.remote){
+            if(!expectHasKeys(action,['remoteAction','remoteEndpoint','remoteRequiresAuth'])) 
+                throw new Error("Invalid remote action, some required keys are missing");
+            let {remoteAction, remoteEndpoint, remoteRequiresAuth, remote, ...reqData} = action;
+            ApiService.sendCrudRequest(remoteAction, remoteEndpoint, reqData, remoteRequiresAuth )
+            .then(data=>{
+                let actionData = Object.assign(reqData, {responseData:data});
+                this.dispatch(actionData);
+            })
+            //Do something more sophisticated
+            .catch(errData=>{
+                throw new Error(errData);
+            });
+        }
+        else{
+            super.dispatch(action);
+        }
     }
     /**
      * Respond to a promise with an action. All resolved data of the promise will be added to the payload.

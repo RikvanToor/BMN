@@ -6,6 +6,7 @@ import CSS from './App.css';
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
+import RehearsalEditPage from "@Routes/RehearsalEditPage.jsx";
 import {BrowserRouter, Route} from "react-router-dom";
 
 /**
@@ -27,6 +28,7 @@ class App extends Component {
             <Route exact path="/suggesties" component={SuggestionList}/>
             <Route exact path="/login" component={LoginContainer}/>
             <Route exact path="/homeParticipant" component={ParticipantHome}/>
+            <Route exact path="/rehearsalEdit" component={RehearsalEditPage}/>
             <Footer />
         </div>
       </BrowserRouter>

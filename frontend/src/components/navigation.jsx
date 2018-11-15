@@ -50,7 +50,9 @@ class Navigation extends Component {
                     <MenuItem eventKey={5.1}>Suggesties</MenuItem>
                 </LinkContainer>
               <MenuItem eventKey={5.2}>Stageplan</MenuItem>
+              <LinkContainer to="/rehearsalEdit">
               <MenuItem eventKey={5.3}>Roosters</MenuItem>
+              </LinkContainer>
               <MenuItem eventKey={5.4}>Tickets</MenuItem>
               <MenuItem eventKey={5.5}>Setlist</MenuItem>
             </NavDropdown>

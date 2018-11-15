@@ -34,6 +34,9 @@ $router->get('/suggesties', function () use ($router) {
 $router->get('/login', function () use ($router) {
     return view('index');
 });
+$router->get('/rehearsalEdit', function () use ($router) {
+    return view('index');
+});
 
 /**
  * API routing
