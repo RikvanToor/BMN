@@ -24,11 +24,6 @@ class AvailabilityPage extends Component {
         deferredDispatch(getAvailabilitiesAction());
     }
 
-    // Move to general extensions or something
-    printTime(d) {
-        return d.toLocaleTimeString('nl-nl', { hour: '2-digit', minute: '2-digit' });
-    }
-
     renderRehearsal(rehearsal) {
         return <AvailabilityWidget key={rehearsal.id} rehearsal={rehearsal} />;
     }
