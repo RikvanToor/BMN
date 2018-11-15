@@ -5,8 +5,6 @@ import AppDispatcher from '@Services/AppDispatcher.js';
 import { UserActions, updateKnownUsersAction } from '@Actions/UserActions.js';
 import User from '@Models/User.js';
 
-const inst = null;
-
 /**
  * Stores retrieved data with respect to user
  */
@@ -50,6 +48,8 @@ class UsersStore extends Store {
 
         // Emit the change
         this.__emitChange();
+        break;
+      default:
         break;
     }
   }

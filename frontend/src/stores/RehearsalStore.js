@@ -2,9 +2,8 @@ import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { RehearsalActions, updateRehearsalsAction, updateAvailabilitiesAction } from '@Actions/RehearsalActions.js';
-import { List, Record } from 'immutable';
+import { List } from 'immutable';
 
-const inst = null;
 const getRehearsals = 'rehearsals/schedules';
 const getRehearsalsForPlayer = 'rehearsals/schedules/for/';
 const getAvailabilities = 'rehearsals/availabilities';
@@ -71,13 +70,15 @@ class RehearsalStore extends Store {
       case RehearsalActions.SET_AVAILABILITIES:
         AppDispatcher.dispatchPromisedFn(
           ApiService.updateData(setAvailabilities(payload.rehearsalId), payload.availabilities),
-          (data) => {
+          () => {
             payload.callback();
           },
           (errData) => {
             this.error = errData;
           },
         );
+        break;
+      default:
         break;
     }
   }

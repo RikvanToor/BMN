@@ -1,5 +1,3 @@
-import AppDispatcher from '@Services/AppDispatcher.js';
-
 export const UserActions = {
   LOG_IN: 'LOG_IN',
   LOGGED_IN: 'LOGGED_IN',

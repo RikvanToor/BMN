@@ -1,10 +1,6 @@
 import { Dispatcher } from 'flux';
 
 class AppDispatcher extends Dispatcher {
-  constructor() {
-    super();
-  }
-
   /**
      * Respond to a promise with an action. All resolved data of the promise will be added to the payload.
      * Note that we can call this is the __onDispatch functions of stores, since Promises resolve

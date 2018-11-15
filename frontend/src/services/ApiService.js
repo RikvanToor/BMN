@@ -97,7 +97,8 @@ class ApiService {
      * object describing the problem
      */
   sendCrudRequest(crudMethod, endpoint, params, requiresAuth) {
-    return this.sendRequest(ApiService.getRequestMethod(crudMethod), endpoint, params, requiresAuth);
+    return this.sendRequest(ApiService.getRequestMethod(crudMethod),
+      endpoint, params, requiresAuth);
   }
 
   /**

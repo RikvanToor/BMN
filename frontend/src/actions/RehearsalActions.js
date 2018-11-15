@@ -1,5 +1,3 @@
-import AppDispatcher from '@Services/AppDispatcher.js';
-
 export const RehearsalActions = {
   GET_REHEARSALS: 'GET_REHEARSALS',
   GET_REHEARSALS_FOR_PLAYER: 'GET_REHEARSALS_FOR_PLAYER',

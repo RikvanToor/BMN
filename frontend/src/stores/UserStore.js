@@ -4,8 +4,6 @@ import AppDispatcher from '@Services/AppDispatcher.js';
 import { UserActions, loggedInAction, logInFailAction } from '@Actions/UserActions.js';
 import User from '@Models/User.js';
 
-const inst = null;
-
 /**
  * Stores retrieved data with respect to user
  */
@@ -36,10 +34,12 @@ class UserStore extends Store {
       case UserActions.LOG_IN:
         AppDispatcher.dispatchPromisedFn(
           ApiService.authRequest(payload.username, payload.password) // Send auth request
-            .then(() => ApiService.readData(UserStore.userInfoPoint, {}, true), // Afterwards, read user data
-            ),
-          data => loggedInAction(data.username, data.name, data.id, data.is_admin != 0), // Success action
-          errData => logInFailAction(errData.msg), // Fail action
+            // Afterwards, read user data
+            .then(() => ApiService.readData(UserStore.userInfoPoint, {}, true)),
+          // Success action
+          data => loggedInAction(data.username, data.name, data.id, data.is_admin !== 0),
+          // Fail action
+          errData => logInFailAction(errData.msg),
         );
         break;
       case UserActions.LOG_IN_FAIL:
@@ -63,7 +63,7 @@ class UserStore extends Store {
         if (ApiService.jwtToken) {
           AppDispatcher.dispatchPromisedFn(
             ApiService.readData(UserStore.userInfoPoint, {}, true),
-            data => loggedInAction(data.username, data.name, data.id, data.is_admin != 0),
+            data => loggedInAction(data.username, data.name, data.id, data.is_admin !== 0),
             errData => logInFailAction(errData.msg),
           );
         } else {
@@ -74,6 +74,8 @@ class UserStore extends Store {
         // Handle update password action
       case UserActions.UPDATE_PASSWORD:
 
+        break;
+      default:
         break;
     }
   }
