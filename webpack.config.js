@@ -18,17 +18,26 @@ const config = {
             {
                 test: /\.(js|jsx)$/, //Check for all js files
                 exclude: /node_modules/,
-		loader: 'babel-loader',
-		query: { presets: [ 'es2015', 'react' ] }
+                loader: 'babel-loader',
+                query: { presets: ['es2015', 'react'] }
             }
         ]
     },
     devServer: {
         contentBase: __dirname + '/frontend/public',
-	compress: true,
-	port: 9000
+        compress: true,
+        port: 9000,
+	publicPath: '/',
+	historyApiFallback: true,
+        proxy: {
+            '/api': {
+		    target: 'http://[::1]:8080',
+                secure: false,
+                changeOrigin: true
+            }
+        }
     }
 };
 
-module.exports = webpackMerge(common,config);
+module.exports = webpackMerge(common, config);
 

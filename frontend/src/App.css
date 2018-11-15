@@ -1,3 +1,7 @@
+html {
+  font-size: 16px;
+}
+
 .bg-dark {
   background-color: #222;
   color: #9d9d9d;
@@ -5,4 +9,53 @@
 
 footer {
   padding:20px;
+  margin-top:20px;
+}
+
+.navbar-brand {
+  display:flex;
+  align-items:center;
+}
+
+/**
+ * For Bootstrap's LG size and up
+ */
+@media(min-width:992px) {
+.navbar-brand img {
+  height:60px;
+  margin-top:20px;
+}
+}
+/**
+ * For Bootstrap's XS and SM sizes
+ */
+@media(max-width:991px) {
+  .navbar-brand img{
+    height:50px;
+    padding:3px;
+  }
+}
+
+/**
+ * Hide min and max labels on the availability sliders
+ */
+.input-range__label--max, .input-range__label--min {
+  display: none;
+}
+.input-range {
+  height:2rem;
+}
+.remove-slider {
+  cursor:pointer;
+  margin-top:7px;
+}
+.input-range__track > .input-range__track,
+.input-range__track > .input-range__slider-container > .input-range__slider {
+  -webkit-transition: background-color 250ms linear;
+  -ms-transition: background-color 250ms linear;
+  transition: background-color 250ms linear;
+}
+.slider-synced > div > .input-range > .input-range__track > .input-range__track,
+.slider-synced > div > .input-range > .input-range__track > .input-range__slider-container > .input-range__slider {
+  background: rgb(68, 157, 68);
 }

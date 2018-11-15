@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import SongTable from '@Components/SongTable.jsx';
+import SongTable from '../components/songTable.jsx';
 
 class SuggestionList extends Component{
     render() {

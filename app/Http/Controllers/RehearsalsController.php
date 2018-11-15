@@ -30,6 +30,70 @@ class RehearsalsController extends Controller {
     }
 
     /**
+     * Get every rehearsal that ends after this very moment including songs and players.
+     */
+    public function showFutureRehearsalsWithSchedule() {
+        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->get();
+        $result = $rehearsals->map(function ($x) {
+            return $x->schedule();
+        });
+        return response()->json($result, 200);
+    }
+
+    /**
+     * Get every rehearsal that ends after this very moment including songs and players 
+     * that a given player plays.
+     */
+    public function showFutureRehearsalsWithScheduleForPlayer($playerid) {
+        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->get();
+        $result = $rehearsals->map(function ($x) use ($playerid){
+            return $x->scheduleForPlayer($playerid);
+        });
+        return response()->json($result, 200);
+    }
+
+    /**
+     * Get every rehearsal that starts after this very moment end return the availabilities
+     * for the current user for those rehearsals
+     */
+    public function showFutureRehearsalsOwnAvailabilities(Request $request) {
+        $rehearsals = Rehearsal::where('start', '>=', date('Y-m-d H:i:s'));
+        $userid = $request->user()->id;
+        $result = $rehearsals->with(['availabilities' => function ($a) use ($userid) {
+            $a->where('user_id', $userid);
+        }]);
+        return response()->json($result->get(), 200);
+    }
+
+    public function saveAvailabilities($id, Request $request) {
+        $rehearsal = Rehearsal::find($id);
+        $userid = $request->user()->id;
+        $availabilities = $rehearsal->availabilities();
+        // Delete old availabilities
+        $availabilities->wherePivot('user_id', $userid)->detach();
+
+        if($request->starts == '') {
+            $availabilities->attach($userid, [
+                'reason' => $request->reason,
+                'start' => NULL,
+                'end' => NULL
+            ]);
+        }
+        else {
+            $starts = explode(',', $request->starts);
+            $ends = explode(',', $request->ends);
+            for($i = 0; $i < count($starts); $i++) {
+                $availabilities->attach($userid, [
+                    'reason' => NULL,
+                    'start' => $starts[$i],
+                    'end' => $ends[$i]
+                ]);
+            }
+        }
+        return response()->json('success', 200);
+    }
+
+    /**
      * Find a rehearsal and return it with its songs with their players.
      */
     public function showRehearsalWithSchedule($id) {

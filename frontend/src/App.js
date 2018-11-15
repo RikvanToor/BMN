@@ -1,39 +1,33 @@
 import React, { Component } from "react";
-import Navigation from "./components/navigation.jsx";
-import Footer from "./components/footer.jsx";
-import SongTable from "./components/songTable.jsx";
+import {Container} from 'flux/utils';
+import Wrapper from './components/wrapper.jsx';
+import UserStore from '@Stores/UserStore.js';
+import { dispatch } from '@Services/AppDispatcher.js';
+import { checkLoginAction } from '@Actions/UserActions.js'
 import CSS from './App.css';
-import LoginContainer from "@Containers/LoginContainer.jsx";
-import NavigationContainer from "@Containers/NavigationContainer.jsx";
-import ParticipantHome from "@Routes/ParticipantHome.jsx";
-import RehearsalEditPage from "@Routes/RehearsalEditPage.jsx";
-import {BrowserRouter, Route} from "react-router-dom";
-
-/**
- * Main routes in the application
- */
-import Home from '@Routes/Home.jsx';
-import SuggestionList from '@Routes/SuggestionList.jsx';
 
 /*
  * Main entry point of the BMN frontend.
  */
 class App extends Component {
+  static calculateState(prevState) {
+    return {
+      doneFetchingUser: UserStore.doneFetchingUser
+    };
+  }
+
+  componentWillMount() {
+    //UserStore.addListener(this.forceRender);
+    dispatch(checkLoginAction());
+  }
+
+  static getStores() {
+    return [UserStore];
+  }
+
   render() {
-    return (
-     <BrowserRouter>
-        <div className="bg-light">
-            <NavigationContainer/>
-            <Route exact path="/home" component={Home}/>
-            <Route exact path="/suggesties" component={SuggestionList}/>
-            <Route exact path="/login" component={LoginContainer}/>
-            <Route exact path="/homeParticipant" component={ParticipantHome}/>
-            <Route exact path="/rehearsalEdit" component={RehearsalEditPage}/>
-            <Footer />
-        </div>
-      </BrowserRouter>
-    );
+    return <Wrapper ReadyToRender={this.state.doneFetchingUser} />
   }
 }
 
-export default App;
+export default Container.create(App);
