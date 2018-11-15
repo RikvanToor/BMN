@@ -32,8 +32,6 @@ class AppDispatcher extends Dispatcher{
     dispatchPromisedFn(promise, succesFn, failFn){
         setTimeout(()=>{
             promise.then(data=>{
-                console.log("Dispatching success");
-                console.log(succesFn(data));
                 this.dispatch(succesFn(data));
             })
             .catch(errData=>{

@@ -29,21 +29,15 @@ class UserStore extends Store {
      * @param {object} payload
      */
     __onDispatch(payload) {
-        console.log('Handling payload ' + payload.action);
         switch (payload.action) {
             //Handle the login action
             case UserActions.LOG_IN:
-                console.log('Sending login request');
-
                 AppDispatcher.dispatchPromisedFn(
                     ApiService.authRequest(payload.username, payload.password) //Send auth request
                         .then(() => {
-                            console.log('Sending auth/me request');
                             return ApiService.readData(UserStore.userInfoPoint, {}, true); //Afterwards, read user data
                         }),
                     data => {
-                        console.log('Auth/me data');
-                        console.log(data);
                         return loggedInAction(data.username, data.name, data.id, data.is_admin != 0);
                     }, //Success action
                     errData => {
@@ -52,8 +46,6 @@ class UserStore extends Store {
                 );
                 break;
             case UserActions.LOG_IN_FAIL:
-                console.log("Failed action");
-                console.log(payload);
                 this.doneFetchingUser = true;
                 this.__emitChange();
                 break;
@@ -67,7 +59,6 @@ class UserStore extends Store {
                     name: payload.name
                 });
                 this.doneFetchingUser = true;
-                console.log(this.user.toJS());
                 //Emit the change
                 this.__emitChange();
                 break;
@@ -93,7 +84,6 @@ class UserStore extends Store {
                 break;
 
         }
-        console.log('Done handling ' + payload.action);
     }
 }
 

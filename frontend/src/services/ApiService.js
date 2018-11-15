@@ -33,7 +33,8 @@ class ApiService{
         
         //API basepath, will be processed by webpack accordingly
         if (process.env.NODE_ENV === "production"){
-            this.basePath = "https://bmn.a-eskwadraat.nl/api/";
+            //this.basePath = "https://bmn.a-eskwadraat.nl/api/";
+            this.basePath = "http://localhost:8080/api/";
         }
         else{
             this.basePath = "http://localhost:9000/api/";
