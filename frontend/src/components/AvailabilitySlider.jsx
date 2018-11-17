@@ -2,21 +2,17 @@ import React, { Component } from "react";
 import { Col } from 'react-bootstrap';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
+import { printTime } from '../GeneralExtensions.js';
 
 /**
  * A simple slider, customized to select a time range.
  */
-class AvailabilityWidget extends Component {
+class AvailabilitySlider extends Component {
     constructor(props) {
         super(props);
         this.state = {
             value: { min: props.startValue, max: props.endValue },
         };
-    }
-
-    //TODO Move to general extensions or something
-    printTime(d) {
-        return d.toLocaleTimeString('nl-nl', { hour: '2-digit', minute: '2-digit' });
     }
 
     setValue(value) {
@@ -26,7 +22,7 @@ class AvailabilityWidget extends Component {
 
     makeLabel(time) {
         var d = new Date(time);
-        return this.printTime(d);
+        return printTime(d);
     }
 
     render() {
@@ -47,4 +43,4 @@ class AvailabilityWidget extends Component {
     }
 }
 
-export default AvailabilityWidget;
+export default AvailabilitySlider;
