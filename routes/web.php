@@ -31,7 +31,7 @@ $router->get('/suggesties', function () use ($router) {
 $router->get('/login', function () use ($router) {
     return view('index');
 });
-$router->get('/rehearsalEdit', function () use ($router) {
+$router->get('/roosterAanpassen', function () use ($router) {
     return view('index');
 });
 $router->get('/rooster', function () use ($router) {
