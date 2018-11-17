@@ -19,19 +19,22 @@
 $router->get('/', function () use ($router) {
     return view('index');
 });
-
 $router->get('/home', function () use ($router) {
     return view('index');
 });
-
 $router->get('/nummers', function () use ($router) {
     return view('index');
 });
-
 $router->get('/suggesties', function () use ($router) {
     return view('index');
 });
 $router->get('/login', function () use ($router) {
+    return view('index');
+});
+$router->get('/rooster', function () use ($router) {
+    return view('index');
+});
+$router->get('/aanwezigheid', function () use ($router) {
     return view('index');
 });
 
@@ -93,6 +96,10 @@ $router->group(['prefix' => '/api'], function () use ($router) {
 
         $router->group(['prefix' => '/rehearsals'], function() use ($router) {
             $router->get('', 'RehearsalsController@showFutureRehearsals');
+            $router->get('/schedules', 'RehearsalsController@showFutureRehearsalsWithSchedule');
+            $router->get('/schedules/for/{id}', 'RehearsalsController@showFutureRehearsalsWithScheduleForPlayer');
+            $router->get('/availabilities', 'RehearsalsController@showFutureRehearsalsOwnAvailabilities');
+            $router->post('/{id}/availabilities/', 'RehearsalsController@saveAvailabilities');
             $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'RehearsalsController@create');

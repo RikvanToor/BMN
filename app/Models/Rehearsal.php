@@ -27,7 +27,6 @@ class Rehearsal extends Model {
             ->withPivot('start', 'end');
     }
 
-    
     /**
      * The users that have specified their availabilities for the rehearsal.
      *
@@ -35,18 +34,42 @@ class Rehearsal extends Model {
      */
     public function availabilities() {
         return $this->belongsToMany(User::class, 'availability')
-        ->withPivot('start', 'end');
+            ->withPivot('start', 'end', 'reason');
     }
 
     /**
      * Get the rehearsal's songs and their players.
-     * 
+     *
      * @return array
      */
     public function schedule() {
-        $result          = $this->toArray();
-        $songs           = $this->songs()->with('players')->get();
-        $result['songs'] = $songs->toArray();
+        $result       = $this->toArray();
+        $rehearsal_id = $this->id;
+        $songs        = $this->songs()->with(['players' => function ($p) use ($rehearsal_id) {
+            $p->with(['availabilities' => function ($a) use ($rehearsal_id) {
+                $a->where('rehearsal_id', $rehearsal_id);
+            }]);
+        }]);
+        $result['songs'] = $songs->get()->toArray();
+        return $result;
+    }
+
+    /**
+     * Get the rehearsal's songs and their players that a given player plays.
+     * 
+     * @return array
+     */
+    public function scheduleForPlayer($playerid) {
+        $result       = $this->toArray();
+        $rehearsal_id = $this->id;
+        $songs        = $this->songs()->whereHas('players', function($q) use ($playerid){
+            $q->where('user_id', $playerid);
+        })->with(['players' => function ($p) use ($rehearsal_id) {
+            $p->with(['availabilities' => function ($a) use ($rehearsal_id) {
+                $a->where('rehearsal_id', $rehearsal_id);
+            }]);
+        }]);
+        $result['songs'] = $songs->get()->toArray();
         return $result;
     }
 }

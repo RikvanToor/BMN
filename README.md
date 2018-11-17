@@ -51,7 +51,9 @@ Okay, tijd voor het
 10. Run `php artisan migrate`. De database wordt nu aangemaakt.
 10. Run `php artisan db:seed`. Er worden nu voorbeeld rijen in de 
     databasetabellen toegevoegd.
-11. Run `php -S localhost:8080 -t public`. Als je nu in je browser naar `localhost:8080` gaat, krijg je de indexpagina te zien. Lekker.
+11. Run `php -S localhost:8080 -t public`. 
+12. Run `npm start`. Als je nu in je browser naar `localhost:9000` gaat, krijg je de indexpagina te zien. Lekker.
+13. Nu heb je een PHP server en een javascript server draaien. Wil je alles liever via PHP doen? Doe dan `npm run publish` ipv `npm start` en ga naar `localhost:8080` in plaats van `localhost:9000`.
 
 # Bijdragen
 
