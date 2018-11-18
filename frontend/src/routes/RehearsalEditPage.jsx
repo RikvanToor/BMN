@@ -23,10 +23,31 @@ class RehearsalEditPage extends Component {
   constructor(props){
     super(props);
     this.state = {showRehearsalDayForm:true, selectedRehearsalDays:new Set()};
+    
+    //Bound callbacks
+    this.hideRehearsalCreation = this.hideRehearsalCreation.bind(this);
+    this.startRehearsalAdd = this.startRehearsalAdd.bind(this);
+    this.saveNewRehearsals = this.saveNewRehearsals.bind(this);
   }
   componentDidMount(){
-      deferredDispatch(loadAllRehearsals());
+    //Load rehearsals  
+    deferredDispatch(loadAllRehearsals());
   }
+  startRehearsalAdd(e){
+    if(!this.state.showRehearsalDayForm){
+      this.setState({
+        showRehearsalDayForm : true
+      });
+    }
+  }
+  saveNewRehearsals(){
+  
+  }
+  /**
+   * Selects a rehearsal from the currently available rehearsals
+   * @param {type} e The event triggered by the selection checkbox
+   * @param {type} id The ID of the rehearsal to select
+   */
   selectRehearsal(e, id){
     let add = e.target.checked;
     let set = this.state.selectedRehearsalDays;
@@ -38,20 +59,26 @@ class RehearsalEditPage extends Component {
     }
     this.setState({selectedRehearsalDays:set});
   }
-    render() {
+  hideRehearsalCreation(){
+    this.setState({
+      showRehearsalDayForm:false
+    });
+  }
+  render() {
+    console.log(this.hideRehearsalCreation);
     return (
         <div>
           <h1>Repetitiedagen</h1>
           <ButtonToolbar>
             <ButtonGroup>
-            <Button><Glyphicon glyph="plus" style={{color:'green'}}/>Nieuwe repetitiedag</Button>
+            <Button onClick={this.startRehearsalAdd}><Glyphicon glyph="plus" style={{color:'green',marginRight:'5px'}}/>Nieuwe repetitiedag</Button>
               <Button><Glyphicon glyph="minus" style={{color:'red'}}/>Verwijder repetitiedag</Button>
             </ButtonGroup>
           </ButtonToolbar>
           <ConditionalComponent condition={this.state.showRehearsalDayForm}>
-            <RehearsalForm/>
+            <RehearsalForm onCancel={this.hideRehearsalCreation} onSave={this.saveNewRehearsals}/>
           </ConditionalComponent>
-          <Table striped bordered condensed hover responsive>
+          <Table striped bordered condensed hover responsive style={{marginTop: '10px'}}>
             <thead>
                 <tr>
                   <th>#</th>

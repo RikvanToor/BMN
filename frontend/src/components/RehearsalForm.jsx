@@ -1,20 +1,216 @@
 import React, { Component } from "react";
 import DatePicker from '@Components/DatePicker.jsx';
-import {FormGroup,ControlLabel} from 'react-bootstrap';
+import ConditionalComponent from '@Components/ConditionalComponent.jsx';
+import PropTypes from 'prop-types';
+import {Record, Map, fromJS} from 'immutable';
+import {FormGroup,ControlLabel, Label, Panel, FormControl, Row, Col, Button,Glyphicon, ButtonGroup} from 'react-bootstrap';
+import TimeSelector from '@Components/TimeSelector.jsx';
+
+import {intRange} from '@Utils/Ranges.js';
+import {changeMinutes, changeHour} from '@Utils/DateTimeUtils.js';
+
+class Rehearsal extends Record({date:new Date(), startTime:1800, endTime:2100, location:"dB's"}){}
+
+const availableHours = intRange(0,24);
+const availableMinutes = intRange(0,60,5);
 
 export default class RehearsalForm extends Component{
     constructor(props){
       super(props);
+      //Newly created rehearsals
       this.state = {
-        date : new Date()
+        rehearsals : new Map({'0': new Rehearsal()}),
+        errs : new Map(),
+        maxId: 0
       };
+      
+      //Bound callbacks
+      this.addNewRehearsalForm = this.addNewRehearsalForm.bind(this);
+      this.handleDateSelect = this.handleDateSelect.bind(this);
+      this.handleLocationChange = this.handleLocationChange.bind(this);
+      this.deleteRehearsal = this.deleteRehearsal.bind(this);
+      this.changeHour = this.changeHour.bind(this);
+      this.changeMinutes = this.changeMinutes.bind(this);
+      this.save = this.save.bind(this);
+      this.cancel = this.cancel.bind(this);
+    }
+    
+    /**
+     * Adds a new rehearsal form row to the form
+     */
+    addNewRehearsalForm(){
+      //Update the state
+      let newState = {
+        rehearsals: this.state.rehearsals.set((this.state.maxId+1).toString(), new Rehearsal()),
+        maxId : this.state.maxId + 1
+      };
+      this.setState(newState);
+    }
+    /**
+     * Delete a rehearsals row from the form
+     */
+    deleteRehearsal(e){
+      let domNode = e.currentTarget; //Refers to the button here. e.target may be a child element
+      
+      if('rehearsalid' in domNode.dataset){
+        let rehearsals = this.state.rehearsals.delete(domNode.dataset.rehearsalid);
+        console.log(rehearsals);
+        this.setState({
+          rehearsals: this.state.rehearsals.delete(domNode.dataset.rehearsalid)
+        });
+      }
+    }
+    /**
+     * Cancels the form. Calls the onCancel property callback and clears out all state.
+     * @param {event} e The click event
+     */
+    cancel(e){
+      this.setState({
+        rehearsals : new Map({'0': new Rehearsal()}),
+        errs : new Map(),
+        maxId: 0
+      });
+      this.prop.onCancel();
+    }
+    /**
+     * Tries to save the rehearsals. 
+     * @param {event} e The click event
+     */
+    save(e){
+      //Gather validation errors
+      let totalErrs = this.state.rehearsals.reduce((accum,v,k)=>{
+        let errs = this.validateRehearsal(v);
+        if(Object.keys(errs).length !== 0){
+          accum[k] = errs;
+        }
+        return accum;
+      },{});
+      
+      //No validation errors are present
+      if(Object.keys(totalErrs).length === 0){
+        this.props.onSave(this.state.rehearsals.valuesSeq());
+      }
+      //Set the validation errors and visualize.
+      else{
+        let inputErrs = fromJS(totalErrs);
+        this.setState({
+          errs: inputErrs
+        });
+        return;
+      }
+    }
+    /**
+     * Handles the selection of a new date via the DatePicker component
+     * @param {string} newValue The new date, represented as an ISO string
+     * @param {string} newValueDsiplay The new date, formatted in a readable string format
+     * @param {object} props The properties of the DatePicker that triggered the change
+     */
+    handleDateSelect(newValue, newValueDisplay, props){
+      this.setState({
+        rehearsals: this.state.rehearsals.setIn([props.rehearsalId,'date'], new Date(newValue))
+      });
+    }
+    handleLocationChange(e){
+      let domNode = e.target;
+      if('rehearsalid' in domNode.dataset){
+        const id = domNode.dataset.rehearsalid;
+        const newState = {
+          rehearsals: this.state.rehearsals.setIn([id, 'location'],domNode.value)
+        };
+        this.setState({
+          rehearsals: this.state.rehearsals.setIn([id, 'location'],domNode.value)
+        });
+      }
+    }
+    changeHour(hour, props){
+      let newState = {};
+      let id = props.rehearsalId;
+      let target = props.type === "end" ? 'endTime' : 'startTime';
+      let orig = this.state.rehearsals.getIn([id,target]);
+      newState.rehearsals = this.state.rehearsals.setIn([props.rehearsalId,target],changeHour(orig, hour))
+      this.setState(newState);
+    }
+    changeMinutes(minutes, props){
+      let newState = {};
+      let id = props.rehearsalId;
+      let target = props.type === "end" ? 'endTime' : 'startTime';
+      let orig = this.state.rehearsals.getIn([id,target]);
+      newState.rehearsals = this.state.rehearsals.setIn([props.rehearsalId,target],changeMinutes(orig, minutes))
+      this.setState(newState);
+    }
+    /**
+     * Renders the rehearsal. If this is the only rehearsal, do not add the 'Delete' button.
+     * @param {int} id The ID of the rehearsal
+     * @param {boolean} isOnly Whether the rehearsal is the only rehearsal present
+     */
+    renderRehearsal(id, isOnly){
+      const rehearsal = this.state.rehearsals.get(id);
+      let pullBottom = {display:'inline-block',verticalAlign:'bottom',float:'none'};
+      const errs = this.state.errs.has(id) ? this.state.errs.get(id) : {};
+      
+      const timeSelectorOpts = {
+        hourOptions : availableHours,
+        minuteOptions : availableMinutes,
+        onHourChange: this.changeHour,
+        onMinuteChange: this.changeMinutes,
+        rehearsalId: id
+      };
+      
+      return (<Row key={id}>
+        <Col xs={3} md={3} style={pullBottom}>
+          <Label>Datum</Label>
+          <DatePicker rehearsalId={id} value={rehearsal.date.toISOString()} onChange={this.handleDateSelect}/>
+        </Col>
+        <Col xs={3} md={3} style={pullBottom}>
+          <Label>Locatie</Label>
+          <FormControl type="text" value={rehearsal.location} onChange={this.handleLocationChange} data-rehearsalid={id}></FormControl>
+        </Col>
+        <Col xs={2} md={2} style={pullBottom}>
+          <Label>Begintijd</Label>
+          <TimeSelector type="start" {...timeSelectorOpts}/>
+        </Col>
+        <Col xs={2} md={2} style={pullBottom}>
+          <Label>Eindtijd</Label>
+          <TimeSelector type="end" {...timeSelectorOpts}/>
+        </Col>
+        <Col xs={2} md={2} style={pullBottom}>
+          <ButtonGroup>
+          <Button onClick={this.addNewRehearsalForm}><Glyphicon glyph="plus" style={{color:'green'}}/></Button>
+            {!isOnly ? (<Button data-rehearsalid={id} onClick={this.deleteRehearsal}><Glyphicon glyph="minus" style={{color:'red'}}/></Button>) : null}
+          </ButtonGroup>
+        </Col>
+      </Row>);
+    }
+    
+    validateRehearsal(rehearsal){
+      let errs = {};
+      if(rehearsal.date < new Date()){
+        errs.dateErr = 'De geselecteerde datum is in het verleden';
+      }
+      if(rehearsal.startTime > this.state.endTime){
+        errs.startTimeErr = 'De starttijd is later dan de eindtijd';
+      }
+      if(rehearsal.location.length === 0){
+        errs.locationerr = 'Er is geen locatie gegeven';
+      }
+      return errs;
     }
     render(){
+      const rehearsalCount = this.state.rehearsals.size;
       return (
-              <FormGroup>
-              <ControlLabel>Datum</ControlLabel>
-              <DatePicker value={this.state.date.toISOString()} onChange={this.handleDateSelect}/>
-              </FormGroup>
+        <Panel style={{marginTop:'5px',marginBottom:'5px'}}>
+          <Panel.Body>
+            {this.state.rehearsals.keySeq().map((key)=>this.renderRehearsal(key, rehearsalCount === 1))}
+            <div style={{marginTop:'5px'}}>
+              <Button bsStyle="primary" onClick={this.save}>{rehearsalCount===1 ? 'Voeg repetitiedag toe' : 'Voeg repetitiedagen toe'}</Button>
+              <Button bsStyle="danger" onClick={this.props.onCancel}>Laat maar zitten</Button>
+            </div>
+          </Panel.Body>
+        </Panel>
       );
     }
 }
+RehearsalForm.propTypes = {
+  onSave : PropTypes.func.isRequired,
+  onCancel : PropTypes.func.isreuqired
+};

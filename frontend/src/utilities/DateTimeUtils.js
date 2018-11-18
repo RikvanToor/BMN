@@ -26,6 +26,36 @@ export function atNoon(date){
   return date;
 }
 
+/**
+ * Changes the hour of an integer time, represented as an element in [0, 2400) for time
+ * @param {int} intTime The original time
+ * @param {int} hour The hour
+ * @returns {int} The new integer time
+ */
+export function changeHour(intTime, hour){
+  return intTime - Math.floor(intTime / 100) * 100 + hour * 100;
+}
+
+/**
+ * Changes the minutes of an integer time, represented as an element in [0, 2400) for time
+ * @param {int} intTime The original time
+ * @param {int} minutes The new minutes
+ * @returns {int} The new integer time
+ */
+export function changeMinutes(intTime, minutes){
+  return Math.floor(intTime / 100) * 100 + minutes;
+}
+
+export function getDaysInMonth(monthNumber, year){
+  let monthLength = daysInMonth[monthNumber];
+  if (monthNumber === 1) { //Februari
+    if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+      monthLength = 29;
+    }
+  }
+  return monthLength;
+}
+
 export function getWeekNumber(dateObj){
   const target  = new Date(dateObj.valueOf());
   const dayNr   = (dateObj.getDay() + 6) % 7;
