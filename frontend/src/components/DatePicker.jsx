@@ -17,6 +17,7 @@ export default class DatePicker extends Component{
     //References to DOM nodes
     this.hiddenInput = React.createRef();
     this.overlayContainer = React.createRef();
+    this.overlayTarget = React.createRef();
     
     //Check conflicting properties
     if (this.props.value && this.props.defaultValue) {
@@ -74,10 +75,9 @@ export default class DatePicker extends Component{
     else {
       this.setState(this.makeDateValues(null));
     }
-
-    if (this.props.onChange) {
-      this.props.onChange(null, null);
-    }
+    
+    console.log("Triggering from clear");
+    this.triggerChange(null,null);
   }
 
   handleHide() {
@@ -90,7 +90,7 @@ export default class DatePicker extends Component{
     if (this.props.onBlur) {
       const event = document.createEvent('CustomEvent');
       event.initEvent('Change Date', true, false);
-      this.hiddenInput.dispatchEvent(event);
+      this.hiddenInput.current.dispatchEvent(event);
       this.props.onBlur(event);
     }
   }
@@ -102,12 +102,16 @@ export default class DatePicker extends Component{
       });
 
       if (this.props.onBlur) {
-        const event = document.createEvent('CustomEvent');
-        event.initEvent('Change Date', true, false);
-        this.hiddenInput.dispatchEvent(event);
+        this.dispatchCustomEvent();
         this.props.onBlur(event);
       }
     }
+  }
+  dispathCustomEvent(){
+    const event = document.createEvent('CustomEvent');
+    event.initEvent('Change Date', true, false);
+    this.hiddenInput.current.dispatchEvent(event);
+    return event;
   }
 
   handleFocus() {
@@ -124,10 +128,21 @@ export default class DatePicker extends Component{
     });
 
     if (this.props.onFocus) {
-      const event = document.createEvent('CustomEvent');
-      event.initEvent('Change Date', true, false);
-      this.hiddenInput.dispatchEvent(event);
+      this.dispatchCustomEvent();
       this.props.onFocus(event);
+    }
+  }
+  
+  /**
+   * Triggers the change callback if it was specified
+   * @param {string} isoDate The ISO string date representation
+   * @param {string} formattedDate The date in formatted string form 
+   */
+  triggerChange(isoDate, formattedDate){
+    if (this.props.onChange) {
+      console.log('Triggering change with props:');
+      console.log(this.props);
+      this.props.onChange(isoDate, formattedDate, this.props);
     }
   }
 
@@ -141,6 +156,10 @@ export default class DatePicker extends Component{
     return !(this.state.inputFocused === true && nextState.inputFocused === false);
   }
 
+  /**
+   * Gets the date value as an ISO string
+   * @returns The date value as an ISO string, or null if not specified
+   */
   getValue() {
     return this.state.selectedDate ? this.state.selectedDate.toISOString() : null;
   }
@@ -210,7 +229,7 @@ export default class DatePicker extends Component{
   }
 
   handleInputChange() {
-
+    console.log("Handling input change");
     const originalValue = ReactDOM.findDOMNode(this.refs.input).value;
     const inputValue = originalValue.replace(/(-|\/\/)/g, this.state.separator).slice(0,10);
 
@@ -260,10 +279,9 @@ export default class DatePicker extends Component{
         displayDate: selectedDate,
         value: selectedDate.toISOString()
       });
-
-      if (this.props.onChange) {
-        this.props.onChange(selectedDate.toISOString(), inputValue);
-      }
+      console.log("triggering change from input value changed");
+      //Trigger the change
+      this.triggerChange(selectedDate.toISOString(), inputValue);
     }
 
     this.setState({
@@ -278,7 +296,17 @@ export default class DatePicker extends Component{
   }
 
   onChangeDate(newSelectedDate) {
+    console.log("Changing date" + newSelectedDate);
     const inputValue = this.makeInputValueString(newSelectedDate);
+    console.log("Date value" + inputValue);
+    console.log("New state:");
+    console.log({
+      inputValue: inputValue,
+      selectedDate: newSelectedDate,
+      displayDate: newSelectedDate,
+      value: newSelectedDate.toISOString(),
+      focused: false
+    });
     this.setState({
       inputValue: inputValue,
       selectedDate: newSelectedDate,
@@ -288,15 +316,11 @@ export default class DatePicker extends Component{
     });
 
     if (this.props.onBlur) {
-      const event = document.createEvent('CustomEvent');
-      event.initEvent('Change Date', true, false);
-      this.hiddenInput.dispatchEvent(event);
-      this.props.onBlur(event);
+      const evt = this.dispathCustomEvent();
+      this.props.onBlur(evt);
     }
-
-    if (this.props.onChange) {
-      this.props.onChange(newSelectedDate.toISOString(), inputValue);
-    }
+    console.log("triggering change from onchangedate");
+    this.triggerChange(newSelectedDate.toISOString(), inputValue);
   }
 
   componentWillReceiveProps(newProps) {
@@ -305,6 +329,11 @@ export default class DatePicker extends Component{
       this.setState(this.makeDateValues(value));
     }
   }
+  /**
+   * Helper to bind function to this instance
+   * @param {function} func The function to bind to this
+   * @returns The function, bound to this object.
+   */
   bound(func){
     return func.bind(this);
   }
@@ -321,40 +350,55 @@ export default class DatePicker extends Component{
       monthLabels={this.props.monthLabels}
       dateFormat={this.props.dateFormat} />);
       
-      let controlProps = {
-        value: this.state.inputValue || '',
-        required: this.props.required,
-        placeholder: this.state.focused ? this.props.dateFormat : this.state.placeholder,
-        ref: this.hiddenInput,
-        disabled: this.props.disabled,
-        onKeyDown: bound(this.handleKeyDown),
-        onFocus: bound(this.handleFocus),
-        onBlur: bound(this.handleBlur),
-        onChange: bound(this.handleInputChange),
-        onInvalid: this.props.onInvalid,
-        className: this.props.className,
-        style: this.props.style,
-        autoComplete: this.props.autoComplete,
-        noValidate: this.props.noValidate,
-      };
+    let controlProps = {
+      value: this.state.inputValue || '',
+      required: this.props.required,
+      placeholder: this.state.focused ? this.props.dateFormat : this.state.placeholder,
+      ref: this.hiddenInput,
+      disabled: this.props.disabled,
+      onKeyDown: bound(this.handleKeyDown),
+      onFocus: bound(this.handleFocus),
+      onBlur: bound(this.handleBlur),
+      onChange: bound(this.handleInputChange),
+      onInvalid: this.props.onInvalid,
+      className: this.props.className,
+      style: this.props.style,
+      autoComplete: this.props.autoComplete,
+      noValidate: this.props.noValidate,
+    };
 
-    const control = this.props.customControl
-      ? React.cloneElement(this.props.customControl, controlProps)
-      : (<FormControl
-          type="text" autoFocus={this.props.autoFocus} {...controlProps}
-          />);
+    console.log("Rendering with " + this.state.inputValue);
+
+    //Either use a custom control or a default form control by react bootstrap.
+    const control = this.props.customControl ? React.cloneElement(this.props.customControl, controlProps)
+      : (<FormControl type="text" autoFocus={this.props.autoFocus} {...controlProps}/>);
 
     return <InputGroup
       bsClass={this.props.showClearButton ? this.props.bsClass : ''}
-      bsSize={this.props.bsSize}
-      id={this.props.id ? `${this.props.id}_group` : null}>
+      bsSize={this.props.bsSize} 
+      id={this.props.id ? `${this.props.id}_group` : null} ref={this.overlayTarget}>
       {control}
+      <div ref={this.overlayContainer} style={{position: 'relative'}} />
+      <input ref={this.hiddenInput} type="hidden" id={this.props.id} name={this.props.name} value={this.state.value || ''} data-formattedvalue={this.state.value ? this.state.inputValue : ''} />
+      {this.props.showClearButton && !this.props.customControl && (<InputGroup.Addon
+        onClick={this.props.disabled ? null : bound(this.clear)}
+        style={{cursor:(this.state.inputValue && !this.props.disabled) ? 'pointer' : 'not-allowed'}}>
+        <div style={{opacity: (this.state.inputValue && !this.props.disabled) ? 1 : 0.5}}>
+          {this.props.clearButtonElement}
+        </div>
+      </InputGroup.Addon>)
+      }
+      {!this.props.customControl && 
       <Overlay
         rootClose={true}
         onHide={bound(this.handleHide)}
         show={this.state.focused}
-        container={() => this.props.calendarContainer || this.overlayContainer}
-        target={() => this.hiddenInput}
+        container={() => {
+            return this.props.calendarContainer || this.overlayContainer.current;
+          }}
+        target={() => { console.log(this.hiddenInput.current);
+          return this.overlayTarget.current;
+          }}
         placement={this.state.calendarPlacement}
         delayHide={200}>
         <Popover id={`date-picker-popover-${this.props.instanceCount}`} className="date-picker-popover" title={calendarHeader}>
@@ -374,15 +418,7 @@ export default class DatePicker extends Component{
            />
         </Popover>
       </Overlay>
-      <div ref={this.overlayContainer} style={{position: 'relative'}} />
-      <input ref={this.hiddenInput} type="hidden" id={this.props.id} name={this.props.name} value={this.state.value || ''} data-formattedvalue={this.state.value ? this.state.inputValue : ''} />
-      {this.props.showClearButton && !this.props.customControl && <InputGroup.Addon
-        onClick={this.props.disabled ? null : this.clear}
-        style={{cursor:(this.state.inputValue && !this.props.disabled) ? 'pointer' : 'not-allowed'}}>
-        <div style={{opacity: (this.state.inputValue && !this.props.disabled) ? 1 : 0.5}}>
-          {this.props.clearButtonElement}
-        </div>
-      </InputGroup.Addon>}
+      }
       {this.props.children}
     </InputGroup>;
   }

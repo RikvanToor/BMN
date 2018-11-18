@@ -3,6 +3,12 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
 export default class DatePickerHeader extends Component{
+  constructor(props){
+    super(props);
+    this.handleClickNext = this.handleClickNext.bind(this);
+    this.handleClickPrevious = this.handleClickPrevious.bind(this);
+  }
+  
   displayingMinMonth() {
     if (!this.props.minDate) return false;
 

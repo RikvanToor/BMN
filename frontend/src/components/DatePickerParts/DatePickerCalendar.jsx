@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import PropTypes from 'prop-types';
-import {daysInMonth, atNoon, getWeekNumber} from '@Utils/DateTimeUtils.js';
+import {daysInMonth, atNoon, getWeekNumber, getDaysInMonth} from '@Utils/DateTimeUtils.js';
 
 export default class DatePickerCalendar extends Component{
   handleClick(day) {
@@ -30,12 +30,7 @@ export default class DatePickerCalendar extends Component{
         : firstDay.getDay();
     const showWeeks = this.props.showWeeks;
 
-    let monthLength = daysInMonth[month];
-    if (month == 1) {
-      if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
-        monthLength = 29;
-      }
-    }
+    let monthLength = getDaysInMonth(month, year);
 
     const weeks = [];
     let day = 1;
