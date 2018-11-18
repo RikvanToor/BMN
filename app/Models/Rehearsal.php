@@ -26,6 +26,18 @@ class Rehearsal extends Model {
         return $this->belongsToMany(Song::class, 'schedule')
             ->withPivot('start', 'end');
     }
+    
+    
+    /**
+     * Special scope to query for future rehearsals.
+     * to avoid hiding rehearsals of today
+     * @param type $query The query to use
+     * @return type The modified query?
+     */
+    public function scopeInFuture($query){
+        return $query->where('end','>=', date('Y-m-d H:i:s'));
+    }
+
 
     /**
      * The users that have specified their availabilities for the rehearsal.

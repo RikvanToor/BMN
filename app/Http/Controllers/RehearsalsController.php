@@ -64,7 +64,7 @@ class RehearsalsController extends Controller {
         $rehearsals = Rehearsal::where('end', '>=', now())->get();
         return response()->json($rehearsals, 200);
     }
-
+    
     /**
      * Get every rehearsal that ends after this very moment including songs and players.
      */
@@ -100,9 +100,15 @@ class RehearsalsController extends Controller {
         }]);
         return response()->json($result->get(), 200);
     }
+    
+    public function showFutureRehearsalsWithAvailabilities(Request $request){
+        $rehearsals = Rehearsal::select('id')->inFuture(); //Use scope
+        $result = $rehearsals->with(['availabilities']);
+        return response()->json($result->get(), 200);
+    }
 
     public function saveAvailabilities($id, Request $request) {
-        $rehearsal = Rehearsal::find($id);
+        $rehearsal = Rehearsal::findOrFail($id);
         $userid = $request->user()->id;
         $availabilities = $rehearsal->availabilities();
         // Delete old availabilities

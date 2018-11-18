@@ -105,6 +105,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->post('/{id}/availabilities/', 'RehearsalsController@saveAvailabilities');
             $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
             $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->get('/availabilities/all', 'RehearsalsController@showFutureRehearsalsWithAvailabilities');
                 $router->post('/create', 'RehearsalsController@create');
                 $router->post('/delete', 'RehearsalsController@deleteRehearsals');
                 $router->delete('{id}', 'RehearsalsController@deleteRehearsal');

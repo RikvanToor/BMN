@@ -1,11 +1,17 @@
 
+import * as typeChecks from '@Utils/TypeChecks.js';
+
 /**
  * Converts a Date object to a nicely readable date string.
  * @param {Date} dateObj The date object
  * @returns {string} String representation of the date part of the date.
  */
 export function readableDate(dateObj){
-  return dateObj.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  return dateObj.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+export function printTime(date){
+  return date.toLocaleTimeString('nl-nl', { hour: '2-digit', minute: '2-digit' });
 }
 
 export const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -62,6 +68,21 @@ export function atNoon(date){
   date.setMilliseconds(0);
   return date;
 }
+
+export function toHoursMinutesInt(date){
+  if(typeChecks.isString(date)){
+    date = new Date(date);
+  }
+  return date.getHours() * 100 + date.getMinutes();
+}
+
+export function toHoursMinutes(date){
+  if(typeChecks.isString(date)){
+    date = new Date(date);
+  }
+  return {h: date.getHours(), m: date.getMinutes()};
+}
+
 /**
  * Converts a date to an integer representation of the form YYYYMMDD.
  * @param {Date} date The date

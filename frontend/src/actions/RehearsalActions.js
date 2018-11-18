@@ -1,6 +1,6 @@
 import * as typeChecks from '@Utils/TypeChecks.js';
 import {List} from 'immutable';
-import {createAuth, deleteAuth, postAuth} from '@Actions/ApiActions.js';
+import {createAuth, deleteAuth, postAuth, readAuth} from '@Actions/ApiActions.js';
 import {dateWithIntTime} from '@Utils/DateTimeUtils.js';
 
 export const RehearsalActions = {
@@ -16,13 +16,21 @@ export const RehearsalActions = {
   GET_AVAILABILITIES: 'GET_AVAILABILITIES',
   SET_AVAILABILITIES: 'SET_AVAILABILITIES',
   UPDATE_AVAILABILITIES: 'UPDATE_AVAILABILITIES',
+  GET_ALL_AVAILABILITIES : 'GET_ALL_AVAILABILITIES'
 };
 
 const Endpoints = {
   createMultiple: 'rehearsals/createMultiple',
   deleteSingle: (id)=>`rehearsals/${id}`,
-  deleteMultiple: 'rehearsals/delete'
+  deleteMultiple: 'rehearsals/delete',
+  readAllAvailabilities: 'rehearsals/availabilities/all'
 };
+
+export function getAllAvailabilities(){
+  return readAuth({
+   action: RehearsalActions.GET_ALL_AVAILABILITIES 
+  },Endpoints.readAllAvailabilities);
+}
 
 export function getScheduleAction() {
   return { action: RehearsalActions.GET_REHEARSALS };

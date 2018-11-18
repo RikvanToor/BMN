@@ -8,7 +8,7 @@ import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ConditionalComponet from '@Components/ConditionalComponent.jsx';
 import {ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox} from 'react-bootstrap';
 import RehearsalForm from '@Components/RehearsalForm.jsx';
-import {getScheduleAction} from '@Actions/RehearsalActions.js';
+import RehearsalSongsForm from '@Components/RehearsalSongsForm.jsx';
 
 //Data imports
 import {Container} from 'flux/utils';
@@ -16,7 +16,7 @@ import UserStore from '@Stores/UserStore.js';
 import {deferredDispatch, dispatch} from '@Services/AppDispatcher.js';
 import RehearsalManipulationStore, {loadAllRehearsals} from '@Stores/RehearsalManipulationStore.js';
 import RehearsalStore from '@Stores/RehearsalStore.js';
-import {createRehearsals, deleteRehearsals} from '@Actions/RehearsalActions.js';
+import {getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities} from '@Actions/RehearsalActions.js';
 
 //Utils
 import * as typeChecks from '@Utils/TypeChecks.js';
@@ -44,6 +44,7 @@ class RehearsalEditPage extends Component {
   componentDidMount(){
     //Load rehearsals  
     deferredDispatch(getScheduleAction());
+    deferredDispatch(getAllAvailabilities());
   }
   removeRehearsals(){
     if(this.state.selectedRehearsalDays.size > 0){
@@ -107,19 +108,26 @@ class RehearsalEditPage extends Component {
                   <th>Locatie</th>
                   <th>Begintijd</th>
                   <th>Eindtijd</th>
+                  <th>Nummers</th>
                 </tr>
             </thead>
             <tbody>
               {
-                this.props.rehearsals.map((obj)=>(
-                  <tr key={obj.start}>
+                this.props.rehearsals.valueSeq().map((obj)=>{
+                  const hasSongs = 'songs' in obj && obj.songs.length > 0;
+                  const songText = hasSongs? obj.songs.map((el)=>el.title).join('<br/>') : 'Nog geen';
+                  
+            return (<React.Fragment key={obj.start}><tr>
                     <td><Checkbox checked={this.state.selectedRehearsalDays.has(obj.id)} onChange={(e)=>this.selectRehearsal(e,obj.id)}/></td>
                     <td>{readableDate(new Date(obj.start))}</td>
                     <td>{obj.location}</td>
                     <td>{readableTime(new Date(obj.start))}</td>
                     <td>{readableTime(new Date(obj.end))}</td>
-                  </tr>     
-                ))
+                    <td>{songText}</td>
+                    </tr><tr><td colSpan="6">
+                      <RehearsalSongsForm songs={[{id:0,title:'Song1'},{id:1,title:'Song2'}]} startTime={1800} endTime={2100}/>
+                    </td></tr></React.Fragment>);  
+                })
               }
             </tbody>
           </Table>

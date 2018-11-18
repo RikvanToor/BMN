@@ -203,8 +203,8 @@ export default class RehearsalForm extends Component{
           <Panel.Body>
             {this.state.rehearsals.keySeq().map((key)=>this.renderRehearsal(key, rehearsalCount === 1))}
             <div style={{marginTop:'5px'}}>
-              <Button bsStyle="primary" onClick={this.save}>{rehearsalCount===1 ? 'Voeg repetitiedag toe' : 'Voeg repetitiedagen toe'}</Button>
-              <Button bsStyle="danger" onClick={this.props.onCancel}>Laat maar zitten</Button>
+              <Button bsStyle="primary" style={{marginRight:'5px'}} onClick={this.save}>{rehearsalCount===1 ? 'Voeg repetitiedag toe' : 'Voeg repetitiedagen toe'}</Button>
+              <Button bsStyle="danger" onClick={this.props.onCancel}>Toch niet!</Button>
             </div>
           </Panel.Body>
         </Panel>
