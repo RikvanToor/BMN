@@ -1,4 +1,4 @@
-
+import {toPhpString} from '@Utils/DateTimeUtils.js';
 /**
  * Class for distinguishing errors originating from the ApiService class.
  * @type type
@@ -10,6 +10,39 @@ class JSONRequestError {
     // Possible HTTP request status code, or -1 if not relevant
     this.httpCode = httpCode;
   }
+}
+
+/**
+ * Recursively fills the FormData object for sending via XMLHttpRequest
+ * @param {FormData} formDataObj The form data object
+ * @param {object} obj The data object to encode in the FormData object
+ * @param {string} prefix Prefix for the keys of the object.
+ */
+function objectToFormData(formDataObj, obj, prefix=''){
+  const hasPrefix = prefix.length !== 0;
+  let newKeyName = (name)=>hasPrefix ? '[' + name + ']' : name;
+  
+  if(!(obj instanceof Object) && !Array.isArray(obj)){
+    formDataObj.append(prefix, obj);
+    return;
+  }
+  
+  Object.keys(obj).forEach((key)=>{
+    if(obj[key] instanceof Object && !(obj[key] instanceof Date)){
+      objectToFormData(formDataObj, obj[key],prefix+newKeyName(key));
+    }
+    else if(Array.isArray(obj[key])){
+      for(let i =0; i < obj[key].length; i++){
+        objectToFormData(formDataObj, obj[key],prefix+newKeyName(key)+'['+i+']');
+      }
+    }
+    else if(obj[key] instanceof Date){
+      formDataObj.append(prefix + newKeyName(key), toPhpString(obj[key]));
+    }
+    else{
+      formDataObj.append(prefix + newKeyName(key), obj[key]);
+    }
+  });
 }
 
 /**
@@ -34,14 +67,14 @@ class JSONRequest {
   }
 
   /**
-     * Converts an object with parameters to an URL parameter string
+     * Converts an object with parameters to a FormData object
      * @param {object} paramObject The parameter object.
-     * @returns {string} The URL parameter string.
+     * @returns {FormData} The FormData object to send.
      */
   static getUrlParameters(paramObject) {
-    // TODO maybe add some checking for incorrect values given (i.e. functions)
-    const paramsStringArray = Object.keys(paramObject).map(key => `${key}=${paramObject[key]}`);
-    return paramsStringArray.join('&');
+    let data = new FormData();
+    objectToFormData(data,paramObject,'');
+    return data;
   }
 
   /**
@@ -63,10 +96,14 @@ class JSONRequest {
     // a Promise is available
     req.onload = () => {
       // Check the status code, since this is called on all responses.
-      if (req.status === 200) {
+      let statusCodeOrder = Math.floor(req.status/100);
+      
+      //Any 2XX codes should be fine
+      if (statusCodeOrder === 2) {
         try {
           // Parse JSON automatically.
           const data = JSON.parse(req.response);
+          
           this.resolve(data);
         } catch (e) {
           this.reject(new JSONRequestError('Failed to decode response', -1));
@@ -95,8 +132,8 @@ class JSONRequest {
       this.resolve = resolve;
       this.reject = reject;
       if (Object.keys(this.params).length > 0) {
-        request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); // Is this appropriate?
-        request.send(JSONRequest.getUrlParameters(this.params));
+        const data = JSONRequest.getUrlParameters(this.params);
+        request.send(data);
       } else {
         request.send();
       }

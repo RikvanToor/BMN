@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Rehearsal;
 use App\Models\Song;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 
 class RehearsalsController extends Controller {
+    private static function now(){
+        return date('Y-m-d H:i:s');
+    }
     /**
      * Add entry to 'rehearsals' table
      */
@@ -20,12 +24,44 @@ class RehearsalsController extends Controller {
         $rehearsal = Rehearsal::create($request->all());
         return response()->json($rehearsal, 201);
     }
+    
+    
+    public function deleteRehearsal(Request $request, $id){
+        Rehearsal::destroy($id);
+        return response()->json(array('id'=>$id),200);
+    }
+    
+    public function deleteRehearsals(Request $request){
+        $validatedData = $this->validate($request, [
+            'ids'=>'required|array'
+        ]);
+        Rehearsal::destroy($validatedData['ids']);
+        
+        return response()->json($validatedData,200);
+    }
+    
+    public function createMultiple(Request $request){
+    
+        $validatedData = $this->validate($request,[
+            'rehearsals.*.location' => 'required',
+            'rehearsals.*.start'    => 'required|date',
+            'rehearsals.*.end'      => 'required|date',
+        ]);
+        
+        //Create all rehearsals
+        $rehearsals = [];
+        foreach($validatedData['rehearsals'] as $elem){
+            $rehearsals[] = Rehearsal::create($elem);
+        }
+        //Send created rehearsals
+        return response()->json($rehearsals, 201);
+    }
 
     /**
      * Get every rehearsal that ends after this very moment.
      */
     public function showFutureRehearsals() {
-        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->get();
+        $rehearsals = Rehearsal::where('end', '>=', now())->get();
         return response()->json($rehearsals, 200);
     }
 

@@ -7,7 +7,7 @@ import {FormGroup,ControlLabel, Label, Panel, FormControl, Row, Col, Button,Glyp
 import TimeSelector from '@Components/TimeSelector.jsx';
 
 import {intRange} from '@Utils/Ranges.js';
-import {changeMinutes, changeHour} from '@Utils/DateTimeUtils.js';
+import {changeMinutes, changeHour, isDateLess} from '@Utils/DateTimeUtils.js';
 
 class Rehearsal extends Record({date:new Date(), startTime:1800, endTime:2100, location:"dB's"}){}
 
@@ -88,10 +88,12 @@ export default class RehearsalForm extends Component{
       
       //No validation errors are present
       if(Object.keys(totalErrs).length === 0){
-        this.props.onSave(this.state.rehearsals.valuesSeq());
+        this.props.onSave(this.state.rehearsals.valueSeq().toJS());
       }
       //Set the validation errors and visualize.
       else{
+        console.log('Has errs');
+        console.log(totalErrs);
         let inputErrs = fromJS(totalErrs);
         this.setState({
           errs: inputErrs
@@ -122,21 +124,20 @@ export default class RehearsalForm extends Component{
         });
       }
     }
-    changeHour(hour, props){
+    changeValue(val, props, isHour){
       let newState = {};
-      let id = props.rehearsalId;
-      let target = props.type === "end" ? 'endTime' : 'startTime';
-      let orig = this.state.rehearsals.getIn([id,target]);
-      newState.rehearsals = this.state.rehearsals.setIn([props.rehearsalId,target],changeHour(orig, hour))
+      const id = props.rehearsalId;
+      const target = props.type === "end" ? 'endTime' : 'startTime';
+      const orig = this.state.rehearsals.getIn([id,target]);
+      const newVal = isHour ? changeHour(orig, val): changeMinutes(orig,val);
+      newState.rehearsals = this.state.rehearsals.setIn([props.rehearsalId,target],newVal);
       this.setState(newState);
     }
+    changeHour(hour, props){
+      this.changeValue(hour,props,true);
+    }
     changeMinutes(minutes, props){
-      let newState = {};
-      let id = props.rehearsalId;
-      let target = props.type === "end" ? 'endTime' : 'startTime';
-      let orig = this.state.rehearsals.getIn([id,target]);
-      newState.rehearsals = this.state.rehearsals.setIn([props.rehearsalId,target],changeMinutes(orig, minutes))
-      this.setState(newState);
+      this.changeValue(minutes,props,false);
     }
     /**
      * Renders the rehearsal. If this is the only rehearsal, do not add the 'Delete' button.
@@ -145,7 +146,7 @@ export default class RehearsalForm extends Component{
      */
     renderRehearsal(id, isOnly){
       const rehearsal = this.state.rehearsals.get(id);
-      let pullBottom = {display:'inline-block',verticalAlign:'bottom',float:'none'};
+      const pullBottom = {display:'inline-block',verticalAlign:'bottom',float:'none'};
       const errs = this.state.errs.has(id) ? this.state.errs.get(id) : {};
       
       const timeSelectorOpts = {
@@ -167,15 +168,15 @@ export default class RehearsalForm extends Component{
         </Col>
         <Col xs={2} md={2} style={pullBottom}>
           <Label>Begintijd</Label>
-          <TimeSelector type="start" {...timeSelectorOpts}/>
+          <TimeSelector type="start" value={rehearsal.startTime} {...timeSelectorOpts}/>
         </Col>
         <Col xs={2} md={2} style={pullBottom}>
           <Label>Eindtijd</Label>
-          <TimeSelector type="end" {...timeSelectorOpts}/>
+          <TimeSelector type="end" value={rehearsal.endTime} {...timeSelectorOpts}/>
         </Col>
         <Col xs={2} md={2} style={pullBottom}>
           <ButtonGroup>
-          <Button onClick={this.addNewRehearsalForm}><Glyphicon glyph="plus" style={{color:'green'}}/></Button>
+          <Button onClick={this.addNewRehearsalForm} data-rehearsalid={id} style={{marginRight:'5px'}}><Glyphicon glyph="duplicate" style={{color:'orange'}}/></Button>
             {!isOnly ? (<Button data-rehearsalid={id} onClick={this.deleteRehearsal}><Glyphicon glyph="minus" style={{color:'red'}}/></Button>) : null}
           </ButtonGroup>
         </Col>
@@ -184,10 +185,10 @@ export default class RehearsalForm extends Component{
     
     validateRehearsal(rehearsal){
       let errs = {};
-      if(rehearsal.date < new Date()){
+      if(isDateLess(rehearsal.date, new Date())){
         errs.dateErr = 'De geselecteerde datum is in het verleden';
       }
-      if(rehearsal.startTime > this.state.endTime){
+      if(rehearsal.startTime > rehearsal.endTime){
         errs.startTimeErr = 'De starttijd is later dan de eindtijd';
       }
       if(rehearsal.location.length === 0){
@@ -212,5 +213,5 @@ export default class RehearsalForm extends Component{
 }
 RehearsalForm.propTypes = {
   onSave : PropTypes.func.isRequired,
-  onCancel : PropTypes.func.isreuqired
+  onCancel : PropTypes.func.isRequired
 };

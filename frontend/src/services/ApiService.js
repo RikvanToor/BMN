@@ -5,6 +5,7 @@ export const Methods = {
   READ: 1,
   UPDATE: 2,
   DELETE: 3,
+  POST: 4,
 };
 
 /**
@@ -49,6 +50,7 @@ class ApiService {
   static getRequestMethod(crudMethod) {
     switch (crudMethod) {
       case Methods.CREATE:
+      case Methods.POST:
       case Methods.UPDATE:
         return 'POST';
       case Methods.READ:
