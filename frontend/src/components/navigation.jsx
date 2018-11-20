@@ -25,6 +25,7 @@ class Navigation extends PureComponent {
         var navs = [];
         var usersOnly = [
             this.createLink('home', 'Home'),
+            this.createLink('nieuws', 'Nieuws'),
             this.createLink('rooster', 'Rooster'),
             this.createLink('nummers', 'Nummers'),
             this.createLink('aanwezigheid', 'Aanwezigheid')

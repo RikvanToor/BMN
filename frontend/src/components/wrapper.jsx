@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Footer from "./footer.jsx";
+import NewsContainer from '@Containers/NewsContainer.jsx';
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
@@ -23,6 +24,7 @@ class Wrapper extends Component {
                     <Grid>
                         <Row>
                             <Route exact path="/home" component={Home} />
+                            <Route exact path="/nieuws" component={NewsContainer} />
                             <Route exact path="/rooster" component={RehearsalContainer} />
                             <Route exact path="/suggesties" component={SuggestionList} />
                             <Route exact path="/login" component={LoginContainer} />

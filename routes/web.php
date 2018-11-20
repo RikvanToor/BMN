@@ -107,5 +107,9 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->delete('{id}/removesong/{song_id}', 'RehearsalsController@removeSong');
             });
         });
+
+        $router->group(['prefix' => '/news'], function() use ($router) {
+            $router->get('', 'NewsController@showAllNews');
+        });
     });
 });
