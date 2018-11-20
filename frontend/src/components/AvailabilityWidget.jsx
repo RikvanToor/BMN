@@ -4,6 +4,7 @@ import { Col, Button, ButtonGroup, Glyphicon, FormControl, FormGroup } from 'rea
 import { isNullOrUndefined } from "util";
 import { dispatch } from '@Services/AppDispatcher.js';
 import { setAvailabilitiesAction } from '@Actions/RehearsalActions.js';
+import { printTime } from '../GeneralExtensions.js';
 
 /**
  * The availabilities page. Since no state is needed, this is a Pure component that is rerendered
@@ -82,11 +83,6 @@ class AvailabilityWidget extends Component {
     }
 
     //TODO Move to general extensions or something
-    printTime(d) {
-        return d.toLocaleTimeString('nl-nl', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    //TODO Move to general extensions or something
     toLocaleJSON(x) {
         var d = new Date(x);
         var date = d.toISOString().slice(0, 10);
@@ -156,7 +152,7 @@ class AvailabilityWidget extends Component {
         return (
             <div key={this.props.rehearsal.id}>
                 <h3>{start.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
-                <h4>{this.printTime(start)}-{this.printTime(end)} @ {this.props.rehearsal.location} {this.synced ? <Glyphicon className="text-success" glyph="ok" /> : ''}</h4>
+                <h4>{printTime(start)}-{printTime(end)} @ {this.props.rehearsal.location} {this.synced ? <Glyphicon className="text-success" glyph="ok" /> : ''}</h4>
                 {this.availabilities.length === 0 ? this.createReasonInput() : this.availabilities.map(a => this.createInput(a))}
                 <ButtonGroup>
                     <Button onClick={() => this.addSlider()}>Voeg slider toe</Button>

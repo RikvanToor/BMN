@@ -30,7 +30,7 @@ class ApiService {
 
   constructor() {
     // Save the JWT token here when acquired
-    this.jwtToken = window.sessionStorage.jwtToken;
+    this.jwtToken = window.sessionStorage.getItem('jwtToken');
 
     // API basepath, will be processed by webpack accordingly
     if (process.env.NODE_ENV === 'production') {
@@ -77,7 +77,7 @@ class ApiService {
       .then((data) => {
         try {
           this.jwtToken = data.token;
-          window.sessionStorage.jwtToken = data.token;
+          window.sessionStorage.setItem('jwtToken', data.token);
         } catch (e) {
           return Promise.reject(new ApiError('Could not decode JSON response for authentication', -1));
         }
