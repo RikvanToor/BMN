@@ -8,7 +8,8 @@ export const UserActions = {
   LOAD_USERS: 'LOAD_USERS',
   UPDATE_KNOWN_USERS: 'UPDATE_KNOWN_USERS',
   UPDATE_PASSWORD: 'UPDATE_PASSWORD',
-  CREATE_USER: 'CREATE_USER'
+  CREATE_USER: 'CREATE_USER',
+  USER_CREATE_FAILED: 'USER_CREATE_FAILED'
 };
 
 //API endpoints
@@ -39,6 +40,6 @@ export function logInFailAction(reason) {
 }
 export function createUser(userObject){
   return createAuth(
-          {action:UserActions.CREATE_USER, ...userObject}
+          {action:UserActions.CREATE_USER, errAction:UserActions.USER_CREATE_FAILED, ...userObject}
           , Endpoints.createUser );
 }

@@ -4,11 +4,12 @@ import {toPhpString} from '@Utils/DateTimeUtils.js';
  * @type type
  */
 class JSONRequestError {
-  constructor(message, httpCode) {
+  constructor(message, httpCode, data={}) {
     // Error message
     this.message = message;
     // Possible HTTP request status code, or -1 if not relevant
     this.httpCode = httpCode;
+    this.data = data;
   }
 }
 
@@ -111,7 +112,15 @@ class JSONRequest {
       } else {
         // Otherwise reject with the status text
         // which will hopefully be a meaningful error
-        this.reject(new JSONRequestError(req.statusText, req.status));
+        let data ={};
+        try {
+          // Parse JSON automatically.
+          data = JSON.parse(req.response);
+        }
+        catch(e){
+          
+        }
+        this.reject({statusText: req.statusText,statusCode: req.status, data: data});
       }
     };
 
@@ -131,11 +140,16 @@ class JSONRequest {
     return new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
-      if (Object.keys(this.params).length > 0) {
-        const data = JSONRequest.getUrlParameters(this.params);
-        request.send(data);
-      } else {
-        request.send();
+      try{
+        if (Object.keys(this.params).length > 0) {
+          const data = JSONRequest.getUrlParameters(this.params);
+          request.send(data);
+        } else {
+          request.send();
+        }
+      }
+      catch(e){
+        this.reject(e);
       }
     });
   }

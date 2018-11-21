@@ -11,25 +11,9 @@ import PropTypes from 'prop-types';
 import {isEmptyString} from '@Utils/TypeChecks.js';
 import {createUser} from '@Actions/UserActions.js';
 
-class UserDataRecord extends Record({name:'',userName:'',password:'',passwordConfirm:'',email:''}){
-  toCreatableUser(){
-    return {
-          username : this.userName,
-          name: this.name,
-          password : this.password,
-          email: this.email,
-          'is_active': true
-        };
-  }
-  arePasswordsConsistent(){
-    return this.password === this.passwordConfirm;
-  }
-};
+import UserDataRecord from '@Models/UserDataRecord.js';
 
-/**
- * The rehearsals page. Since no state is needed, this is a Pure component that is rerendered
- * only when new properties are provided.
-  */
+
 class UsersPage extends Component {
     constructor(props) {
         super(props);
@@ -44,8 +28,7 @@ class UsersPage extends Component {
       let Tag = controlTag;
       
       let errMsg = this.state.errs.get(stateId);
-      console.log(errMsg);
-      
+
       const hasError= errMsg.length > 0;
       let valState= hasError ? { validationState:'error'} : {};
       let props = {onChange: this.handleNewUserField, ...controlProps};
@@ -72,7 +55,7 @@ class UsersPage extends Component {
     }
     
     validateNewUser(){
-      const fields = ['name','userName','email','password','passwordConfirm'];
+      const fields = ['name','username','email','password','passwordConfirm'];
       let errObj = {};
       let hasErr = false;
       
@@ -88,9 +71,7 @@ class UsersPage extends Component {
         errObj['passwordConfirm'] = 'Dit wachtwoord komt niet overeen met de vorige.';
         hasErr = true;
       }
-      if(hasErr){
-        console.log(errObj);
-      }
+
       this.setState({errs:new UserDataRecord(errObj)});
       return hasErr;
     }
@@ -106,9 +87,18 @@ class UsersPage extends Component {
     }
     //Dirty hack, find something nice for this
     static getDerivedStateFromProps(props,state){
+      let newState = {};
+      let modified =false;
       if('savedUser' in props && props.savedUser){
-        return {errs: new UserDataRecord(), user: new UserDataRecord()};
+        modified = true;
+        newState.errs = new UserDataRecord();
+        newState.user = new UserDataRecord();
       }
+      if('userCreateErrors' in props){
+        newState.errs = new UserDataRecord(props.userCreateErrors);
+        modified = true;
+      }
+      if(modified) return newState;
       return null;
     }
     
@@ -121,7 +111,7 @@ class UsersPage extends Component {
           <Panel.Body>
             <Form horizontal onSubmit={this.handleNewUser}>
             {this.renderFormEntry('Naam', 'name', FormControl, {type:'text', value: this.state.user.name})}
-            {this.renderFormEntry('Gebruikersnaam', 'userName', FormControl, {type:'text', value: this.state.user.userName})}
+            {this.renderFormEntry('Gebruikersnaam', 'username', FormControl, {type:'text', value: this.state.user.username})}
             {this.renderFormEntry('Email', 'email', FormControl, {type:'text', value: this.state.user.email})}
             {this.renderFormEntry('Wachtwoord', 'password', FormControl, {type:'password', value: this.state.user.password})}
             {this.renderFormEntry('Wachtwoord nog een keer', 'passwordConfirm', FormControl, {type:'password', value: this.state.user.passwordConfirm})}
@@ -140,12 +130,12 @@ class UsersPage extends Component {
 }
 //Wrap the page in a Flux container that relays data from stores
 export default Container.createFunctional(
-    (state)=>(<UsersPage savedUser={state.savedUser}/>), //View function
+    (state)=>(<UsersPage savedUser={state.savedUser} userCreateErrors={state.userCreateErrors}/>), //View function
     
     ()=>[UsersStore], //Required stores
     
     (prevState)=>{ //Determine the state needed
         
-        return {savedUser: UsersStore.lastCreatedUser};
+        return {savedUser: UsersStore.lastCreatedUser, userCreateErrors: UsersStore.userCreateErrors};
     }
 );
