@@ -102,9 +102,12 @@ class RehearsalsController extends Controller {
     }
     
     public function showFutureRehearsalsWithAvailabilities(Request $request){
-        $rehearsals = Rehearsal::select('id')->inFuture(); //Use scope
-        $result = $rehearsals->with(['availabilities']);
-        return response()->json($result->get(), 200);
+        $rehearsals = Rehearsal::inFuture(); //Use scope
+        $rehearsals = $rehearsals->with(['availabilities'])->get(array('*'));
+        $result = $rehearsals->map(function ($x){
+            return $x->schedule();
+        });
+        return response()->json($result, 200);
     }
 
     public function saveAvailabilities($id, Request $request) {
@@ -141,6 +144,27 @@ class RehearsalsController extends Controller {
     public function showRehearsalWithSchedule($id) {
         $rehearsal = Rehearsal::findOrFail($id);
         return response()->json($rehearsal->schedule(), 200);
+    }
+    
+    public function setSongs($id, Request $request){
+        $rehearsal = Rehearsal::findOrFail($id);
+        $validatedData = $this->validate($request, [
+            'songs.*.id' => 'required',
+            'songs.*.start' => 'required|date|after_or_equal' . $rehearsal->start,
+            'songs.*.end' => 'required|date|before_or_equal:' . $rehearsal->end,
+        ]);
+        //Create all rehearsals
+        $rehearsals = [];
+        foreach($validatedData['songs'] as $elem){
+            //Make sure the song exists
+            $song = Song::findOrFail($elem["id"]);
+            $rehearsal->songs()->attach($elem['id'], [
+               'start'=>$elem['start'],
+               'end'=>$elem['end']
+            ]);
+        }
+        //Send created rehearsals
+        return response()->json($rehearsals, 201);
     }
 
     public function addSong($id, Request $request) {

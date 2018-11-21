@@ -1,19 +1,22 @@
 import React, { Component, PureComponent } from "react";
+
+//UI components
 import DatePicker from '@Components/DatePicker.jsx';
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
-import PropTypes from 'prop-types';
-import {Record, Map, fromJS} from 'immutable';
-import {FormGroup,ControlLabel, Label, Panel, FormControl, Row, Col, Button,Glyphicon, ButtonGroup} from 'react-bootstrap';
+import {FormGroup,ControlLabel, Label, Panel, OverlayTrigger, Tooltip, FormControl, Row, Col, Button,Glyphicon, ButtonGroup} from 'react-bootstrap';
 import GlyphButton from '@Components/GlyphButton.jsx';
-
 import InputRange from 'react-input-range';
-
 import 'react-input-range/lib/css/index.css';
-
-import {pullBottomStyle} from '@Components/UiHelpers.js';
-
 import {Typeahead} from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import {pullBottomStyle} from '@Components/UiHelpers.js';
+import * as typeChecks from '@Utils/TypeChecks.js';
+
+//Property checking
+import PropTypes from 'prop-types';
+
+//Data imports
+import {Record, Map, fromJS} from 'immutable';
 import {intRange} from '@Utils/Ranges.js';
 
 function toHourMinute(int){
@@ -61,7 +64,13 @@ class ColorRanges extends PureComponent{
             let styling = { left: left+'%', width:width+'%', ...defaultStyle};
             if('color' in range) styling.backgroundColor = range.color;
             const clsName = 'cls' in range ? range.cls : '';
-            return(<span key={range.start} className={clsName} style={styling}/>);
+            const el = (<span key={range.start} className={clsName} style={styling}/>);
+            if('toolTip' in range){
+              return(<OverlayTrigger key={range.start} placement="bottom" overlay={<Tooltip id={range.start}>{range.toolTip}</Tooltip>}>{el}</OverlayTrigger>);
+            }
+            else{
+              return el;
+            }
           })
         }
       </div>
@@ -107,7 +116,7 @@ class SongSlider extends PureComponent{
                 <InputRange 
                   minValue={0} maxValue={range} onChange={this.onChange}
                   value={valObj} formatLabel={this.labelFunc}/>
-                <ColorRanges start={0} end={1} ranges={[{start:0.3,end:0.5, color:'red'},{start:0.6,end:0.8,color:'green'}]}/>
+                <ColorRanges start={0} end={1} ranges={[{start:0.3,end:0.5, color:'red', toolTip:'Afwezig: User1'},{start:0.6,end:0.8,color:'green'}]}/>
           </Col>
           </Row>
       );
@@ -119,7 +128,7 @@ SongSlider.propTypes = {
   onChange : PropTypes.func.isRequired,
   startTime: PropTypes.number.isRequired,
   endTime: PropTypes.number.isRequired
-}
+};
 
 export default class RehearsalSongsForm extends Component{
     constructor(props){
@@ -127,7 +136,7 @@ export default class RehearsalSongsForm extends Component{
       
       this.state = {
         selectedSong: [],
-        songs: new Map(),
+        songs: !typeChecks.isUndefined(this.props.songsAvailabilities) ? fromJS(this.props.songs) : new Map(),
         songsLeft : new Set(props.songs)
       };
       
@@ -136,20 +145,29 @@ export default class RehearsalSongsForm extends Component{
       this.addRehearsalSong = this.addRehearsalSong.bind(this);
       this.updateSongRange = this.updateSongRange.bind(this);
     }
+    /**
+     * Updates the song time range value.
+     */
     updateSongRange(value, props){
-      console.log("SONG: " + props.songid);
-      console.log([parseInt(props.songid),'range']);
       let song = this.state.songs.get(props.songid);
       song.range = value;
+      song.isDirty = true;
       this.setState({
         songs: this.state.songs.set(props.songid,song)
       });
     }
+    /**
+     * Sets the currently selected song
+     * @param {array} value The selected song (as first element of an array).
+     */
     updateSelectedSong(value){
       this.setState({
         selectedSong: [value[0]]
       });
     }
+    /**
+     * Adds a new form for the currently selected song
+     */
     addRehearsalSong(){
       if(this.state.selectedSong.length === 0) return;
       
@@ -159,6 +177,7 @@ export default class RehearsalSongsForm extends Component{
       //Prepare song to be used with slider.
       let songObj = this.state.selectedSong[0];
       songObj.range = {min: this.props.startTime, max:this.props.endTime};
+      songObj.isDirty = true;
       
       let newState = {
         selectedSong: [],
@@ -167,6 +186,10 @@ export default class RehearsalSongsForm extends Component{
       };
       this.setState(newState);
     }
+    /**
+     * Renders the form for a song
+     * @param {object} song The song to render.
+     */
     renderSongForm(song){
       return (
           <SongSlider key={song.title} songTitle={song.title} startTime={this.props.startTime} endTime={this.props.endTime}
@@ -190,15 +213,15 @@ export default class RehearsalSongsForm extends Component{
           </Col>
           </Row>
           <ConditionalComponent condition={this.state.songs.size > 0}>
-          <Panel style={{marginTop:'10px',padding:'5px'}}>
-          {this.state.songs.valueSeq().map((song)=>this.renderSongForm(song))}
-          <Row>
-          <Col xs={5} md={5}>
-            <Button bsStyle='success'>Opslaan</Button>
-            <Button bsStyle='danger'>Annuleren</Button>
-          </Col>
-          </Row>
-          </Panel>
+            <Panel style={{marginTop:'10px',padding:'5px'}}>
+            {this.state.songs.valueSeq().map((song)=>this.renderSongForm(song))}
+              <Row>
+                <Col xs={5} md={5}>
+                  <Button bsStyle='success'>Opslaan</Button>
+                  <Button bsStyle='danger'>Annuleren</Button>
+                </Col>
+              </Row>
+            </Panel>
           </ConditionalComponent>
         </React.Fragment>
       );
@@ -207,5 +230,6 @@ export default class RehearsalSongsForm extends Component{
 RehearsalSongsForm.propTypes = {
   songs : PropTypes.array.isRequired,
   startTime: PropTypes.number.isRequired,
-  endTime: PropTypes.number.isRequired
+  endTime: PropTypes.number.isRequired,
+  availabilities: PropTypes.object
 };

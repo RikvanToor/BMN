@@ -1,3 +1,5 @@
+import {createAuth} from '@Actions/ApiActions.js';
+
 export const UserActions = {
   LOG_IN: 'LOG_IN',
   LOGGED_IN: 'LOGGED_IN',
@@ -6,6 +8,12 @@ export const UserActions = {
   LOAD_USERS: 'LOAD_USERS',
   UPDATE_KNOWN_USERS: 'UPDATE_KNOWN_USERS',
   UPDATE_PASSWORD: 'UPDATE_PASSWORD',
+  CREATE_USER: 'CREATE_USER'
+};
+
+//API endpoints
+const Endpoints = {
+  createUser : 'users/create'
 };
 
 
@@ -28,4 +36,9 @@ export function updateKnownUsersAction(usersList) {
 }
 export function logInFailAction(reason) {
   return { action: UserActions.LOG_IN_FAIL, msg: reason };
+}
+export function createUser(userObject){
+  return createAuth(
+          {action:UserActions.CREATE_USER, ...userObject}
+          , Endpoints.createUser );
 }

@@ -18,6 +18,8 @@ class UsersStore extends Store {
 
     // Possible error during authentication process
     this.error = '';
+    
+    this.lastCreatedUser = '';
   }
 
   /**
@@ -27,6 +29,12 @@ class UsersStore extends Store {
      */
   __onDispatch(payload) {
     switch (payload.action) {
+      case UserActions.CREATE_USER:
+        console.log('Handling CREATE_USER');
+        console.log(payload);
+        this.lastCreatedUser = payload.name;
+        this.__emitChange();
+        break;
       // Handle the users request action
       case UserActions.LOAD_USERS:
 

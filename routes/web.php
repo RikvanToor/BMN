@@ -40,6 +40,9 @@ $router->get('/rooster', function () use ($router) {
 $router->get('/aanwezigheid', function () use ($router) {
     return view('index');
 });
+$router->get('/gebruikersbeheer', function () use ($router) {
+    return view('index');
+});
 
 /**
  * API routing

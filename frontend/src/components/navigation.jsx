@@ -15,7 +15,8 @@ const committeeLinks = {
   'Stageplan' : 'stageplan',
   'Roosters' :'roosterAanpassen',
   'Tickets' : 'tickets',
-  'Setlist' : 'setlist'
+  'Setlist' : 'setlist',
+  'Gebuikersbeheer' : 'gebruikersbeheer'
 };
 
 /**

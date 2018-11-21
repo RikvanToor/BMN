@@ -8,6 +8,9 @@ export function isString(data){
 export function isNumber(data){
     return typeof data === 'number';
 }
+export function isEmptyString(data){
+  return data.length === 0;
+}
 export function isBoolean(data){
     return typeof data === 'boolean';
 }

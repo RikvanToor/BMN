@@ -17,30 +17,51 @@ class RehearsalManipulationStore extends Store{
         this.rehearsalSongs = new Map();
         this.availabilities = new Map();
     }
+    parseAvailabilityData(data){
+      //Update availabilities of users per rehearsal
+      this.availabilities = new Map().withMutations(map=>{
+        Object.keys(data).forEach((key)=>{
+          const rehearsalData = data[key];
+          let availabilities = rehearsalData.availabilities.reduce((accum,value)=>{
+            const uid = value.id;
+            const valObj = {user: value.name, start:toHoursMinutesInt(value.pivot.start), end:toHoursMinutesInt(value.pivot.end)};
+            if(uid in accum){
+              accum[uid].push(valObj);
+            }
+            else{
+              accum[uid] = [valObj];
+            }
+            return accum;
+          },{});
+          map.set(key, availabilities);
+        });
+      });
+      //Update songs per rehearsal already specified.
+      this.rehearsalSongs = new Map().withMutations(map=>{
+        Object.keys(data).forEach((key)=>{
+         const rehearsalData = data[key];
+         let songs = rehearsalData.songs.map((value)=>{
+            const uid = value.id;
+            let valObj = {id: value.id, title:value.title, 
+              start:toHoursMinutesInt(value.pivot.start), 
+              end:toHoursMinutesInt(value.pivot.end)};
+            valObj.players = value.players.map((player)=>{return{name:player.name, id:player.id}});
+            return valObj;
+          },);
+          map.set(key, songs);
+        });
+      });
+    }
     //Required override
     __onDispatch(payload){
         switch(payload.action){
             //Handle the load
             case RehearsalActions.GET_ALL_AVAILABILITIES:
+              console.log(payload.responseData);
               //Get the availabilities per rehearsal day, per user ID.
-              this.availabilities = new Map().withMutations(map=>{
-                Object.keys(payload.responseData).forEach((key)=>{
-                  const data = payload.responseData[key];
-                  let availabilities = data.availabilities.reduce((accum,value)=>{
-                    const uid = value.id;
-                    const valObj = {user: value.name, start:toHoursMinutesInt(value.pivot.start), end:toHoursMinutesInt(value.pivot.end)};
-                    if(uid in accum){
-                      accum[uid].push(valObj);
-                    }
-                    else{
-                      accum[uid] = [valObj];
-                    }
-                    return accum;
-                  },{});
-                  map.set(key, availabilities);
-                });
-              });
+              this.parseAvailabilityData(payload.responseData);
               console.log(this.availabilities);
+              console.log(this.rehearsalSongs);
               this.__emitChange();
             break;
             case 'ERROR_MSG':
