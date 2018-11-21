@@ -68,7 +68,7 @@ class UsersStore extends Store {
         break;
       // Handle the users request action
       case UserActions.LOAD_USERS:
-
+        console.log('Loading users');
         // Apply the auth request promise and react to it by dispatching new actions
         AppDispatcher.dispatchPromisedFn(
           ApiService.readAuthenticatedData('users'), // Promise to perform
@@ -83,9 +83,11 @@ class UsersStore extends Store {
         // Create the immutable list.
         this.users = new List(payload.users.map(
           el => new User({
-            id: el.id, name: el.name, userName: el.username, isCommittee: el.is_admin > 0,
+            id: el.id, name: el.name, userName: el.username, email:el.email, isCommittee: el.is_admin > 0,
           }),
         ));
+        
+        //Determine date of last user create. May be used to query for new users.
         this.latestUserDate = payload.users.reduce((accum,user)=>{
           return accum < user.created_at ? user.created_at : accum;
         },payload.users[0].created_at);

@@ -1,18 +1,19 @@
-import React, { Component, PureComponent } from "react";
-
+//Data imports
 import {Container} from 'flux/utils';
 import UsersStore from '@Stores/UsersStore.js';
-
+import UserStore from '@Stores/UserStore.js';
 import {Record} from 'immutable';
+import UserDataRecord from '@Models/UserDataRecord.js';
 
+//Interaction
 import { deferredDispatch } from '@Services/AppDispatcher.js';
+import {createUser, loadUsersAction} from '@Actions/UserActions.js';
+
+//UI imports
+import React, { Component, PureComponent } from "react";
 import { Alert, Table, Form, FormGroup, Col, FormControl, HelpBlock, ControlLabel, Panel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {isEmptyString} from '@Utils/TypeChecks.js';
-import {createUser} from '@Actions/UserActions.js';
-
-import UserDataRecord from '@Models/UserDataRecord.js';
-
 
 class UsersPage extends Component {
     constructor(props) {
@@ -23,6 +24,12 @@ class UsersPage extends Component {
         };
         this.handleNewUser = this.handleNewUser.bind(this);
         this.handleNewUserField = this.handleNewUserField.bind(this);
+    }
+    componentDidMount() {
+        if (this.props.isAdmin) {
+            //This needs to be deferred since the loading of this component happens during a dispatch.
+            deferredDispatch(loadUsersAction());
+        }
     }
     renderFormEntry(label, stateId, controlTag, controlProps){
       let Tag = controlTag;
@@ -124,18 +131,43 @@ class UsersPage extends Component {
             {'savedUser' in this.props && this.props.savedUser ? (<Alert bsStyle="success">Gebruiker '{this.props.savedUser}' aangemaakt</Alert>) : null} 
           </Panel.Body>
           </Panel>
+          <h4>Bekende gebruikers</h4>
+           <Table striped bordered condensed hover responsive>
+              <thead>
+                  <tr>
+                      <th>Gebruikersnaam</th>
+                      <th>Naam</th>
+                      <th>E-mail</th>
+                      <th>Commissie?</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {this.props.users.map((user)=>{
+                  return (<tr key={user.id}>
+                  <td>{user.userName}</td>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.isCommittee ? 'Ja' : 'Nee'}</td>
+                  </tr>);
+                })}
+              </tbody>
+          </Table>
         </div>
       );
     }
 }
 //Wrap the page in a Flux container that relays data from stores
 export default Container.createFunctional(
-    (state)=>(<UsersPage savedUser={state.savedUser} userCreateErrors={state.userCreateErrors}/>), //View function
+    (state)=>(<UsersPage savedUser={state.savedUser} users={state.users} isAdmin={state.isAdmin} userCreateErrors={state.userCreateErrors}/>), //View function
     
-    ()=>[UsersStore], //Required stores
+    ()=>[UsersStore, UserStore], //Required stores
     
     (prevState)=>{ //Determine the state needed
-        
-        return {savedUser: UsersStore.lastCreatedUser, userCreateErrors: UsersStore.userCreateErrors};
+      return {
+        savedUser: UsersStore.lastCreatedUser, 
+        userCreateErrors: UsersStore.userCreateErrors, 
+        isAdmin: UserStore.user.isCommittee,
+        users: UsersStore.users
+      };
     }
 );
