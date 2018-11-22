@@ -15,7 +15,7 @@ class Song extends Model {
      */
     protected $fillable = [
         'title', 'artist', 'spotify_link', 'comment',
-        'genre', 'vocals', 'backing', 'duet',
+        'genre', 'vocals', 'backing', 'duet', 'is_setlist', 'setlist_order'
     ];
 
     /**
