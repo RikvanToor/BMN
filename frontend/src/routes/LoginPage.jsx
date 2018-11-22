@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from "react";
-import Carousel from "../components/carousel.jsx";
+import Carousel from "@Components/carousel.jsx";
 import { dispatch } from '@Services/AppDispatcher.js';
 import { logInAction } from '@Actions/UserActions.js'
 import { Redirect } from 'react-router';

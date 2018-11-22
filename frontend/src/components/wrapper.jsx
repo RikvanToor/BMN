@@ -6,7 +6,7 @@ import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Redirect } from "react-router-dom";
 import { Grid, Row } from 'react-bootstrap';
 
 /**
@@ -23,7 +23,7 @@ class Wrapper extends Component {
                     <NavigationContainer />
                     <Grid>
                         <Row>
-                            <Route exact path="/home" component={Home} />
+                            <Route exact path="/" component={NewsContainer} />
                             <Route exact path="/nieuws" component={NewsContainer} />
                             <Route exact path="/rooster" component={RehearsalContainer} />
                             <Route exact path="/suggesties" component={SuggestionList} />

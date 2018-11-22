@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { draftToMarkdown } from 'markdown-draft-js';
-import RichEditor from '../components/RichEditor.jsx';
+import RichEditor from '@Components/RichEditor.jsx';
 
 const styles = {
   editor: {

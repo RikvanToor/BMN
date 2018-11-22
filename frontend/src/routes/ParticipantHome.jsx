@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
 //UI imports
-import Carousel from "../components/carousel.jsx";
+import Carousel from "@Components/carousel.jsx";
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 
 //Data imports

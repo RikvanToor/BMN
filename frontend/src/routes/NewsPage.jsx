@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getNewsAction } from '@Actions/NewsActions.js';
-import NewsArticle from '../components/NewsArticle.jsx';
+import NewsArticle from '@Components/NewsArticle.jsx';
 
 /**
  * The news page. Since no state is needed, this is a Pure component that is rerendered
@@ -13,7 +13,6 @@ class NewsPage extends Component {
     }
 
     componentDidMount() {
-      console.log(this.props);
         if (this.props.isLoggedIn)
             this.getNews();
     }
@@ -25,7 +24,7 @@ class NewsPage extends Component {
     render() {
         return (
             <div>
-                {this.props.news.map(x => <NewsArticle key={x.id} article={x} />)}
+                {this.props.news.map(x => <NewsArticle key={x.id} article={x} isCommittee={this.props.isCommittee} />)}
             </div>
         )
     }

@@ -24,7 +24,6 @@ class Navigation extends PureComponent {
     render() {
         var navs = [];
         var usersOnly = [
-            this.createLink('home', 'Home'),
             this.createLink('nieuws', 'Nieuws'),
             this.createLink('rooster', 'Rooster'),
             this.createLink('nummers', 'Nummers'),
@@ -57,7 +56,7 @@ class Navigation extends PureComponent {
             <Navbar inverse collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <LinkContainer to='/home'>
+                        <LinkContainer to='/nieuws'>
                             <NavItem href="#">
                                 <img className="logo" src={Logo} />
                             </NavItem>

@@ -3,7 +3,7 @@ import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
 import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
 import { getAvailabilitiesAction } from '@Actions/RehearsalActions.js';
-import AvailabilityWidget from '../components/AvailabilityWidget.jsx';
+import AvailabilityWidget from '@Components/AvailabilityWidget.jsx';
 
 /**
  * The availabilities page. Since no state is needed, this is a Pure component that is rerendered
