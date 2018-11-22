@@ -18,7 +18,9 @@ class RehearsalStore extends Store {
   constructor(dispatcher) {
     super(dispatcher);
 
+    //All rehearsals
     this.rehearsals = new List();
+    //Personal availabilities of current user
     this.myAvailabilities = new List();
 
     // Possible errors
@@ -50,7 +52,6 @@ class RehearsalStore extends Store {
           },
         );
         break;
-        
       //Set all rehearsals to the given rehearsals
       case RehearsalActions.UPDATE_REHEARSALS:
         this.rehearsals = new List(payload.rehearsals);
@@ -68,7 +69,7 @@ class RehearsalStore extends Store {
         );
         break;
         
-      //Add newly created rehearsals
+      //Add newly created rehearsals after being added on the server
       case RehearsalActions.CREATE_REHEARSALS:
         //Create list for new rehearsals
         let newRehearsals = new List(payload.responseData);

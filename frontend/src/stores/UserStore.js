@@ -30,6 +30,10 @@ class UserStore extends Store {
      */
   __onDispatch(payload) {
     switch (payload.action) {
+      case UserActions.LOG_OUT:
+        this.user = new User();
+        this.__emitChange();
+        break;
       // Handle the login action
       case UserActions.LOG_IN:
         AppDispatcher.dispatchPromisedFn(

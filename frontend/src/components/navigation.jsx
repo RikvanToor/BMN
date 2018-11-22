@@ -3,6 +3,8 @@ import Logo from '../images/bmnlogo.png';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap/lib';
 import { Redirect } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
+import { dispatch} from '@Services/AppDispatcher.js';
+import {logOut} from '@Actions/UserActions.js';
 
 const userLinks = {
   'Home' : 'home',
@@ -26,6 +28,7 @@ class Navigation extends PureComponent {
     constructor(props) {
         super(props);
         this.state = { active: this.props.active };
+        this.logOutUser = this.logOutUser.bind(this);
     }
 
     createLink(address, text) {
@@ -41,6 +44,9 @@ class Navigation extends PureComponent {
           <MenuItem >{text}</MenuItem>
         </LinkContainer>
       );
+    }
+    logOutUser(){
+      dispatch(logOut());
     }
 
     render() {
@@ -60,6 +66,7 @@ class Navigation extends PureComponent {
             if (this.props.isCommittee) {
                 navs.push(committeeOnly);
             }
+            navs = navs.concat(<NavItem key="logOut" onClick={this.logOutUser}>Log uit</NavItem>);
         }
         else {
             navs.push(this.createLink('login', 'Log In'));

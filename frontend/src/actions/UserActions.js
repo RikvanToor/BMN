@@ -9,7 +9,8 @@ export const UserActions = {
   UPDATE_KNOWN_USERS: 'UPDATE_KNOWN_USERS',
   UPDATE_PASSWORD: 'UPDATE_PASSWORD',
   CREATE_USER: 'CREATE_USER',
-  USER_CREATE_FAILED: 'USER_CREATE_FAILED'
+  USER_CREATE_FAILED: 'USER_CREATE_FAILED',
+  LOG_OUT:'LOG_OUT'
 };
 
 //API endpoints
@@ -17,6 +18,9 @@ const Endpoints = {
   createUser : 'users/create'
 };
 
+export function logOut(){
+  return {action : UserActions.LOG_OUT};
+}
 
 export function logInAction(userName, password) {
   return { action: UserActions.LOG_IN, username: userName, password };

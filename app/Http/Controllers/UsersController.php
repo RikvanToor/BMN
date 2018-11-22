@@ -19,6 +19,8 @@ class UsersController extends Controller {
 
         $properties = $request->all();
         $properties['password'] = app('hash')->make($request->get('password'));
+        //Hack for now. 
+        $properties['is_active'] = true;
 
         $user = User::create($properties);
         return response()->json($user, 201);

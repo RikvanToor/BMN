@@ -116,17 +116,23 @@ class RehearsalsController extends Controller {
         $availabilities = $rehearsal->availabilities();
         // Delete old availabilities
         $availabilities->wherePivot('user_id', $userid)->detach();
+        
+        $validatedData = $this->validate($request,[
+            'reason' => 'string',
+            'starts'    => 'array',
+            'ends'      => 'array',
+        ]);
 
-        if($request->starts == '') {
+        if(count($validatedData['starts']) == 0) {
             $availabilities->attach($userid, [
-                'reason' => $request->reason,
+                'reason' => $validatedData['reason'],
                 'start' => NULL,
                 'end' => NULL
             ]);
         }
         else {
-            $starts = explode(',', $request->starts);
-            $ends = explode(',', $request->ends);
+            $starts = $validatedData['starts'];
+            $ends = $validatedData['ends'];
             for($i = 0; $i < count($starts); $i++) {
                 $availabilities->attach($userid, [
                     'reason' => NULL,
