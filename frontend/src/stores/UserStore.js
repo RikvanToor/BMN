@@ -33,6 +33,7 @@ class UserStore extends Store {
       case UserActions.LOG_OUT:
         this.user = new User();
         window.sessionStorage.removeItem('jwtToken');
+        ApiService.reset();
         this.__emitChange();
         break;
       // Handle the login action

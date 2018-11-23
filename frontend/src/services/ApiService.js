@@ -21,6 +21,8 @@ class ApiError {
   }
 }
 
+const JWT_TOKEN = 'jwtToken';
+
 /**
  * Api service class for interacting with the BMN Api on the server.
  */
@@ -31,7 +33,7 @@ class ApiService {
 
   constructor() {
     // Save the JWT token here when acquired
-    this.jwtToken = window.sessionStorage.getItem('jwtToken');
+    this.jwtToken = window.sessionStorage.getItem(JWT_TOKEN);
 
     // API basepath, will be processed by webpack accordingly
     if (process.env.NODE_ENV === 'production') {
@@ -40,6 +42,11 @@ class ApiService {
     } else {
       this.basePath = 'http://localhost:9000/api/';
     }
+  }
+
+  reset(){
+    window.sessionStorage.removeItem(JWT_TOKEN);
+    this.jwtToken = '';
   }
 
   /**
@@ -79,7 +86,7 @@ class ApiService {
       .then((data) => {
         try {
           this.jwtToken = data.token;
-          window.sessionStorage.setItem('jwtToken', data.token);
+          window.sessionStorage.setItem(JWT_TOKEN, data.token);
         } catch (e) {
           return Promise.reject(new ApiError('Could not decode JSON response for authentication', -1));
         }
