@@ -32,6 +32,7 @@ class UserStore extends Store {
     switch (payload.action) {
       case UserActions.LOG_OUT:
         this.user = new User();
+        window.sessionStorage.removeItem('jwtToken');
         this.__emitChange();
         break;
       // Handle the login action
