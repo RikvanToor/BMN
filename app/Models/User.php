@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordsContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Model implements JWTSubject, AuthenticatableContract, AuthorizableContract {
-    use Authenticatable, Authorizable;
+
+class User extends Model implements JWTSubject, AuthenticatableContract, AuthorizableContract, CanResetPassword {
+    use Authenticatable, Authorizable, Notifiable;
 
     protected $table = 'users';
 
@@ -31,6 +34,13 @@ class User extends Model implements JWTSubject, AuthenticatableContract, Authori
     protected $hidden = [
         'password', 'is_active',
     ];
+
+    /**
+     * Override method of the CanResetPassword contract. Returns the email to set the reset link to.
+     */
+    public function getEmailForPasswordReset(){
+        return $this->email;
+    }
 
     /**
      * The songs that the user plays

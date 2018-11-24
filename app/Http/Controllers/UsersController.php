@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth; 
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -24,6 +24,21 @@ class UsersController extends Controller {
 
         $user = User::create($properties);
         return response()->json($user, 201);
+    }
+
+    /**
+     * Handle the unique change password hash url to allow a user to
+     * change a password once.
+     */
+    public function changePassword(Request $request){
+        $validatedData = $this->validate($request, [
+            'password' => 'required|string'
+        ]);
+        //Change the password on the authenticated user
+        $user = Auth::user();
+        $user->passord = app('hash')->make($validatedData['password']);
+        $user->save();
+        return response()->json('', 200);
     }
 
     /**
