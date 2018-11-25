@@ -2,8 +2,10 @@ import React, { Component, PureComponent } from "react";
 import Carousel from "../components/carousel.jsx";
 import { dispatch } from '@Services/AppDispatcher.js';
 import { logInAction } from '@Actions/UserActions.js'
-import { Redirect } from 'react-router';
-import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { Redirect} from 'react-router';
+import {Link} from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+import { FormGroup, FormControl, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 
 /**
  * The login page. Since no state is needed, this is a Pure component that is rerendered
@@ -32,7 +34,8 @@ class LoginPage extends PureComponent {
         }
         //Otherwise, render the login page
         return (
-            <div>
+            <Row>
+              <Col mdOffset={4} md={4}>
                 <h1>Login</h1>
                 <form onSubmit={(e) => this.logIn(e)}>
                     <FormGroup controlId="formUsername">
@@ -55,8 +58,10 @@ class LoginPage extends PureComponent {
                         <FormControl.Feedback />
                     </FormGroup>
                     <Button type="submit">Log in</Button>
+                    <div style={{marginTop:'5px'}}><Link to="/">Wachtwoord vergeten?</Link></div>
                 </form>
-            </div>
+              </Col>
+            </Row>
         );
     }
 }
