@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Carbon;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,7 +27,7 @@ class PasswordResetToken extends Model {
      * @return boolean Has the token expired
      */
     public function hasExpired(){
-        return $this->expires->lessThan(Carbon::now());
+        return (new Carbon($this->expires))->lessThan(Carbon::now());
     }
     
     /**

@@ -51,6 +51,9 @@ $router->get('/account', function () use ($router) {
 $router->get('/wachtwoordreset', function() use ($router){
     return view('index');
 });
+$router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use ($router){
+    return view('index');
+}]);
 
 /**
  * API routing
@@ -60,7 +63,8 @@ $router->group(['prefix' => '/api'], function () use ($router) {
     $router->post('auth/login', 'AuthController@login');
 
     $router->post('forgotpassword','PasswordController@requestNewPassword');
-    $router->post('setnewpassword/{token}',['as'=>'newPasswordSet', 'uses'=>'PasswordController@requestNewPassword']);
+    $router->post('setnewpassword/{token}','PasswordController@setNewPassword');
+    
     
     //Participant and committee actions
     $router->group(['middleware' => 'auth'], function () use ($router) {
