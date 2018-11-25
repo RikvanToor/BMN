@@ -1,5 +1,11 @@
 import React, { Component } from "react";
+
+//UI
 import Footer from "./footer.jsx";
+import { BrowserRouter, Route } from "react-router-dom";
+import { Grid, Row } from 'react-bootstrap';
+
+//Routes
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
@@ -7,8 +13,8 @@ import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
 import UsersPage from '@Routes/UsersPage.jsx'
-import { BrowserRouter, Route } from "react-router-dom";
-import { Grid, Row } from 'react-bootstrap';
+import AccountPage from '@Routes/AccountPage.jsx'
+
 
 /**
  * Main routes in the application
@@ -32,6 +38,7 @@ class Wrapper extends Component {
                             <Route exact path="/roosterAanpassen" component={RehearsalEditPage} />
                             <Route exact path="/aanwezigheid" component={AvailabilityContainer} />
                             <Route exact path="/gebruikersbeheer" component={UsersPage} />
+                            <Route exact path="/account" component={AccountPage} />
                         </Row>
                     </Grid>
                     <Footer />

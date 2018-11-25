@@ -27,21 +27,6 @@ class UsersController extends Controller {
     }
 
     /**
-     * Handle the unique change password hash url to allow a user to
-     * change a password once.
-     */
-    public function changePassword(Request $request){
-        $validatedData = $this->validate($request, [
-            'password' => 'required|string'
-        ]);
-        //Change the password on the authenticated user
-        $user = Auth::user();
-        $user->passord = app('hash')->make($validatedData['password']);
-        $user->save();
-        return response()->json('', 200);
-    }
-
-    /**
      * Remove entry from 'users' table
      */
     public function delete($id) {

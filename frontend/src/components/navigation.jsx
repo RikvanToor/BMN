@@ -10,7 +10,8 @@ const userLinks = {
   'Home' : 'home',
   'Rooster' : 'rooster',
   'Nummers' : 'nummers',
-  'Aanwezigheid' : 'aanwezigheid'
+  'Aanwezigheid' : 'aanwezigheid',
+  'Account' : 'account'
 };
 const committeeLinks = {
   'Suggesties' : 'suggesties',
@@ -69,6 +70,7 @@ class Navigation extends PureComponent {
             navs = navs.concat(<NavItem key="logOut" onClick={this.logOutUser}>Log uit</NavItem>);
         }
         else {
+            //TODO: Change this for public website
             navs.push(this.createLink('login', 'Log In'));
             navs.push(<Redirect key="redirect" to='/login' />);
         }
