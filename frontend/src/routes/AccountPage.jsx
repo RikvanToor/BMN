@@ -6,6 +6,7 @@ import { changePassword } from '@Actions/PasswordActions.js'
 import { Redirect } from 'react-router';
 import { FormGroup, Form,  FormControl, Alert, ControlLabel, Button, HelpBlock} from 'react-bootstrap';
 import {isEmptyString} from '@Utils/TypeChecks.js';
+import PasswordChangeComponent from '@Components/PasswordChangeComponent.jsx';
 
 //Data import
 import UserStore from '@Stores/UserStore.js';
@@ -14,49 +15,15 @@ import UserStore from '@Stores/UserStore.js';
  * The login page. Since no state is needed, this is a Pure component that is rerendered
  * only when new properties are provided.
   */
-class AccountPage extends PureComponent {
+class AccountPage extends Component {
     constructor(props) {
         super(props);
         
-        this.state = {
-          newPassword:'',
-          newPasswordConfirm:'',
-          passwordError:'',
-        };
-        this.passwordChange = this.passwordChange.bind(this);
+        this.savePassword = this.savePassword.bind(this);
     }
-    passwordChange(e){
-      let newState = {};
-      newState[e.target.id] = e.target.value;
-      this.setState(newState);
-    }
-    clearPasswordState(){
-      this.setState({
-          newPassword:'',
-          newPasswordConfirm:'',
-          passwordError:'',
-        });
-    }
-    /**
-     * Apply the login action when the form is submitted.
-     * @param {Event} e The form submit event
-     */
-    changePassword(e) {
-      e.preventDefault();
-      
-      if(isEmptyString(this.state.newPassword) || isEmptyString(this.state.newPasswordConfirm)){
-        this.setState({passwordError:'Beide wachtwoord velden moeten ingevuld zijn'});
-        return;
-      }
-      if(this.state.newPassword !== this.state.newPasswordConfirm){
-        this.setState({passwordError:'De ingevulde wachtwoorden komen niet overeen'});
-        return;
-      }
+    savePassword(id, pw){
       //Apply the user based login action
       dispatch(changePassword(this.props.user.id, this.state.newPassword));
-
-      //Clear the password state
-      this.clearPasswordState();
     }
 
     render() {
@@ -66,31 +33,7 @@ class AccountPage extends PureComponent {
                 <h3>Wijzig mijn gegevens</h3>
                 <b>TODO</b>
                 <h3>Wijzig wachtwoord</h3>
-                <Form inline onSubmit={(e) => this.changePassword(e)}>
-                    <FormGroup controlId="newPassword">
-                        <ControlLabel>Nieuw wachtwoord</ControlLabel>
-                        <FormControl
-                            type="password"
-                            value={this.state.newPassword}
-                            onChange={this.passwordChange}
-                        />
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <FormGroup
-                        controlId="newPasswordConfirm"
-                    >
-                        <ControlLabel>Herhaal wachtwoord</ControlLabel>
-                        <FormControl
-                            type="password"
-                            value={this.state.newPasswordConfirm}
-                            onChange={this.passwordChange}
-                        />
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <Button bsStyle="primary" type="submit">Opslaan</Button>
-                </Form>
-                {!isEmptyString(this.state.passwordError) ? (<p className="text-danger">{this.state.passwordError}</p>) : null}
-                {this.props.passwordSaved ? (<Alert bsStyle="success">Wachtwoord gewijzigd</Alert>) : null}
+                <PasswordChangeComponent user={this.props.user} onSave={this.savePassword} inline/>
             </div>
         );
     }
