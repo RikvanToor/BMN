@@ -2,6 +2,7 @@ import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { UserActions, loggedInAction, logInFailAction } from '@Actions/UserActions.js';
+import { PasswordActions} from '@Actions/PasswordActions.js';
 import User from '@Models/User.js';
 
 /**
@@ -18,6 +19,7 @@ class UserStore extends Store {
 
     this.user = new User();
     this.doneFetchingUser = false;
+    this.passwordSaved = false;
 
     // Possible error during authentication process
     this.error = '';
@@ -33,6 +35,11 @@ class UserStore extends Store {
       case UserActions.LOG_OUT:
         this.user = new User();
         ApiService.reset();
+        this.__emitChange();
+        break;
+      case PasswordActions.CHANGE_PASSWORD:
+        console.log("Handle change password");
+        this.passwordSaved = true;
         this.__emitChange();
         break;
       // Handle the login action
