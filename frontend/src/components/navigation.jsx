@@ -70,9 +70,7 @@ class Navigation extends PureComponent {
             navs = navs.concat(<NavItem key="logOut" onClick={this.logOutUser}>Log uit</NavItem>);
         }
         else {
-            //TODO: Change this for public website
             navs.push(this.createLink('login', 'Log In'));
-            navs.push(<Redirect key="redirect" to='/login' />);
         }
 
         return (
