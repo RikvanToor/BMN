@@ -17,6 +17,17 @@ export function isBoolean(data){
 export function isUndefined(data){
     return typeof data === 'undefined';
 }
+export function isDate(o){
+  return o instanceof Date;
+}
+/**
+ * Returns whether the given object is a plain old javascript object
+ * @param {mixed} o Element
+ * @returns {Boolean} Whether it is a POJO
+ */
+export function isPOJO(o){
+  return Object(o) === o && Object.getPrototypeOf(o) === Object.prototype;
+}
 export function isFunction(data){
     return typeof data === 'function';
 }

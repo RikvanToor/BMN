@@ -28,9 +28,9 @@ $router->get('/nummers', function () use ($router) {
 $router->get('/suggesties', function () use ($router) {
     return view('index');
 });
-$router->get('/login', function () use ($router) {
+$router->get('/login', ['as'=>'login', function () use ($router) {
     return view('index');
-});
+}]);
 $router->get('/roosterAanpassen', function () use ($router) {
     return view('index');
 });
@@ -105,6 +105,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'UsersController@create');
                 $router->delete('/{id}/delete', 'UsersController@delete');
+                $router->post('/importcsv', 'UsersController@generateUsersFromCsv');
             });
 
             $router->group(['prefix' => '/{id}'], function () use ($router) {

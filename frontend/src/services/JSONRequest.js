@@ -1,4 +1,5 @@
 import {toPhpString} from '@Utils/DateTimeUtils.js';
+import {isPOJO, isArray, isDate} from '@Utils/TypeChecks.js';
 /**
  * Class for distinguishing errors originating from the ApiService class.
  * @type type
@@ -29,17 +30,19 @@ function objectToFormData(formDataObj, obj, prefix=''){
   }
   
   Object.keys(obj).forEach((key)=>{
-    if(obj[key] instanceof Object && !(obj[key] instanceof Date)){
+    if(isPOJO(obj[key])){
       objectToFormData(formDataObj, obj[key],prefix+newKeyName(key));
     }
-    else if(Array.isArray(obj[key])){
+    else if(isArray(obj[key])){
       for(let i =0; i < obj[key].length; i++){
         objectToFormData(formDataObj, obj[key],prefix+newKeyName(key)+'['+i+']');
       }
     }
-    else if(obj[key] instanceof Date){
+    //Convert date to usable PHP string
+    else if(isDate(obj[key])){
       formDataObj.append(prefix + newKeyName(key), toPhpString(obj[key]));
     }
+    //Just set the value
     else{
       formDataObj.append(prefix + newKeyName(key), obj[key]);
     }

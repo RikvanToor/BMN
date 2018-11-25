@@ -10,12 +10,14 @@ export const UserActions = {
   UPDATE_PASSWORD: 'UPDATE_PASSWORD',
   CREATE_USER: 'CREATE_USER',
   USER_CREATE_FAILED: 'USER_CREATE_FAILED',
-  LOG_OUT:'LOG_OUT'
+  LOG_OUT:'LOG_OUT',
+  IMPORT_USERS: 'IMPORT_USERS'
 };
 
 //API endpoints
 const Endpoints = {
-  createUser : 'users/create'
+  createUser : 'users/create',
+  importUsers: 'users/importcsv'
 };
 
 export function logOut(){
@@ -30,6 +32,15 @@ export function loggedInAction(userName, name, id, isCommittee) {
     action: UserActions.LOGGED_IN, userName, name, id, isCommittee,
   };
 }
+export function importUsers(file, nameCol, emailCol){
+  return createAuth({
+    action: UserActions.IMPORT_USERS,
+    nameColumn: nameCol,
+    emailColumn: emailCol,
+    usersFile: file
+  },Endpoints.importUsers);
+}
+
 export function checkLoginAction() {
   return { action: UserActions.CHECK_LOG_IN };
 }

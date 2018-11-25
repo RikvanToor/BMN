@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use Db;
 use \DateInterval;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth; 
 use App\Http\ResponseCodes;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetMyPasswordMail;
@@ -94,11 +92,7 @@ class PasswordController extends Controller {
         }
 
         //Create a reset token
-        $tokenObj = new PasswordResetToken();
-        $tokenObj->token = str_random(self::RESET_TOKEN_LENGTH);
-        $tokenObj->expires = Carbon::now()->add(new DateInterval(self::TOKEN_EXPIRATION));
-        //Associate with user
-        $tokenObj->user()->associate($user);
+        $tokenObj = $user->createPasswordResetToken();
         $tokenObj->save();
 
         //Generate an url to the named 'newPasswordSet' route (see routes.php)
@@ -106,5 +100,7 @@ class PasswordController extends Controller {
         
         //Send the email. Takes email address from the user object
         Mail::to($user)->send(new ResetMyPasswordMail($resetUrl,$user->name));
+        
+        return response()->json(array('message'=>'De e-mail is verstuurd'), ResponseCodes::HTTP_OK);
     }
 }

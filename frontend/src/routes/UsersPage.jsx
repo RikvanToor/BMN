@@ -6,12 +6,13 @@ import {Record} from 'immutable';
 import UserDataRecord from '@Models/UserDataRecord.js';
 
 //Interaction
-import { deferredDispatch } from '@Services/AppDispatcher.js';
-import {createUser, loadUsersAction} from '@Actions/UserActions.js';
+import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
+import {createUser, loadUsersAction, importUsers} from '@Actions/UserActions.js';
 
 //UI imports
 import React, { Component, PureComponent } from "react";
-import { Alert, Table, Form, FormGroup, Col, FormControl, HelpBlock, ControlLabel, Panel, Button } from 'react-bootstrap';
+import ImportUsersComponent from '@Components/UserComponents/ImportUsersComponent.jsx';
+import { Alert, Table, Tabs, Tab, Form, FormGroup, Col, FormControl, HelpBlock, ControlLabel, Panel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {isEmptyString} from '@Utils/TypeChecks.js';
 
@@ -24,6 +25,7 @@ class UsersPage extends Component {
         };
         this.handleNewUser = this.handleNewUser.bind(this);
         this.handleNewUserField = this.handleNewUserField.bind(this);
+        this.importNewUsers = this.importNewUsers.bind(this);
     }
     componentDidMount() {
         if (this.props.isAdmin) {
@@ -61,6 +63,10 @@ class UsersPage extends Component {
       this.setState({user: this.state.user.set(id,val)});
     }
     
+    importNewUsers(file, nameCol, emailCol){
+      dispatch(importUsers(file,nameCol,emailCol));
+    }
+    
     validateNewUser(){
       const fields = ['name','username','email','password','passwordConfirm'];
       let errObj = {};
@@ -92,6 +98,7 @@ class UsersPage extends Component {
         deferredDispatch(createUser(this.state.user.toCreatableUser()));
       }
     }
+    
     //Dirty hack, find something nice for this
     static getDerivedStateFromProps(props,state){
       let newState = {};
@@ -112,46 +119,51 @@ class UsersPage extends Component {
     render(){
       return (
         <div>
-          <h3>Gebruikers</h3>
-          <Panel>
-          <Panel.Heading>Nieuwe gebruiker</Panel.Heading>
-          <Panel.Body>
-            <Form horizontal onSubmit={this.handleNewUser}>
-            {this.renderFormEntry('Naam', 'name', FormControl, {type:'text', value: this.state.user.name})}
-            {this.renderFormEntry('Gebruikersnaam', 'username', FormControl, {type:'text', value: this.state.user.username})}
-            {this.renderFormEntry('Email', 'email', FormControl, {type:'text', value: this.state.user.email})}
-            {this.renderFormEntry('Wachtwoord', 'password', FormControl, {type:'password', value: this.state.user.password})}
-            {this.renderFormEntry('Wachtwoord nog een keer', 'passwordConfirm', FormControl, {type:'password', value: this.state.user.passwordConfirm})}
-            <FormGroup>
-              <Col smOffset={3} sm={3}>
-              <Button type="submit">Opslaan</Button>
-              </Col>
-            </FormGroup>        
-            </Form>
-            {'savedUser' in this.props && this.props.savedUser ? (<Alert bsStyle="success">Gebruiker '{this.props.savedUser}' aangemaakt</Alert>) : null} 
-          </Panel.Body>
-          </Panel>
-          <h4>Bekende gebruikers</h4>
-           <Table striped bordered condensed hover responsive>
-              <thead>
-                  <tr>
-                      <th>Gebruikersnaam</th>
-                      <th>Naam</th>
-                      <th>E-mail</th>
-                      <th>Commissie?</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {this.props.users.map((user)=>{
-                  return (<tr key={user.id}>
-                  <td>{user.userName}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.isCommittee ? 'Ja' : 'Nee'}</td>
-                  </tr>);
-                })}
-              </tbody>
-          </Table>
+          <h3>Gebruikersbeheer</h3>
+          <Tabs defaultActiveKey={1} animation={false} id="userPagesTabs">
+            <Tab eventKey={1} title="Bekende gebruikers">
+              <Table striped bordered condensed hover responsive>
+                <thead>
+                    <tr>
+                        <th>Gebruikersnaam</th>
+                        <th>Naam</th>
+                        <th>E-mail</th>
+                        <th>Commissie?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {this.props.users.map((user)=>{
+                    return (<tr key={user.id}>
+                    <td>{user.userName}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.isCommittee ? 'Ja' : 'Nee'}</td>
+                    </tr>);
+                  })}
+                </tbody>
+              </Table>
+            </Tab>
+            <Tab eventKey={2} title="Nieuwe gebruiker maken">
+              <Form horizontal onSubmit={this.handleNewUser}>
+              {this.renderFormEntry('Naam', 'name', FormControl, {type:'text', value: this.state.user.name})}
+              {this.renderFormEntry('Gebruikersnaam', 'username', FormControl, {type:'text', value: this.state.user.username})}
+              {this.renderFormEntry('Email', 'email', FormControl, {type:'text', value: this.state.user.email})}
+              {this.renderFormEntry('Wachtwoord', 'password', FormControl, {type:'password', value: this.state.user.password})}
+              {this.renderFormEntry('Wachtwoord nog een keer', 'passwordConfirm', FormControl, {type:'password', value: this.state.user.passwordConfirm})}
+              <FormGroup>
+                <Col smOffset={3} sm={3}>
+                <Button type="submit">Opslaan</Button>
+                </Col>
+              </FormGroup>        
+              </Form>
+              {'savedUser' in this.props && this.props.savedUser ? (<Alert bsStyle="success">Gebruiker '{this.props.savedUser}' aangemaakt</Alert>) : null} 
+            </Tab>
+            <Tab eventKey={3} title="Gebruikers importeren">
+                <p>Importeer gebruikers via een .csv bestand met namen en emailadressen. Het systeem maakt de gebruikers en stuurt een
+                mailtje om een nieuw wachtwoord te zetten</p>
+              <ImportUsersComponent onImport={this.importNewUsers}/>
+            </Tab>
+          </Tabs>
         </div>
       );
     }

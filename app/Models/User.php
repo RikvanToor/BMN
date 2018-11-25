@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Models;
-
+use Carbon\Carbon;
+use DateInterval;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -51,6 +52,20 @@ class User extends Model implements JWTSubject, AuthenticatableContract, Authori
     public function singingSongs() {
         return $this->belongsToMany(Song::class, 'can_sing')
             ->withPivot('yes_or_maybe');
+    }
+    
+    public function createPasswordResetToken(){
+        //Grab token data from environment
+        $tokenLength = intval(env('PW_RESET_TOKEN_LENGTH'));
+        $tokenExpiration = env('PW_RESET_TOKEN_EXPIRATION');
+        
+        //Create a reset token
+        $tokenObj = new PasswordResetToken();
+        $tokenObj->token = str_random($tokenLength);
+        $tokenObj->expires = Carbon::now()->add(new DateInterval($tokenExpiration));
+        //Associate with user
+        $tokenObj->user()->associate($this);
+        return $tokenObj;
     }
 
     /**

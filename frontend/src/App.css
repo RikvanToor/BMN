@@ -66,3 +66,6 @@ footer {
 .form-inline * {
     margin-right: 10px;
 }
+.tab-content{
+    padding-top: 15px;
+}
