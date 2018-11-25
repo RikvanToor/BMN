@@ -20,6 +20,7 @@ class UserStore extends Store {
     this.user = new User();
     this.doneFetchingUser = false;
     this.passwordSaved = false;
+    this.loginFailed = false;
 
     // Possible error during authentication process
     this.error = '';
@@ -56,6 +57,7 @@ class UserStore extends Store {
         break;
       case UserActions.LOG_IN_FAIL:
         this.doneFetchingUser = true;
+        this.loginFailed = true;
         this.__emitChange();
         break;
       case UserActions.LOGGED_IN:
@@ -67,6 +69,7 @@ class UserStore extends Store {
           id: payload.id,
           name: payload.name,
         });
+        this.loginFailed = false;
         this.doneFetchingUser = true;
         // Emit the change
         this.__emitChange();

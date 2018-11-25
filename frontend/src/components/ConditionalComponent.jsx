@@ -7,13 +7,10 @@ class ConditionalComponent extends PureComponent {
     super(props);
   }
   render() {
-      console.log("Rendering conditional component");
       if(this.props.condition){
-        console.log("Rendering true condition");
           return this.props.children;
       }
       if(!isUndefined(this.props.otherwise)){
-        console.log("Doing otherwise");
         return this.props.otherwise;
       }
       return null;

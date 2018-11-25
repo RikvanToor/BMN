@@ -5,7 +5,7 @@ import { logInAction } from '@Actions/UserActions.js'
 import { Redirect} from 'react-router';
 import {Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { FormGroup, FormControl, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormControl, ControlLabel, Button, Row, Col, Alert } from 'react-bootstrap';
 
 /**
  * The login page. Since no state is needed, this is a Pure component that is rerendered
@@ -57,6 +57,7 @@ class LoginPage extends PureComponent {
                         />
                         <FormControl.Feedback />
                     </FormGroup>
+                    {this.props.loginFailed ? (<Alert bsStyle="danger">Deze combo kennen we niet. Nog een keer proberen?</Alert>) : null}
                     <Button type="submit">Log in</Button>
                     <div style={{marginTop:'5px'}}><Link to="/wachtwoordreset">Wachtwoord vergeten?</Link></div>
                 </form>

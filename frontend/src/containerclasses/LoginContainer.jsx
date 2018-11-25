@@ -9,12 +9,13 @@ class LoginContainer extends Component {
     } 
     static calculateState(prevState) { 
         return {
-            isLoggedIn: UserStore.user.isLoggedIn
+            isLoggedIn: UserStore.user.isLoggedIn,
+            loginFailed : UserStore.loginFailed
         }; 
     }
     render() {
         return (
-            <LoginPage isLoggedIn={this.state.isLoggedIn} />
+            <LoginPage isLoggedIn={this.state.isLoggedIn} loginFailed={this.state.loginFailed} />
         );
     }
 }
