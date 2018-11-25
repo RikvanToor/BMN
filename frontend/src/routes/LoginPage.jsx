@@ -58,7 +58,7 @@ class LoginPage extends PureComponent {
                         <FormControl.Feedback />
                     </FormGroup>
                     <Button type="submit">Log in</Button>
-                    <div style={{marginTop:'5px'}}><Link to="/">Wachtwoord vergeten?</Link></div>
+                    <div style={{marginTop:'5px'}}><Link to="/wachtwoordreset">Wachtwoord vergeten?</Link></div>
                 </form>
               </Col>
             </Row>

@@ -14,6 +14,7 @@ import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
 import UsersPage from '@Routes/UsersPage.jsx'
 import AccountPage from '@Routes/AccountPage.jsx'
+import PasswordResetPage from '@Routes/PasswordResetPage.jsx'
 
 
 /**
@@ -39,6 +40,7 @@ class Wrapper extends Component {
                             <Route exact path="/aanwezigheid" component={AvailabilityContainer} />
                             <Route exact path="/gebruikersbeheer" component={UsersPage} />
                             <Route exact path="/account" component={AccountPage} />
+                            <Route exact path="/wachtwoordreset" component={PasswordResetPage}/>
                         </Row>
                     </Grid>
                     <Footer />

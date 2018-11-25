@@ -15,7 +15,8 @@ export default class PasswordResetPage extends Component {
       super();
       this.send= this.send.bind(this);
     }
-    send(){
+    send(e){
+      e.preventDefault();
       dispatch(requestNewPassword(this.emailInput.value));
     }
     render(){
@@ -30,7 +31,7 @@ export default class PasswordResetPage extends Component {
           <React.Fragment>
             <p>Vul hieronder het email adres in van je account, dan krijg je een mailtje om je 
               wachtwoord te resetten.</p>
-            <form onSubmit={(e) => this.logIn(e)}>
+            <form onSubmit={(e) => this.send(e)}>
                   <FormGroup controlId="email">
                       <ControlLabel>E-mail adres</ControlLabel>
                       <FormControl
@@ -41,7 +42,6 @@ export default class PasswordResetPage extends Component {
                       <FormControl.Feedback />
                   </FormGroup>
                   <Button type="submit">Verstuur</Button>
-                  <div style={{marginTop:'5px'}}><Link to="/">Wachtwoord vergeten?</Link></div>
             </form>
           </React.Fragment>
         );
@@ -57,5 +57,5 @@ export default class PasswordResetPage extends Component {
     }
 };
 PasswordResetPage.propTypes = {
-  emailWasSent : PropTypes.boolean
+  emailWasSent : PropTypes.bool
 };
