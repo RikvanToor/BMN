@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 use Db;
-use Carbon;
+use \DateInterval;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth; 
 use App\Http\ResponseCodes;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetMyPasswordMail;
 use App\Models\User;
+use App\Models\PasswordResetToken;
 use Illuminate\Http\Request;
 
 class PasswordController extends Controller {
-    const RESET_TOKEN_LENGTH = 90;
-    const TOKEN_DB = 'password_resets';
-    const TOKEN_EXPIRATION = '3 hours';
+    const RESET_TOKEN_LENGTH = 40;
+    //Period with time element (PT), 3 hours (3H). 
+    //See: http://php.net/manual/en/dateinterval.construct.php
+    const TOKEN_EXPIRATION = 'PT3H'; 
     
     /**
      * Handle change password from authenticated user.
@@ -43,15 +46,14 @@ class PasswordController extends Controller {
      * @return Response
      */
     public function setNewPassword(Request $request, $token){
-        $tokenEntry = Db::table(TOKEN_DB)->where('token', $token)->get();
+        $tokenEntry = PasswordResetToken::where('token', $token)->first();
         if(!$tokenEntry){
             return response()->json(array('error'=>'Invalid token for password change'), ResponseCodes::HTTP_UNPROCESSABLE_ENTITY);
         }
-        //Delete the token regardless
-        Db::table(TOKEN_DB)->where('token', $token)->delete();
         
         //Fail if token expired
-        if(Carbon::now()->greaterThan($tokenEntry->expires)){
+        if($tokenEntry->hasExpired()){
+            $tokenEntry->delete();
             return response()->json(array('error'=>'Token expired'), ResponseCodes::HTTP_UNPROCESSABLE_ENTITY);
         }
         //Check request data
@@ -59,11 +61,14 @@ class PasswordController extends Controller {
             'password' => 'required|string'
         ]);
         //Get associated user
-        $user = User::where('email',$tokenEntry['email'])->get();
+        $user = $tokenEntry->user;
         
         //Change the password
         $user->password = app('hash')->make($validatedData['password']);
         $user->save();
+        
+        //Delete the token
+        $tokenEntry->delete();
         
         return response()->json(array('message'=>'Password change'), ResponseCodes::HTTP_OK);
     }
@@ -81,23 +86,23 @@ class PasswordController extends Controller {
         ]);
         
         //Find user by email
-        $user = User::where('email', $validatedData['email']);
+        $user = User::where('email', $validatedData['email'])->first();
         
         //If not found, send back that the email is not known
         if(!$user) {
             return response()-json(array('error'=>'unknown email'), 422);
         }
 
-        //Insert the token
-        $data = [ 
-        'token' => str_random(RESET_TOKEN_LENGTH),
-        'email' => $validatedData['email'],
-        'expires' => Carbon::now()->add(TOKEN_EXPIRATION)
-        ];
-        Db::table(TOKEN_DB)->insert($data);
+        //Create a reset token
+        $tokenObj = new PasswordResetToken();
+        $tokenObj->token = str_random(self::RESET_TOKEN_LENGTH);
+        $tokenObj->expires = Carbon::now()->add(new DateInterval(self::TOKEN_EXPIRATION));
+        //Associate with user
+        $tokenObj->user()->associate($user);
+        $tokenObj->save();
 
         //Generate an url to the named 'newPasswordSet' route (see routes.php)
-        $resetUrl = route('newPasswordSet',['token'=>$data['token']]);
+        $resetUrl = route('newPasswordSet',['token'=>$tokenObj->token]);
         
         //Send the email. Takes email address from the user object
         Mail::to($user)->send(new ResetMyPasswordMail($resetUrl,$user->name));
