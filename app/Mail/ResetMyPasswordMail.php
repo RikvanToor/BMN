@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -21,11 +20,11 @@ class ResetMyPasswordMail extends Mailable {
     }
 
     public function build(){
-        return $this->view(MAIL_VIEW)
-            ->subject(MAIL_SUBJECT)
+        return $this->view(self::MAIL_VIEW)
+            ->subject(self::MAIL_SUBJECT)
             ->with([
                 'url' => $this->url,
-                'user' => $this->userName
+                'userName' => $this->userName
             ]);
     }
 }
