@@ -5,6 +5,7 @@ export const Methods = {
   READ: 1,
   UPDATE: 2,
   DELETE: 3,
+  POST: 4,
 };
 
 /**
@@ -20,6 +21,8 @@ class ApiError {
   }
 }
 
+const JWT_TOKEN = 'jwtToken';
+
 /**
  * Api service class for interacting with the BMN Api on the server.
  */
@@ -30,15 +33,20 @@ class ApiService {
 
   constructor() {
     // Save the JWT token here when acquired
-    this.jwtToken = window.sessionStorage.getItem('jwtToken');
+    this.jwtToken = window.sessionStorage.getItem(JWT_TOKEN);
 
     // API basepath, will be processed by webpack accordingly
     if (process.env.NODE_ENV === 'production') {
       // this.basePath = "https://bmn.a-eskwadraat.nl/api/";
-      this.basePath = 'http://localhost:8080/api/';
+      this.basePath = 'https://bmn.rikvantoor.nl/public/api/';
     } else {
       this.basePath = 'http://localhost:9000/api/';
     }
+  }
+
+  reset(){
+    window.sessionStorage.removeItem(JWT_TOKEN);
+    this.jwtToken = '';
   }
 
   /**
@@ -49,6 +57,7 @@ class ApiService {
   static getRequestMethod(crudMethod) {
     switch (crudMethod) {
       case Methods.CREATE:
+      case Methods.POST:
       case Methods.UPDATE:
         return 'POST';
       case Methods.READ:
@@ -77,7 +86,7 @@ class ApiService {
       .then((data) => {
         try {
           this.jwtToken = data.token;
-          window.sessionStorage.setItem('jwtToken', data.token);
+          window.sessionStorage.setItem(JWT_TOKEN, data.token);
         } catch (e) {
           return Promise.reject(new ApiError('Could not decode JSON response for authentication', -1));
         }

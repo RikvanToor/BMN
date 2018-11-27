@@ -1,46 +1,16 @@
 import { Dispatcher } from 'flux';
 
-class AppDispatcher extends Dispatcher {
-  /**
-     * Respond to a promise with an action. All resolved data of the promise will be added to the payload.
-     * Note that we can call this is the __onDispatch functions of stores, since Promises resolve
-     * at the earliest in the next tick.
-     * @param {Promise} promise The promise that was created
-     * @param {string} succesActionName Name of the action to perform on success (resolve)
-     * @param {string} failActionName Name of the action to perform on failure (reject)
-     */
-  dispatchPromised(promise, succesActionName, failActionName) {
-    setTimeout(() => {
-      promise.then((data) => {
-        this.dispatch({ action: succesActionName, ...data });
-      })
-        .catch((errData) => {
-          this.dispatch({ action: failActionName, ...errData });
-        });
-    });
-  }
+import ApiService from '@Services/ApiService.js';
+import {expectHasKeys} from '@Utils/TypeChecks.js';
 
-  /**
-     * Sames as dispatchPromised, only applies the functions to the returned data to create
-     * payloads for the dispatcher. Make sure to set the action key on the payload!
-     * @param {Promise} promise The promise that was created
-     * @param {function} succesFn Function that creates success payload to be processed
-     * @param {function} failFn Function that creates fail payload to be processed
-     */
-  dispatchPromisedFn(promise, succesFn, failFn) {
-    setTimeout(() => {
-      promise.then((data) => {
-        this.dispatch(succesFn(data));
-      })
-        .catch((errData) => {
-          this.dispatch(failFn(errData));
-        });
-    });
-  }
-}
+import AppDispatcher from '@Services/AppDispatcherClass.js';
+
+//Add middleware
+import dispatchRemote from '@Services/dispatcherMiddleware/dispatchRemote.js';
 
 // Global singleton
-const appDispatcher = new AppDispatcher();
+let appDispatcher = new AppDispatcher();
+appDispatcher.addMiddleWare(dispatchRemote);
 
 export function deferredDispatch(action) {
   setTimeout(() => {

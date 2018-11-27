@@ -38,6 +38,54 @@ class SongsController extends Controller {
         $song = Song::find($id);
         return response()->json($song, 200);
     }
+    
+    public function addSetlistSong(Request $request){
+        $this->validate($request, [
+            'title'        => 'required',
+            'artist'       => 'required',
+            'spotify_link' => 'required',
+        ]);
+
+        $song = Song::create($request->all());
+        $song->is_setlist = true;
+        
+        return response()->json($song, 201);
+    }
+    
+    /**
+     * Promotes a single song to the setlist
+     * @param Request $request
+     * @return type
+     */
+    public function promoteSongToSetlist(Request $request){
+        $validatedData = $this->validate($request, [
+           'songid' => 'required|integer|exists:songs,id' 
+        ]);
+        $song = Song::findOrFail($validatedData['songid']);
+        //
+        $song->is_setlist = true;
+        $song->setlist_order = 0;
+        $song->save();
+        
+        return response()->json(array('songid'=>$validatedData['songid']), 200);
+    }
+    
+    /**
+     * Demotes a song from the setlist
+     * @param Request $request
+     * @return type
+     */
+    public function demoteSongFromSetlist(Request $request){
+        $validatedData = $this->validate($request, [
+           'songid' => 'required|integer|exists:songs,id' 
+        ]);
+        $song = Song::findOrFail($validatedData['songid']);
+        //
+        $song->is_setlist = false;
+        $song->save();
+        
+        return response()->json(array('songid'=>$validatedData['songid']), 200);
+    }
 
     /**
      * Show all songs
