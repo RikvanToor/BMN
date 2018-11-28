@@ -50,7 +50,7 @@ class UserStore extends Store {
             // Afterwards, read user data
             .then(() => ApiService.readData(UserStore.userInfoPoint, {}, true)),
           // Success action
-          data => loggedInAction(data.username, data.name, data.id, data.is_admin !== 0),
+          data => loggedInAction(data.username, data.name, data.id, data.is_admin != 0),
           // Fail action
           errData => logInFailAction(errData.msg),
         );
@@ -78,7 +78,7 @@ class UserStore extends Store {
         if (ApiService.jwtToken) {
           AppDispatcher.dispatchPromisedFn(
             ApiService.readData(UserStore.userInfoPoint, {}, true),
-            data => loggedInAction(data.username, data.name, data.id, data.is_admin !== 0),
+            data => loggedInAction(data.username, data.name, data.id, data.is_admin != 0),
             errData => logInFailAction(errData.msg),
           );
         } else {
