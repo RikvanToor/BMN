@@ -84,6 +84,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+$app->alias('mailer', \Illuminate\Contracts\Mail\Mailer::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

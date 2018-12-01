@@ -12,7 +12,8 @@ import CSS from './App.css';
 class App extends Component {
   static calculateState(prevState) {
     return {
-      doneFetchingUser: UserStore.doneFetchingUser
+      doneFetchingUser: UserStore.doneFetchingUser,
+      user: UserStore.user
     };
   }
 
@@ -26,7 +27,7 @@ class App extends Component {
   }
 
   render() {
-    return <Wrapper ReadyToRender={this.state.doneFetchingUser} />
+    return <Wrapper ReadyToRender={this.state.doneFetchingUser} user={this.state.user} />
   }
 }
 

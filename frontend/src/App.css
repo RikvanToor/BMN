@@ -59,3 +59,13 @@ footer {
 .slider-synced > div > .input-range > .input-range__track > .input-range__slider-container > .input-range__slider {
   background: rgb(68, 157, 68);
 }
+
+/**
+* Style inline forms with better margins
+*/
+.form-inline * {
+    margin-right: 10px;
+}
+.tab-content{
+    padding-top: 15px;
+}

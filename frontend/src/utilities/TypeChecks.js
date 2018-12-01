@@ -9,13 +9,24 @@ export function isNumber(data){
     return typeof data === 'number';
 }
 export function isEmptyString(data){
-  return data.length === 0;
+  return isString(data) && data.length === 0;
 }
 export function isBoolean(data){
     return typeof data === 'boolean';
 }
 export function isUndefined(data){
     return typeof data === 'undefined';
+}
+export function isDate(o){
+  return o instanceof Date;
+}
+/**
+ * Returns whether the given object is a plain old javascript object
+ * @param {mixed} o Element
+ * @returns {Boolean} Whether it is a POJO
+ */
+export function isPOJO(o){
+  return Object(o) === o && Object.getPrototypeOf(o) === Object.prototype;
 }
 export function isFunction(data){
     return typeof data === 'function';

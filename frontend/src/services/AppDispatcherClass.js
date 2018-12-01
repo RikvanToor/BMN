@@ -13,14 +13,15 @@ export default class AppDispatcher extends Dispatcher {
   }
   
   dispatch(action){
-    let handled = false;
+    //Try to handle the action in middleware
     let dispatchFn = this.dispatch.bind(this);
-    this.middleware.forEach((el)=>{
-      const localHandled = el(dispatchFn, action);
-      handled = handled || localHandled;
-    });
-    
-    if(handled) return;
+    for(let i = 0; i < this.middleware.length; i++){
+      //Middleware handled dispatch: we are done
+      if(this.middleware[i](dispatchFn, action)){
+        return;
+      }
+    }
+    //Middleware did not handle action: dispatch the action regularly
     super.dispatch(action);
   }
   /**

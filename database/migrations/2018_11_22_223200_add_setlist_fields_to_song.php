@@ -32,7 +32,7 @@ class AddSetlistFieldsToSong extends Migration
         Schema::table('songs', function (Blueprint $table) {
             $table->dropColumn('is_setlist');
             $table->dropColumn('setlist_order');
-            $table->dropwIndex('songs_is_setlist_index');
+            $table->dropIndex('songs_is_setlist_index');
         });
     }
 }
