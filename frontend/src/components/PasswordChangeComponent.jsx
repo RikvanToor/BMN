@@ -38,7 +38,7 @@ export default class PasswordChangeComponent extends Component {
         });
     }
     /**
-     * Apply the login action when the form is submitted.
+     * Apply the change password action when the form is submitted.
      * @param {Event} e The form submit event
      */
     changePassword(e) {
@@ -55,12 +55,12 @@ export default class PasswordChangeComponent extends Component {
       }
       else{
         //Apply the user based login action
-        this.props.onSave(this.props.user.id, pass);
+        this.props.onSave(pass);
       }
     }
 
     render() {
-      let {user, passwordSaved,onSave, ...props} = this.props;
+      let {passwordSaved,onSave, ...props} = this.props;
       return (
           <React.Fragment>
               <Form onSubmit={(e) => this.changePassword(e)} {...props}>
@@ -85,14 +85,13 @@ export default class PasswordChangeComponent extends Component {
                   <Button bsStyle="primary" type="submit">Opslaan</Button>
               </Form>
               {!isEmptyString(this.state.passwordError) ? (<p className="text-danger">{this.state.passwordError}</p>) : null}
-              {!isUndefined(this.props.passwordSaved) ? (<Alert bsStyle="success">Wachtwoord gewijzigd</Alert>) : null}
+              {!isUndefined(this.props.passwordSaved) && this.props.passwordSaved ? (<Alert bsStyle="success">Wachtwoord gewijzigd</Alert>) : null}
           </React.Fragment>
       );
     }
 }
 
 PasswordChangeComponent.propTypes = {
-  user: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
   passwordSaved: PropTypes.bool
 };

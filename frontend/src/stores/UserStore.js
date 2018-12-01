@@ -21,6 +21,8 @@ class UserStore extends Store {
     this.doneFetchingUser = false;
     this.passwordSaved = false;
     this.loginFailed = false;
+    this.passwordEmailSent = false;
+    this.newPasswordSet = false;
 
     // Possible error during authentication process
     this.error = '';
@@ -38,8 +40,23 @@ class UserStore extends Store {
         ApiService.reset();
         this.__emitChange();
         break;
+      case PasswordActions.SET_NEW_PASSWORD:
+        this.newPasswordSet = true;
+        this.__emitChange();
+        break;
+      //Update password email state when succesfully request
+      //a new password
+      case PasswordActions.REQUEST_NEW_PASSWORD:
+        this.passwordEmailSent = true;
+        this.__emitChange();
+        break;
+      case PasswordActions.REQUEST_PASSWORD_FAIL:
+        console.log('Req fail');
+        console.log(payload);
+        this.requestPasswordError = payload.data.error;
+        this.__emitChange();
+        break;
       case PasswordActions.CHANGE_PASSWORD:
-        console.log("Handle change password");
         this.passwordSaved = true;
         this.__emitChange();
         break;

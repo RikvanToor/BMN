@@ -21,9 +21,9 @@ class AccountPage extends Component {
         
         this.savePassword = this.savePassword.bind(this);
     }
-    savePassword(id, pw){
+    savePassword(pw){
       //Apply the user based login action
-      dispatch(changePassword(this.props.user.id, this.state.newPassword));
+      dispatch(changePassword(this.props.user.id,pw));
     }
 
     render() {
@@ -33,7 +33,7 @@ class AccountPage extends Component {
                 <h3>Wijzig mijn gegevens</h3>
                 <b>TODO</b>
                 <h3>Wijzig wachtwoord</h3>
-                <PasswordChangeComponent user={this.props.user} onSave={this.savePassword} inline/>
+                <PasswordChangeComponent passwordSaved={this.props.passwordSaved} onSave={this.savePassword} inline/>
             </div>
         );
     }

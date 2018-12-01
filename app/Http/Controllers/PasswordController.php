@@ -88,7 +88,7 @@ class PasswordController extends Controller {
         
         //If not found, send back that the email is not known
         if(!$user) {
-            return response()-json(array('error'=>'unknown email'), 422);
+            return response()->json(array('error'=>'unknown email'), 422);
         }
 
         //Create a reset token
