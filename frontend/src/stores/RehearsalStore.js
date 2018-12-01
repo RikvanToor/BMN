@@ -18,7 +18,9 @@ class RehearsalStore extends Store {
   constructor(dispatcher) {
     super(dispatcher);
 
+    //All rehearsals
     this.rehearsals = new List();
+    //Personal availabilities of current user
     this.myAvailabilities = new List();
 
     // Possible errors
@@ -50,10 +52,13 @@ class RehearsalStore extends Store {
           },
         );
         break;
+      //Set all rehearsals to the given rehearsals
       case RehearsalActions.UPDATE_REHEARSALS:
         this.rehearsals = new List(payload.rehearsals);
         this.__emitChange();
         break;
+        
+      //Retrieve availability 
       case RehearsalActions.GET_AVAILABILITIES:
         AppDispatcher.dispatchPromisedFn(
           ApiService.readAuthenticatedData(getAvailabilities, {}),
@@ -63,10 +68,48 @@ class RehearsalStore extends Store {
           },
         );
         break;
+        
+      //Add newly created rehearsals after being added on the server
+      case RehearsalActions.CREATE_REHEARSALS:
+        //Create list for new rehearsals
+        let newRehearsals = new List(payload.responseData);
+        //Concatenate to present rehearsals.
+        this.rehearsals = this.rehearsals.concat(newRehearsals);
+        this.__emitChange();
+      break;
+      
+      //Delete rehearsals
+      case RehearsalActions.DELETE_REHEARSALS:
+        let data = payload.responseData;
+        //Delete a single rehearsal
+        if('id' in data){
+          let id = parseInt(data.id);
+          let ind = this.rehearsals.findIndex((val, ind)=>{
+            return val.id === id;
+          });
+          //ID was found
+          if(ind !== -1){
+            this.rehearsals = this.rehearsals.delete(ind);
+            this.__emitChange();
+          }
+        }
+        //Delete multiple rehearsals
+        else if('ids' in data){
+          let ids = new Set(data.ids.map((el)=>parseInt(el)));
+          this.rehearsals = this.rehearsals.filter(val=>{
+            return !ids.has(val.id);
+          });
+          this.__emitChange();
+        }
+      break;
+      
+      //Update availabilities for the current user
       case RehearsalActions.UPDATE_AVAILABILITIES:
         this.myAvailabilities = new List(payload.availabilities);
         this.__emitChange();
         break;
+      
+      //Sets new availabilities.
       case RehearsalActions.SET_AVAILABILITIES:
         AppDispatcher.dispatchPromisedFn(
           ApiService.updateData(setAvailabilities(payload.rehearsalId), payload.availabilities),

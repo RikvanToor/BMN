@@ -3,6 +3,23 @@ import Logo from '../images/bmnlogo.png';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap/lib';
 import { Redirect } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
+import { dispatch} from '@Services/AppDispatcher.js';
+import {logOut} from '@Actions/UserActions.js';
+
+const userLinks = {
+  'Home' : 'home',
+  'Rooster' : 'rooster',
+  'Nummers' : 'nummers',
+  'Aanwezigheid' : 'aanwezigheid'
+};
+const committeeLinks = {
+  'Suggesties' : 'suggesties',
+  'Stageplan' : 'stageplan',
+  'Roosters' :'roosterAanpassen',
+  'Tickets' : 'tickets',
+  'Setlist' : 'setlist',
+  'Gebuikersbeheer' : 'gebruikersbeheer'
+};
 
 /**
  * Navigation class, rendered as a menubar at the top of the site
@@ -11,6 +28,7 @@ class Navigation extends PureComponent {
     constructor(props) {
         super(props);
         this.state = { active: this.props.active };
+        this.logOutUser = this.logOutUser.bind(this);
     }
 
     createLink(address, text) {
@@ -20,24 +38,26 @@ class Navigation extends PureComponent {
             </LinkContainer>
         );
     }
+    createMenuItem(address, text){
+      return (
+        <LinkContainer to={"/"+address} key={address}>
+          <MenuItem >{text}</MenuItem>
+        </LinkContainer>
+      );
+    }
+    logOutUser(){
+      dispatch(logOut());
+    }
 
     render() {
         var navs = [];
-        var usersOnly = [
-            this.createLink('nieuws', 'Nieuws'),
-            this.createLink('rooster', 'Rooster'),
-            this.createLink('nummers', 'Nummers'),
-            this.createLink('aanwezigheid', 'Aanwezigheid')
-        ];
+        
+        //User only menu parts
+        var usersOnly = Object.keys(userLinks).map(key=>this.createLink(userLinks[key],key));
+        
         var committeeOnly = (
             <NavDropdown key="committee" eventKey={5} title="Commissie tools" id="basic-nav-dropdown">
-                <LinkContainer to="/suggesties">
-                    <MenuItem eventKey={5.1}>Suggesties</MenuItem>
-                </LinkContainer>
-                <MenuItem eventKey={5.2}>Stageplan</MenuItem>
-                <MenuItem eventKey={5.3}>Roosters</MenuItem>
-                <MenuItem eventKey={5.4}>Tickets</MenuItem>
-                <MenuItem eventKey={5.5}>Setlist</MenuItem>
+                {Object.keys(committeeLinks).map(key=>this.createMenuItem(committeeLinks[key],key))}
             </NavDropdown>
         );
 
@@ -46,6 +66,7 @@ class Navigation extends PureComponent {
             if (this.props.isCommittee) {
                 navs.push(committeeOnly);
             }
+            navs = navs.concat(<NavItem key="logOut" onClick={this.logOutUser}>Log uit</NavItem>);
         }
         else {
             navs.push(this.createLink('login', 'Log In'));

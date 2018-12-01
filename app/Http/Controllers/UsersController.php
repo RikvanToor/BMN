@@ -11,14 +11,16 @@ class UsersController extends Controller {
      */
     public function create(Request $request) {
         $this->validate($request, [
-            'name'     => 'required',
-            'email'    => 'required|email',
-            'username' => 'required',
+            'name'     => 'required|unique:users',
+            'email'    => 'required|email|unique:users',
+            'username' => 'required|unique:users',
             'password' => 'required',
         ]);
 
         $properties = $request->all();
         $properties['password'] = app('hash')->make($request->get('password'));
+        //Hack for now. 
+        $properties['is_active'] = true;
 
         $user = User::create($properties);
         return response()->json($user, 201);

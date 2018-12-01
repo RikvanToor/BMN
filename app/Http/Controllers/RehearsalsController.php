@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Rehearsal;
 use App\Models\Song;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 
 class RehearsalsController extends Controller {
+    private static function now(){
+        return date('Y-m-d H:i:s');
+    }
     /**
      * Add entry to 'rehearsals' table
      */
@@ -20,15 +24,47 @@ class RehearsalsController extends Controller {
         $rehearsal = Rehearsal::create($request->all());
         return response()->json($rehearsal, 201);
     }
+    
+    
+    public function deleteRehearsal(Request $request, $id){
+        Rehearsal::destroy($id);
+        return response()->json(array('id'=>$id),200);
+    }
+    
+    public function deleteRehearsals(Request $request){
+        $validatedData = $this->validate($request, [
+            'ids'=>'required|array'
+        ]);
+        Rehearsal::destroy($validatedData['ids']);
+        
+        return response()->json($validatedData,200);
+    }
+    
+    public function createMultiple(Request $request){
+    
+        $validatedData = $this->validate($request,[
+            'rehearsals.*.location' => 'required',
+            'rehearsals.*.start'    => 'required|date',
+            'rehearsals.*.end'      => 'required|date',
+        ]);
+        
+        //Create all rehearsals
+        $rehearsals = [];
+        foreach($validatedData['rehearsals'] as $elem){
+            $rehearsals[] = Rehearsal::create($elem);
+        }
+        //Send created rehearsals
+        return response()->json($rehearsals, 201);
+    }
 
     /**
      * Get every rehearsal that ends after this very moment.
      */
     public function showFutureRehearsals() {
-        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->get();
+        $rehearsals = Rehearsal::where('end', '>=', now())->get();
         return response()->json($rehearsals, 200);
     }
-
+    
     /**
      * Get every rehearsal that ends after this very moment including songs and players.
      */
@@ -64,24 +100,39 @@ class RehearsalsController extends Controller {
         }]);
         return response()->json($result->get(), 200);
     }
+    
+    public function showFutureRehearsalsWithAvailabilities(Request $request){
+        $rehearsals = Rehearsal::inFuture(); //Use scope
+        $rehearsals = $rehearsals->with(['availabilities'])->get(array('*'));
+        $result = $rehearsals->map(function ($x){
+            return $x->schedule();
+        });
+        return response()->json($result, 200);
+    }
 
     public function saveAvailabilities($id, Request $request) {
-        $rehearsal = Rehearsal::find($id);
+        $rehearsal = Rehearsal::findOrFail($id);
         $userid = $request->user()->id;
         $availabilities = $rehearsal->availabilities();
         // Delete old availabilities
         $availabilities->wherePivot('user_id', $userid)->detach();
+        
+        $validatedData = $this->validate($request,[
+            'reason' => 'string',
+            'starts'    => 'array',
+            'ends'      => 'array',
+        ]);
 
-        if($request->starts == '') {
+        if(count($validatedData['starts']) == 0) {
             $availabilities->attach($userid, [
-                'reason' => $request->reason,
+                'reason' => $validatedData['reason'],
                 'start' => NULL,
                 'end' => NULL
             ]);
         }
         else {
-            $starts = explode(',', $request->starts);
-            $ends = explode(',', $request->ends);
+            $starts = $validatedData['starts'];
+            $ends = $validatedData['ends'];
             for($i = 0; $i < count($starts); $i++) {
                 $availabilities->attach($userid, [
                     'reason' => NULL,
@@ -99,6 +150,27 @@ class RehearsalsController extends Controller {
     public function showRehearsalWithSchedule($id) {
         $rehearsal = Rehearsal::findOrFail($id);
         return response()->json($rehearsal->schedule(), 200);
+    }
+    
+    public function setSongs($id, Request $request){
+        $rehearsal = Rehearsal::findOrFail($id);
+        $validatedData = $this->validate($request, [
+            'songs.*.id' => 'required',
+            'songs.*.start' => 'required|date|after_or_equal' . $rehearsal->start,
+            'songs.*.end' => 'required|date|before_or_equal:' . $rehearsal->end,
+        ]);
+        //Create all rehearsals
+        $rehearsals = [];
+        foreach($validatedData['songs'] as $elem){
+            //Make sure the song exists
+            $song = Song::findOrFail($elem["id"]);
+            $rehearsal->songs()->attach($elem['id'], [
+               'start'=>$elem['start'],
+               'end'=>$elem['end']
+            ]);
+        }
+        //Send created rehearsals
+        return response()->json($rehearsals, 201);
     }
 
     public function addSong($id, Request $request) {

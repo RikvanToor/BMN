@@ -5,6 +5,7 @@ import { isNullOrUndefined } from "util";
 import { dispatch } from '@Services/AppDispatcher.js';
 import { setAvailabilitiesAction } from '@Actions/RehearsalActions.js';
 import { printTime } from '../GeneralExtensions.js';
+import PropTypes from 'prop-types';
 
 /**
  * The availabilities page. Since no state is needed, this is a Pure component that is rerendered
@@ -20,7 +21,7 @@ class AvailabilityWidget extends Component {
         };
         this.synced = true;
         if (this.availabilities.length === 0) {
-            this.availabilities = [this.createDefaultAvailability()]
+            this.availabilities = [this.createDefaultAvailability()];
             this.synced = false;
         }
         else if (this.availabilities.length === 1
@@ -94,11 +95,11 @@ class AvailabilityWidget extends Component {
      * Creates a slider for the availability object, or text input if the values are null
      * @param {An availability object} availability 
      */
-    createInput(availability) {
+    createInput(availability, index) {
         var startValue = new Date(availability.pivot.start).getTime();
         var endValue = new Date(availability.pivot.end).getTime();
         var className = this.synced ? 'slider-synced' : '';
-        return <div key={availability.id}>
+        return <div key={index}>
             <Col xs={10} className={className}>
                 <AvailabilitySlider
                     min={this.minValue}
@@ -152,8 +153,10 @@ class AvailabilityWidget extends Component {
         return (
             <div key={this.props.rehearsal.id}>
                 <h3>{start.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
-                <h4>{printTime(start)}-{printTime(end)} @ {this.props.rehearsal.location} {this.synced ? <Glyphicon className="text-success" glyph="ok" /> : ''}</h4>
-                {this.availabilities.length === 0 ? this.createReasonInput() : this.availabilities.map(a => this.createInput(a))}
+                <h4>{printTime(start)}-{printTime(end)} @ {this.props.rehearsal.location} {
+                  <Glyphicon className={this.synced ? "text-success" : "text-warning"} glyph={this.synced ? "ok" : "exclamation-sign"}/>
+                  }</h4>
+                {this.availabilities.length === 0 ? this.createReasonInput() : this.availabilities.map((a,ind) => this.createInput(a,ind))}
                 <ButtonGroup>
                     <Button onClick={() => this.addSlider()}>Voeg slider toe</Button>
                     <Button disabled={!this.reasonOrAvailabilities} onClick={() => this.saveAvailabilities()}>Sla aanwezigheid op</Button>
@@ -162,5 +165,8 @@ class AvailabilityWidget extends Component {
         )
     }
 }
+AvailabilityWidget.propTypes = {
+  rehearsal : PropTypes.object.isRequired
+};
 
 export default AvailabilityWidget;

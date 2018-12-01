@@ -6,7 +6,9 @@ import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
-import { BrowserRouter, Route, Redirect } from "react-router-dom";
+import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
+import UsersPage from '@Routes/UsersPage.jsx'
+import { BrowserRouter, Route } from "react-router-dom";
 import { Grid, Row } from 'react-bootstrap';
 
 /**
@@ -29,7 +31,9 @@ class Wrapper extends Component {
                             <Route exact path="/suggesties" component={SuggestionList} />
                             <Route exact path="/login" component={LoginContainer} />
                             <Route exact path="/homeParticipant" component={ParticipantHome} />
+                            <Route exact path="/roosterAanpassen" component={RehearsalEditPage} />
                             <Route exact path="/aanwezigheid" component={AvailabilityContainer} />
+                            <Route exact path="/gebruikersbeheer" component={UsersPage} />
                         </Row>
                     </Grid>
                     <Footer />

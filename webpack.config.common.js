@@ -21,6 +21,7 @@ const config = {
             '@Containers' : path.resolve(__dirname,'frontend/src/containerclasses'),
             '@Stores' : path.resolve(__dirname,'frontend/src/stores'),
             '@Models' : path.resolve(__dirname,'frontend/src/models'),
+            '@Utils' : path.resolve(__dirname,'frontend/src/utilities'),
         }
     },
     module: {
