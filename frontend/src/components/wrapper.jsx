@@ -1,15 +1,25 @@
 import React, { Component } from "react";
+
+//UI
 import Footer from "./footer.jsx";
-import NewsContainer from '@Containers/NewsContainer.jsx';
+import { BrowserRouter, Route } from "react-router-dom";
+import {Redirect} from 'react-router';
+import { Grid, Row } from 'react-bootstrap';
+
+//Routes
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
+import NewsContainer from '@Containers/NewsContainer.jsx';
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
 import UsersPage from '@Routes/UsersPage.jsx'
-import { BrowserRouter, Route } from "react-router-dom";
-import { Grid, Row } from 'react-bootstrap';
+import AccountPage from '@Routes/AccountPage.jsx'
+import PasswordResetPage from '@Routes/PasswordResetPage.jsx'
+import ConditionalComponent from '@Components/ConditionalComponent.jsx';
+import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
+
 
 /**
  * Main routes in the application
@@ -17,30 +27,65 @@ import { Grid, Row } from 'react-bootstrap';
 import Home from '@Routes/Home.jsx';
 import SuggestionList from '@Routes/SuggestionList.jsx';
 
+//Routes in the app
+const routes = [
+  {target:'/home',            component:Home,                 role:'guest'},
+  {target:'/login',           component:LoginContainer,       role:'guest'},
+  {target:'/nieuws',          component:NewsContainer,        role:'user'},
+  {target:'/rooster',         component:RehearsalContainer,   role:'user'},
+  {target:'/suggesties',      component:SuggestionList,       role:'committee'},
+  {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
+  {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
+  {target:'/aanwezigheid',    component:AvailabilityContainer,role:'user'},
+  {target:'/gebruikersbeheer',component:UsersPage,            role:'committee'},
+  {target:'/account',         component:AccountPage,          role:'user'},
+  {target:'/wachtwoordreset', component:PasswordResetPage,    role:'guest'},
+  {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage, role:'guest'}
+];
+
 class Wrapper extends Component {
     render() {
-        return this.props.ReadyToRender ? (
-            <BrowserRouter>
-                <div className="bg-light">
-                    <NavigationContainer />
-                    <Grid>
-                        <Row>
-                            <Route exact path="/" component={NewsContainer} />
-                            <Route exact path="/nieuws" component={NewsContainer} />
-                            <Route exact path="/rooster" component={RehearsalContainer} />
-                            <Route exact path="/suggesties" component={SuggestionList} />
-                            <Route exact path="/login" component={LoginContainer} />
-                            <Route exact path="/homeParticipant" component={ParticipantHome} />
-                            <Route exact path="/roosterAanpassen" component={RehearsalEditPage} />
-                            <Route exact path="/aanwezigheid" component={AvailabilityContainer} />
-                            <Route exact path="/gebruikersbeheer" component={UsersPage} />
-                        </Row>
-                    </Grid>
-                    <Footer />
-                </div>
-            </BrowserRouter>
-        ) : null;
+      //Wait until we are ready to render
+      if(!this.props.ReadyToRender) return null;
+      
+      //Setup roles
+      let roles = {};
+      roles.guest = true;
+      roles.user = this.props.user.isLoggedIn;
+      roles.committee = roles.user && this.props.user.isCommittee;
+      
+      //Redirect target
+      const redirectTarget = '/login';
+            
+      //Route creation function
+      let exactRouteFn = (routeObj,redirect)=>{
+        //The component to render
+        let Comp = routeObj.component;
+        //Render function, taking into account the role of the user, redirects if the 
+        //role is not present
+        let renderFn = (props) =>{
+          return (
+          <ConditionalComponent condition={roles[routeObj.role]} otherwise={(<Redirect to={redirect}/>)}>
+          <Comp {...props}/>
+          </ConditionalComponent>);
+        };
+        return (<Route key={routeObj.target} exact path={routeObj.target} render={renderFn}/>);
+      };
+      
+      return (
+          <BrowserRouter>
+              <div className="bg-light">
+                  <NavigationContainer />
+                  <Grid>
+                      <Row>
+                          {routes.map((el)=>exactRouteFn(el, redirectTarget))}
+                      </Row>
+                  </Grid>
+                  <Footer />
+              </div>
+          </BrowserRouter>
+        );
     }
-}
+};
 
 export default Wrapper;

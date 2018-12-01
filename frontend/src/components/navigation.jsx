@@ -10,7 +10,8 @@ const userLinks = {
   'Home' : 'home',
   'Rooster' : 'rooster',
   'Nummers' : 'nummers',
-  'Aanwezigheid' : 'aanwezigheid'
+  'Aanwezigheid' : 'aanwezigheid',
+  'Account' : 'account'
 };
 const committeeLinks = {
   'Suggesties' : 'suggesties',
@@ -70,7 +71,6 @@ class Navigation extends PureComponent {
         }
         else {
             navs.push(this.createLink('login', 'Log In'));
-            navs.push(<Redirect key="redirect" to='/login' />);
         }
 
         return (

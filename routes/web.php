@@ -28,9 +28,9 @@ $router->get('/nummers', function () use ($router) {
 $router->get('/suggesties', function () use ($router) {
     return view('index');
 });
-$router->get('/login', function () use ($router) {
+$router->get('/login', ['as'=>'login', function () use ($router) {
     return view('index');
-});
+}]);
 $router->get('/roosterAanpassen', function () use ($router) {
     return view('index');
 });
@@ -43,6 +43,17 @@ $router->get('/aanwezigheid', function () use ($router) {
 $router->get('/gebruikersbeheer', function () use ($router) {
     return view('index');
 });
+$router->get('/account', function () use ($router) {
+    return view('index');
+});
+
+//Route reset to the index for React router to pick up, The 
+$router->get('/wachtwoordreset', function() use ($router){
+    return view('index');
+});
+$router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use ($router){
+    return view('index');
+}]);
 
 /**
  * API routing
@@ -51,10 +62,15 @@ $router->group(['prefix' => '/api'], function () use ($router) {
     // prefix /api
     $router->post('auth/login', 'AuthController@login');
 
+    $router->post('forgotpassword','PasswordController@requestNewPassword');
+    $router->post('setnewpassword/{token}','PasswordController@setNewPassword');
     
+    
+    //Participant and committee actions
     $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('auth/me', 'AuthController@getUser');
 
+        //prefix /api/songs
         $router->group(['prefix' => '/songs'], function () use ($router) {
             $router->get('', 'SongsController@showAllSongs');
             $router->get('/genre/{genre}', 'SongsController@showGenre');
@@ -82,16 +98,19 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->get('/singers', 'SongsController@showSingers');
             });
         });
-
+        
+        //prefix /api/users
         $router->group(['prefix' => '/users'], function () use ($router) {
             $router->get('', 'UsersController@showAllUsers');
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->post('/create', 'UsersController@create');
                 $router->delete('/{id}/delete', 'UsersController@delete');
+                $router->post('/importcsv', 'UsersController@generateUsersFromCsv');
             });
 
             $router->group(['prefix' => '/{id}'], function () use ($router) {
                 $router->get('', 'UsersController@showOneUser');
+                $router->post('/changepassword', 'PasswordController@changePassword');
 
                 $router->get('/songs', 'UsersController@showUserSongs');
                 
@@ -100,6 +119,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             });
         });
 
+        //prefix /api/rehearsals
         $router->group(['prefix' => '/rehearsals'], function() use ($router) {
             $router->get('', 'RehearsalsController@showFutureRehearsals');
             $router->get('/schedules', 'RehearsalsController@showFutureRehearsalsWithSchedule');
@@ -107,6 +127,8 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('/availabilities', 'RehearsalsController@showFutureRehearsalsOwnAvailabilities');
             $router->post('/{id}/availabilities/', 'RehearsalsController@saveAvailabilities');
             $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
+            
+            //Rehearsal management
             $router->group(['middleware' => 'committee'], function () use ($router) {
                 $router->get('/availabilities/all', 'RehearsalsController@showFutureRehearsalsWithAvailabilities');
                 $router->post('/create', 'RehearsalsController@create');

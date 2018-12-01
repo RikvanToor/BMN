@@ -34,8 +34,10 @@ export default function dispatchRemote(dispatchFn, action){
       dispatchFn(action.errCreator(errData));
     }
     //Otherwise, throw an error
-    else
+    else{
+      console.log(errData);
       throw new Error(errData);
+    }
   });
   return true;
 }

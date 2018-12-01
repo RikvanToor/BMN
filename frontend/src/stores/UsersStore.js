@@ -4,33 +4,16 @@ import { List } from 'immutable';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { UserActions, updateKnownUsersAction } from '@Actions/UserActions.js';
 import User from '@Models/User.js';
-
-const UPDATE_FLASH = 'UsersStore_UPDATE_FLASH';
+import BmnStore from '@Services/BmnStore.js'
 
 /**
- * Stores retrieved data with respect to user
+ * Store that retrieves data of users. Uses flash functionality from BmnStore
  */
-class UsersStore extends Store {
-  setFlash(key, value, timeTillResetInSeconds, resetValue='', doEmitChange = true){
-    //Clear previous
-    if(key in this.flashes){
-      clearTimeout(this.flashes[key]);
-    }
-    this.flashes[key] = setTimeout(()=>{
-      this[key] = resetValue;
-      AppDispatcher.dispatch({action: UPDATE_FLASH, key: key, val: resetValue});
-    },
-      timeTillResetInSeconds*1000
-    );
-    this[key] = value;
-    if(doEmitChange) this.__emitChange();
-  }
+class UsersStore extends BmnStore {
   // Pass global dispatcher to parent class
   constructor(dispatcher) {
-    super(dispatcher);
+    super(dispatcher,'UsersStore');
     
-    this.flashes = {};
-
     // List of users
     this.users = new List();
 
@@ -50,10 +33,12 @@ class UsersStore extends Store {
      */
   __onDispatch(payload) {
     switch (payload.action) {
-      case UPDATE_FLASH:
-        this[payload.key] = payload.val;
-        this.__emitChange();
+      //Using the flash functionality for temporary state that dissapears after
+      //some time
+      case this.FLASH_ACTION:
+        this.handleFlashUpdate(payload);
         break;
+        
       //Succesfully created user
       case UserActions.CREATE_USER:
         this.setFlash('lastCreatedUser', payload.name, 2, '', false);

@@ -60,7 +60,6 @@ footer {
   background: rgb(68, 157, 68);
 }
 
-
 .RichEditor-root {
   background: #fff;
   border: 1px solid #ddd;
@@ -130,4 +129,14 @@ footer {
 
 .news-article {
   padding:10px;
+}
+
+/**
+* Style inline forms with better margins
+*/
+.form-inline * {
+    margin-right: 10px;
+}
+.tab-content{
+    padding-top: 15px;
 }

@@ -2,6 +2,7 @@ import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { UserActions, loggedInAction, logInFailAction } from '@Actions/UserActions.js';
+import { PasswordActions} from '@Actions/PasswordActions.js';
 import User from '@Models/User.js';
 
 /**
@@ -18,6 +19,10 @@ class UserStore extends Store {
 
     this.user = new User();
     this.doneFetchingUser = false;
+    this.passwordSaved = false;
+    this.loginFailed = false;
+    this.passwordEmailSent = false;
+    this.newPasswordSet = false;
 
     // Possible error during authentication process
     this.error = '';
@@ -35,6 +40,26 @@ class UserStore extends Store {
         ApiService.reset();
         this.__emitChange();
         break;
+      case PasswordActions.SET_NEW_PASSWORD:
+        this.newPasswordSet = true;
+        this.__emitChange();
+        break;
+      //Update password email state when succesfully request
+      //a new password
+      case PasswordActions.REQUEST_NEW_PASSWORD:
+        this.passwordEmailSent = true;
+        this.__emitChange();
+        break;
+      case PasswordActions.REQUEST_PASSWORD_FAIL:
+        console.log('Req fail');
+        console.log(payload);
+        this.requestPasswordError = payload.data.error;
+        this.__emitChange();
+        break;
+      case PasswordActions.CHANGE_PASSWORD:
+        this.passwordSaved = true;
+        this.__emitChange();
+        break;
       // Handle the login action
       case UserActions.LOG_IN:
         AppDispatcher.dispatchPromisedFn(
@@ -49,6 +74,7 @@ class UserStore extends Store {
         break;
       case UserActions.LOG_IN_FAIL:
         this.doneFetchingUser = true;
+        this.loginFailed = true;
         this.__emitChange();
         break;
       case UserActions.LOGGED_IN:
@@ -60,6 +86,7 @@ class UserStore extends Store {
           id: payload.id,
           name: payload.name,
         });
+        this.loginFailed = false;
         this.doneFetchingUser = true;
         // Emit the change
         this.__emitChange();
