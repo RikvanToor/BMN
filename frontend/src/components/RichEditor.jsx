@@ -7,15 +7,23 @@ const { Editor, EditorState, RichUtils } = Draft;
 class RichEditorExample extends Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+    this.state = { editorState: EditorState.createWithContent(this.props.content), title: this.props.title };
+
+
 
     this.focus = () => this.refs.editor.focus();
-    this.onChange = (editorState) => this.setState({ editorState });
+    this.onChange = (editorState) => this.syncState({ editorState });
+    this.onChangeTitle = (event) => this.syncState({ title: event.target.value });
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
     this.onTab = (e) => this._onTab(e);
     this.toggleBlockType = (type) => this._toggleBlockType(type);
     this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+  }
+
+  syncState(state) {
+    this.setState(state);
+    this.props.onChange(this.state);
   }
 
   _handleKeyCommand(command) {
@@ -66,7 +74,13 @@ class RichEditorExample extends Component {
 
     return (
       <div>
-        <input type="text" placeholder="Titel..." className="title-editor" />
+        <input 
+          type="text" 
+          placeholder="Titel..." 
+          className="title-editor" 
+          value={this.state.title}
+          onChange={this.onChangeTitle}
+        />
         <div className="RichEditor-root">
           <BlockStyleControls
             editorState={editorState}

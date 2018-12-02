@@ -3,6 +3,8 @@ import { Panel, Glyphicon, Button, Modal } from 'react-bootstrap';
 import MarkdownRenderer from 'react-markdown-renderer';
 import { printDateTime } from '../GeneralExtensions.js';
 import RichEditor from '@Components/RichEditor.jsx';
+import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
+import { convertToRaw, convertFromRaw } from 'draft-js'
 
 /**
  * Display for a news article
@@ -17,6 +19,14 @@ class NewsArticle extends Component {
   setMode(mode) {
     this.state.mode = mode;
     this.forceUpdate();
+  }
+
+  setEditState(state) {
+    this.state.editState = state;
+  }
+
+  saveArticle() {
+
   }
 
   editBar() {
@@ -44,24 +54,26 @@ class NewsArticle extends Component {
 
         <Modal.Footer>
           <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
-          <Button bsStyle="danger">Verwijder</Button>
+          <Button bsStyle="danger">Verwijderen</Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>
   }
 
   renderEditor() {
+    var content = convertFromRaw(markdownToDraft(this.state.article.content));
+
     return <div className="static-modal">
       <Modal.Dialog>
         <Modal.Header>
           <Modal.Title>Nieuwsbericht bewerken</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body><RichEditor /></Modal.Body>
+        <Modal.Body><RichEditor content={content} title={this.state.article.title} onChange={(s) => this.setEditState(s)} /></Modal.Body>
 
         <Modal.Footer>
           <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
-          <Button bsStyle="primary">Opslaan</Button>
+          <Button bsStyle="primary" onClick={this.saveArticle}>Opslaan</Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>;
