@@ -12,7 +12,7 @@ import {createUser, loadUsersAction, importUsers} from '@Actions/UserActions.js'
 //UI imports
 import React, { Component, PureComponent } from "react";
 import ImportUsersComponent from '@Components/UserComponents/ImportUsersComponent.jsx';
-import { Alert, Table, Tabs, Tab, Form, FormGroup, Col, FormControl, HelpBlock, ControlLabel, Panel, Button } from 'react-bootstrap';
+import { Alert, Table, Tabs, Tab, Form, FormGroup, Col, FormControl, HelpBlock, ControlLabel, Panel, Button, PageHeader } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {isEmptyString} from '@Utils/TypeChecks.js';
 
@@ -119,7 +119,7 @@ class UsersPage extends Component {
     render(){
       return (
         <div>
-          <h3>Gebruikersbeheer</h3>
+          <PageHeader>Gebruikersbeheer</PageHeader>
           <Tabs defaultActiveKey={1} animation={false} id="userPagesTabs">
             <Tab eventKey={1} title="Bekende gebruikers">
               <Table striped bordered condensed hover responsive>

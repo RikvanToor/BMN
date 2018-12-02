@@ -67,6 +67,7 @@ footer {
   background: #fff;
   border: 1px solid #ddd;
   padding: 15px;
+  border-radius:0px 0px 5px 5px;
 }
 .RichEditor-editor {
   border-top: 1px solid #ddd;
@@ -123,6 +124,10 @@ footer {
 .title-editor {
   width:100%;
   font-size:36px;
+  border: solid 1px #ddd;
+  border-bottom:none;
+  border-radius:5px 5px 0px 0px;
+  padding: 3px 15px;
 }
 .news-article {
   padding:10px;
