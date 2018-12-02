@@ -120,6 +120,10 @@ footer {
 .RichEditor-activeButton {
   color: #5890ff;
 }
+.title-editor {
+  width:100%;
+  font-size:36px;
+}
 .news-article {
   padding:10px;
   position:relative;
