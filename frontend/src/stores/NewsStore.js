@@ -60,8 +60,7 @@ class NewsStore extends Store {
         var index = this.news.findIndex(x => x.id === payload.article.id);
         if (index > -1) {
           this.news[index] = payload.article;
-          this.news = new List(this.news);
-          payload.callback();
+          this.news = this.news.splice(0);
           this.__emitChange();
         }
         break;

@@ -14,40 +14,41 @@ import { dispatch } from '@Services/AppDispatcher.js';
 class NewsArticle extends Component {
   constructor(props) {
     super(props);
-    this.reset();
-  }
-  
-  reset() {
-    //TODO verwijderen?
-    this.state = { article: this.props.article };
-    this.state.mode = this.props.article ? MODES.NORMAL : MODES.EDIT;
+    this.state = { mode: this.props.article ? MODES.NORMAL : MODES.EDIT };
   }
 
+  /**
+   * Sets the current mode and updates the component
+   * @param {Mode} mode 
+   */
   setMode(mode) {
     this.state.mode = mode;
     this.forceUpdate();
   }
 
+  /**
+   * Updates the current editState
+   * @param {EditState} state 
+   */
   setEditState(state) {
     this.state.editState = state;
   }
 
+  /**
+   * Dispatches an action to update the article from the editor
+   */
   saveArticle() {
     var content = draftToMarkdown(convertToRaw(this.state.editState.editorState.getCurrentContent()));
     var title = this.state.editState.title;
     var news = { content, title };
-    var action =  editNewsAction(this.state.article.id, news, this.savedCallback.bind(this));
+    var action = editNewsAction(this.props.article.id, news);
+    this.setState({ mode: MODES.NORMAL });
     dispatch(action);
   }
 
-  savedCallback() {
-    console.log('CALLBACK');
-    console.log(this.props);
-    this.state.mode = MODES.NORMAL;
-    this.state.article = this.props.article;
-    this.forceUpdate();
-  }
-
+  /**
+   * Renders an 'edit' and a 'delete' button
+   */
   editBar() {
     if (this.props.isCommittee) {
       return <div className='news-article-controls'>
@@ -62,6 +63,9 @@ class NewsArticle extends Component {
     return '';
   }
 
+  /**
+   * Renders a confirmation box when deleting an article
+   */
   renderConfirmDelete() {
     return <div className="static-modal">
       <Modal.Dialog>
@@ -79,8 +83,11 @@ class NewsArticle extends Component {
     </div>
   }
 
+  /**
+   * Renders an editor to edit an article
+   */
   renderEditor() {
-    var content = convertFromRaw(markdownToDraft(this.state.article.content));
+    var content = convertFromRaw(markdownToDraft(this.props.article.content));
 
     return <div className="static-modal">
       <Modal.Dialog>
@@ -88,7 +95,7 @@ class NewsArticle extends Component {
           <Modal.Title>Nieuwsbericht bewerken</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body><RichEditor content={content} title={this.state.article.title} onChange={(s) => this.setEditState(s)} /></Modal.Body>
+        <Modal.Body><RichEditor content={content} title={this.props.article.title} onChange={(s) => this.setEditState(s)} /></Modal.Body>
 
         <Modal.Footer>
           <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
@@ -98,21 +105,23 @@ class NewsArticle extends Component {
     </div>;
   }
 
+  /**
+   * Renders an article
+   */
   renderRegular() {
     return (
       <Panel className='news-article'>
-        <h2>{this.state.article.title}</h2>
+        <h2>{this.props.article.title}</h2>
         <hr />
-        <MarkdownRenderer markdown={this.state.article.content} />
+        <MarkdownRenderer markdown={this.props.article.content} />
         <hr />
-        <p className='author-information'>{this.state.article.writer.name} - {printDateTime(new Date(this.state.article.created_at))}</p>
+        <p className='author-information'>{this.props.article.writer.name} - {printDateTime(new Date(this.props.article.created_at))}</p>
         {this.editBar()}
       </Panel>
     )
   }
 
   render() {
-    console.log('hoi');
     switch (this.state.mode) {
       case MODES.EDIT:
         return <div>{this.renderEditor()}{this.renderRegular()}</div>;

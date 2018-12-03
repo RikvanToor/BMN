@@ -23,8 +23,6 @@ class NewsPage extends Component {
     }
 
     render() {
-        console.log('RENDER PAGE');
-        console.log(this.props.news);
         return (
             <div>
                 <PageHeader>Nieuws</PageHeader>

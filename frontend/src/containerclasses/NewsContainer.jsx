@@ -14,8 +14,6 @@ class NewsContainer extends Component {
   }
 
   static calculateState(prevState) {
-    console.log('UPDATE');
-    console.log(NewsStore.news);
     return {
       news: NewsStore.news,
       isCommittee: UserStore.user.isCommittee,
@@ -24,7 +22,6 @@ class NewsContainer extends Component {
   }
 
   render() {
-    console.log('RENDER');
     return (
       <NewsPage
         news={this.state.news}

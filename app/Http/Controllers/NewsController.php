@@ -41,7 +41,7 @@ class NewsController extends Controller {
             'title'    => 'required',
             'content'  => 'required',
         ]);
-        $news = News::with('writer')->find($request->id);
+        $news = News::with('writer')->findOrFail($request->id);
         $news->title = $request->title;
         $news->content = $request->content;
         $news->user_id = $request->user()->id;
