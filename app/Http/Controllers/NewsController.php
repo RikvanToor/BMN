@@ -28,7 +28,7 @@ class NewsController extends Controller {
      * Show all news articles
      */
     public function showAllNews() {
-        $news = News::with('writer')->get();
+        $news = News::with('writer')->orderBy('created_at', 'DESC')->get();
         return response()->json($news, 200);
     }
 
