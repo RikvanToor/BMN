@@ -1,9 +1,14 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import { NewsActions, updateNewsAction } from '@Actions/NewsActions.js';
+import { NewsActions, updateNewsAction, updateArticleAction } from '@Actions/NewsActions.js';
+import { List } from 'immutable';
 
 const getNews = 'news';
+const urls = {
+  getNews: 'news',
+  updateNews: 'news/update'
+}
 
 /**
  * Stores and updates all news articles
@@ -24,10 +29,10 @@ class NewsStore extends Store {
    * @param {object} payload
    */
   __onDispatch(payload) {
-    switch(payload.action) {
+    switch (payload.action) {
       case NewsActions.GET_NEWS:
         AppDispatcher.dispatchPromisedFn(
-          ApiService.readAuthenticatedData(getNews, {}),
+          ApiService.readAuthenticatedData(urls.getNews, {}),
           data => updateNewsAction(data),
           (errData) => {
             this.error = errData;
@@ -37,6 +42,28 @@ class NewsStore extends Store {
       case NewsActions.UPDATE_NEWS:
         this.news = payload.news;
         this.__emitChange();
+        break;
+      case NewsActions.EDIT_NEWS:
+        AppDispatcher.dispatchPromisedFn(
+          ApiService.updateData(urls.updateNews, {
+            id: payload.id,
+            title: payload.news.title,
+            content: payload.news.content
+          }),
+          data => updateArticleAction(data, payload.callback),
+          (errData) => {
+            this.error = errData;
+          },
+        );
+        break;
+      case NewsActions.UPDATE_ARTICLE:
+        var index = this.news.findIndex(x => x.id === payload.article.id);
+        if (index > -1) {
+          this.news[index] = payload.article;
+          this.news = new List(this.news);
+          payload.callback();
+          this.__emitChange();
+        }
         break;
     }
   }

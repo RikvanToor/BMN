@@ -4,7 +4,9 @@ import MarkdownRenderer from 'react-markdown-renderer';
 import { printDateTime } from '../GeneralExtensions.js';
 import RichEditor from '@Components/RichEditor.jsx';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
-import { convertToRaw, convertFromRaw } from 'draft-js'
+import { convertToRaw, convertFromRaw } from 'draft-js';
+import { editNewsAction } from '@Actions/NewsActions.js';
+import { dispatch } from '@Services/AppDispatcher.js';
 
 /**
  * Display for a news article
@@ -12,6 +14,11 @@ import { convertToRaw, convertFromRaw } from 'draft-js'
 class NewsArticle extends Component {
   constructor(props) {
     super(props);
+    this.reset();
+  }
+  
+  reset() {
+    //TODO verwijderen?
     this.state = { article: this.props.article };
     this.state.mode = this.props.article ? MODES.NORMAL : MODES.EDIT;
   }
@@ -26,7 +33,19 @@ class NewsArticle extends Component {
   }
 
   saveArticle() {
+    var content = draftToMarkdown(convertToRaw(this.state.editState.editorState.getCurrentContent()));
+    var title = this.state.editState.title;
+    var news = { content, title };
+    var action =  editNewsAction(this.state.article.id, news, this.savedCallback.bind(this));
+    dispatch(action);
+  }
 
+  savedCallback() {
+    console.log('CALLBACK');
+    console.log(this.props);
+    this.state.mode = MODES.NORMAL;
+    this.state.article = this.props.article;
+    this.forceUpdate();
   }
 
   editBar() {
@@ -73,7 +92,7 @@ class NewsArticle extends Component {
 
         <Modal.Footer>
           <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
-          <Button bsStyle="primary" onClick={this.saveArticle}>Opslaan</Button>
+          <Button bsStyle="primary" onClick={this.saveArticle.bind(this)}>Opslaan</Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>;
@@ -93,6 +112,7 @@ class NewsArticle extends Component {
   }
 
   render() {
+    console.log('hoi');
     switch (this.state.mode) {
       case MODES.EDIT:
         return <div>{this.renderEditor()}{this.renderRegular()}</div>;

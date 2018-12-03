@@ -31,4 +31,22 @@ class NewsController extends Controller {
         $news = News::with('writer')->get();
         return response()->json($news, 200);
     }
+
+    /**
+     * Update a single news article
+     */
+    public function updateNews(Request $request) {
+        $this->validate($request, [
+            'id'       => 'required|integer',
+            'title'    => 'required',
+            'content'  => 'required',
+        ]);
+        $news = News::with('writer')->find($request->id);
+        $news->title = $request->title;
+        $news->content = $request->content;
+        $news->user_id = $request->user()->id;
+        $news->save();
+
+        return response()->json($news, 200);
+    }
 }

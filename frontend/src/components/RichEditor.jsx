@@ -8,8 +8,7 @@ class RichEditorExample extends Component {
   constructor(props) {
     super(props);
     this.state = { editorState: EditorState.createWithContent(this.props.content), title: this.props.title };
-
-
+    this.props.onChange(this.state);
 
     this.focus = () => this.refs.editor.focus();
     this.onChange = (editorState) => this.syncState({ editorState });
