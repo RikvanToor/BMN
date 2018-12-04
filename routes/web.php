@@ -143,6 +143,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
         $router->group(['prefix' => '/news'], function() use ($router) {
             $router->get('', 'NewsController@showAllNews');
             $router->post('/update', 'NewsController@updateNews');
+            $router->delete('/{id}', 'NewsController@deleteNews');
         });
     });
 });

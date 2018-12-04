@@ -1,13 +1,14 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import { NewsActions, updateNewsAction, updateArticleAction } from '@Actions/NewsActions.js';
+import { NewsActions, updateNewsAction, updateArticleAction, updateArticleDeletedAction } from '@Actions/NewsActions.js';
 import { List } from 'immutable';
 
 const getNews = 'news';
 const urls = {
   getNews: 'news',
-  updateNews: 'news/update'
+  updateNews: 'news/update',
+  deleteNews: 'news'
 }
 
 /**
@@ -50,7 +51,16 @@ class NewsStore extends Store {
             title: payload.news.title,
             content: payload.news.content
           }),
-          data => updateArticleAction(data, payload.callback),
+          data => updateArticleAction(data),
+          (errData) => {
+            this.error = errData;
+          },
+        );
+        break;
+      case NewsActions.DELETE_NEWS:
+        AppDispatcher.dispatchPromisedFn(
+          ApiService.deleteData(urls.deleteNews + '/' + payload.id, {}),
+          () => updateArticleDeletedAction(payload.id),
           (errData) => {
             this.error = errData;
           },
@@ -60,6 +70,14 @@ class NewsStore extends Store {
         var index = this.news.findIndex(x => x.id === payload.article.id);
         if (index > -1) {
           this.news[index] = payload.article;
+          this.news = this.news.splice(0);
+          this.__emitChange();
+        }
+        break;
+      case NewsActions.UPDATE_ARTICLE_DELETED:
+        var index = this.news.findIndex(x => x.id === payload.id);
+        if (index > -1) {
+          delete this.news[index];
           this.news = this.news.splice(0);
           this.__emitChange();
         }

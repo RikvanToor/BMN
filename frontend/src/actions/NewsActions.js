@@ -4,7 +4,8 @@ export const NewsActions = {
   EDIT_NEWS: 'EDIT_NEWS',
   DELETE_NEWS: 'DELETE_NEWS',
   UPDATE_NEWS: 'UPDATE_NEWS',
-  UPDATE_ARTICLE: 'UPDATE_ARTICLE'
+  UPDATE_ARTICLE: 'UPDATE_ARTICLE',
+  UPDATE_ARTICLE_DELETED: 'UPDATE_ARTICLE_DELETED',
 }
 
 export function getNewsAction() {
@@ -16,7 +17,7 @@ export function createNewsAction(news) {
 }
 
 export function editNewsAction(id, news, callback) {
-  return { action: NewsActions.EDIT_NEWS, id: id, news: news, callback: callback };
+  return { action: NewsActions.EDIT_NEWS, id: id, news: news };
 }
 
 export function deleteNewsAction(id) {
@@ -27,6 +28,10 @@ export function updateNewsAction(news) {
   return { action: NewsActions.UPDATE_NEWS, news, };
 }
 
-export function updateArticleAction(article, callback) {
-  return { action: NewsActions.UPDATE_ARTICLE, article, callback };
+export function updateArticleAction(article) {
+  return { action: NewsActions.UPDATE_ARTICLE, article };
+}
+
+export function updateArticleDeletedAction(id) {
+  return { action: NewsActions.UPDATE_ARTICLE_DELETED, id };
 }

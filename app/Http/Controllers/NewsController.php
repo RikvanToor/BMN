@@ -9,7 +9,7 @@ class NewsController extends Controller {
     /**
      * Remove entry from 'news' table
      */
-    public function delete($id) {
+    public function deleteNews($id) {
         $news = News::findOrFail($id);
         $news->delete();
 

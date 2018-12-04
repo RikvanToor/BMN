@@ -5,7 +5,7 @@ import { printDateTime } from '../GeneralExtensions.js';
 import RichEditor from '@Components/RichEditor.jsx';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 import { convertToRaw, convertFromRaw } from 'draft-js';
-import { editNewsAction } from '@Actions/NewsActions.js';
+import { editNewsAction, deleteNewsAction } from '@Actions/NewsActions.js';
 import { dispatch } from '@Services/AppDispatcher.js';
 
 /**
@@ -47,6 +47,15 @@ class NewsArticle extends Component {
   }
 
   /**
+   * Dispatches an action to delete the current article
+   */
+  deleteArticle() {
+    var action = deleteNewsAction(this.props.article.id);
+    this.setState({ mode: MODES.NORMAL });
+    dispatch(action);
+  }
+
+  /**
    * Renders an 'edit' and a 'delete' button
    */
   editBar() {
@@ -77,7 +86,7 @@ class NewsArticle extends Component {
 
         <Modal.Footer>
           <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
-          <Button bsStyle="danger">Verwijderen</Button>
+          <Button bsStyle="danger" onClick={this.deleteArticle.bind(this)}>Verwijderen</Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>
