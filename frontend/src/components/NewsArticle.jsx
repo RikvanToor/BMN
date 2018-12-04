@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Panel, Glyphicon, Button, Modal } from 'react-bootstrap';
 import MarkdownRenderer from 'react-markdown-renderer';
 import { printDateTime } from '../GeneralExtensions.js';
-import RichEditor from '@Components/RichEditor.jsx';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 import { convertToRaw, convertFromRaw } from 'draft-js';
 import { editNewsAction, deleteNewsAction } from '@Actions/NewsActions.js';
 import { dispatch } from '@Services/AppDispatcher.js';
+import NewsEditor from '@Components/NewsEditor.jsx';
 
 /**
  * Display for a news article
@@ -27,19 +27,11 @@ class NewsArticle extends Component {
   }
 
   /**
-   * Updates the current editState
-   * @param {EditState} state 
-   */
-  setEditState(state) {
-    this.state.editState = state;
-  }
-
-  /**
    * Dispatches an action to update the article from the editor
    */
-  saveArticle() {
-    var content = draftToMarkdown(convertToRaw(this.state.editState.editorState.getCurrentContent()));
-    var title = this.state.editState.title;
+  saveArticle(editState) {
+    var content = draftToMarkdown(convertToRaw(editState.editorState.getCurrentContent()));
+    var title = editState.title;
     var news = { content, title };
     var action = editNewsAction(this.props.article.id, news);
     this.setState({ mode: MODES.NORMAL });
@@ -98,20 +90,12 @@ class NewsArticle extends Component {
   renderEditor() {
     var content = convertFromRaw(markdownToDraft(this.props.article.content));
 
-    return <div className="static-modal">
-      <Modal.Dialog>
-        <Modal.Header>
-          <Modal.Title>Nieuwsbericht bewerken</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body><RichEditor content={content} title={this.props.article.title} onChange={(s) => this.setEditState(s)} /></Modal.Body>
-
-        <Modal.Footer>
-          <Button onClick={() => this.setMode(MODES.NORMAL)}>Annuleren</Button>
-          <Button bsStyle="primary" onClick={this.saveArticle.bind(this)}>Opslaan</Button>
-        </Modal.Footer>
-      </Modal.Dialog>
-    </div>;
+    return <NewsEditor 
+      content={content} 
+      title={this.props.article.title}
+      onSave={this.saveArticle.bind(this)}
+      onCancel={() => this.setMode(MODES.NORMAL)}
+      />;
   }
 
   /**

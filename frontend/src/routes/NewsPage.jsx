@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { PageHeader } from 'react-bootstrap';
-import { deferredDispatch } from '@Services/AppDispatcher.js';
+import { PageHeader, Button, Glyphicon } from 'react-bootstrap';
+import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
 import { getNewsAction } from '@Actions/NewsActions.js';
 import NewsArticle from '@Components/NewsArticle.jsx';
 
@@ -22,10 +22,21 @@ class NewsPage extends Component {
         deferredDispatch(getNewsAction());
     }
 
+    createNewArticle() {
+        
+    }
+
     render() {
         return (
             <div>
-                <PageHeader>Nieuws</PageHeader>
+                <PageHeader>
+                    Nieuws
+                    {this.props.isCommittee ?
+                        <Button bsStyle="primary" className="pull-right" onClick={this.createNewArticle.bind(this)}>
+                            <Glyphicon glyph='plus' /> Nieuw artikel
+                        </Button> :
+                        null}
+                </PageHeader>
                 {this.props.news.map(x => <NewsArticle key={x.id} article={x} isCommittee={this.props.isCommittee} />)}
             </div>
         )
