@@ -88,7 +88,7 @@ class NewsStore extends Store {
       case NewsActions.UPDATE_ARTICLE_DELETED:
         var index = this.news.findIndex(x => x.id === payload.id);
         if (index > -1) {
-          delete this.news[index];
+          this.news.splice(index, 1);
           this.news = this.news.splice(0);
           this.__emitChange();
         }
