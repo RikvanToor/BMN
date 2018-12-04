@@ -142,8 +142,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
 
         $router->group(['prefix' => '/news'], function() use ($router) {
             $router->get('', 'NewsController@showAllNews');
-            $router->post('/update', 'NewsController@updateNews');
-            $router->delete('/{id}', 'NewsController@deleteNews');
+            $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->post('', 'NewsController@createNews');
+                $router->post('/update', 'NewsController@updateNews');
+                $router->delete('/{id}', 'NewsController@deleteNews');
+            });
         });
     });
 });

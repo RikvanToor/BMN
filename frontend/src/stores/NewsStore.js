@@ -1,12 +1,11 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import { NewsActions, updateNewsAction, updateArticleAction, updateArticleDeletedAction } from '@Actions/NewsActions.js';
-import { List } from 'immutable';
+import { NewsActions, updateNewsAction, updateArticleAction, updateArticleDeletedAction, addArticleAction } from '@Actions/NewsActions.js';
 
-const getNews = 'news';
 const urls = {
-  getNews: 'news',
+  createNews: 'news',
+  readNews: 'news',
   updateNews: 'news/update',
   deleteNews: 'news'
 }
@@ -33,7 +32,7 @@ class NewsStore extends Store {
     switch (payload.action) {
       case NewsActions.GET_NEWS:
         AppDispatcher.dispatchPromisedFn(
-          ApiService.readAuthenticatedData(urls.getNews, {}),
+          ApiService.readAuthenticatedData(urls.readNews, {}),
           data => updateNewsAction(data),
           (errData) => {
             this.error = errData;
@@ -43,6 +42,18 @@ class NewsStore extends Store {
       case NewsActions.UPDATE_NEWS:
         this.news = payload.news;
         this.__emitChange();
+        break;
+      case NewsActions.CREATE_NEWS:
+        AppDispatcher.dispatchPromisedFn(
+          ApiService.createData(urls.createNews, {
+            title: payload.news.title,
+            content: payload.news.content
+          }),
+          data => addArticleAction(data),
+          (errData) => {
+            this.error = errData;
+          }
+        );
         break;
       case NewsActions.EDIT_NEWS:
         AppDispatcher.dispatchPromisedFn(
@@ -81,6 +92,11 @@ class NewsStore extends Store {
           this.news = this.news.splice(0);
           this.__emitChange();
         }
+        break;
+      case NewsActions.ADD_ARTICLE:
+        this.news.unshift(payload.news);
+        this.news = this.news.splice(0);
+        this.__emitChange();
         break;
     }
   }

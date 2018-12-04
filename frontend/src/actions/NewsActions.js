@@ -6,6 +6,7 @@ export const NewsActions = {
   UPDATE_NEWS: 'UPDATE_NEWS',
   UPDATE_ARTICLE: 'UPDATE_ARTICLE',
   UPDATE_ARTICLE_DELETED: 'UPDATE_ARTICLE_DELETED',
+  ADD_ARTICLE: 'ADD_ARTICLE'
 }
 
 export function getNewsAction() {
@@ -34,4 +35,8 @@ export function updateArticleAction(article) {
 
 export function updateArticleDeletedAction(id) {
   return { action: NewsActions.UPDATE_ARTICLE_DELETED, id };
+}
+
+export function addArticleAction(news) {
+  return { action: NewsActions.ADD_ARTICLE, news };
 }

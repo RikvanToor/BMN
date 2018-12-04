@@ -7,6 +7,24 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller {
     /**
+     * Create a new news article and insert it into the database
+     */
+    public function createNews(Request $request) {
+        $this->validate($request, [
+            'title'     => 'required',
+            'content'   => 'required',
+        ]);
+        $news = new News;
+        $news->title = $request->title;
+        $news->content = $request->content;
+        //$news->user_id = $request->user()->id;
+        $news->writer()->associate($request->user());
+        $news->save();
+
+        return response()->json($news, 200);
+    }
+
+    /**
      * Remove entry from 'news' table
      */
     public function deleteNews($id) {
