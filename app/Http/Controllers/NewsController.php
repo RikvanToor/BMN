@@ -35,14 +35,6 @@ class NewsController extends Controller {
     }
 
     /**
-     * Show a single news article
-     */
-    public function showOneArticle($id) {
-        $article = News::find($id);
-        return response()->json($article, 200);
-    }
-
-    /**
      * Show all news articles
      */
     public function showAllNews() {
