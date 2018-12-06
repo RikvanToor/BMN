@@ -14,7 +14,7 @@ import NewsEditor from '@Components/NewsEditor.jsx';
 class NewsArticle extends Component {
   constructor(props) {
     super(props);
-    this.state = { mode: this.props.article ? MODES.NORMAL : MODES.EDIT };
+    this.state = { mode: MODES.NORMAL };
   }
 
   /**
@@ -22,7 +22,8 @@ class NewsArticle extends Component {
    * @param {Mode} mode 
    */
   setMode(mode) {
-    this.state.mode = mode;
+    this.transition = undefined;
+    this.setState({ mode });
     this.forceUpdate();
   }
 
@@ -34,7 +35,7 @@ class NewsArticle extends Component {
     var title = editState.title;
     var news = { content, title };
     var action = editNewsAction(this.props.article.id, news);
-    this.setState({ mode: MODES.NORMAL });
+    this.transition = MODES.NORMAL;
     dispatch(action);
   }
 
@@ -88,14 +89,16 @@ class NewsArticle extends Component {
    * Renders an editor to edit an article
    */
   renderEditor() {
+    console.log(this.props.error);
     var content = convertFromRaw(markdownToDraft(this.props.article.content));
 
-    return <NewsEditor 
-      content={content} 
+    return <NewsEditor
+      content={content}
       title={this.props.article.title}
       onSave={this.saveArticle.bind(this)}
       onCancel={() => this.setMode(MODES.NORMAL)}
-      />;
+      error={this.props.error}
+    />;
   }
 
   /**
@@ -115,17 +118,13 @@ class NewsArticle extends Component {
   }
 
   render() {
-    switch (this.state.mode) {
-      case MODES.EDIT:
-        return <div>{this.renderEditor()}{this.renderRegular()}</div>;
-
-      case MODES.DELETE:
-        return <div>{this.renderConfirmDelete()}{this.renderRegular()}</div>;
-
-      case MODES.NORMAL:
-      default:
-        return this.renderRegular();
-    }
+    return <div>
+      {(this.state.mode === MODES.EDIT && ((this.transition === MODES.NORMAL && this.props.error) || !(this.transition === MODES.NORMAL))) ?
+        this.renderEditor() : null}
+      {this.state.mode === MODES.DELETE ?
+        this.renderConfirmDelete() : null}
+      {this.renderRegular()}
+    </div>;
   }
 }
 

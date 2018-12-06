@@ -64,7 +64,7 @@ class NewsPage extends Component {
             </Button> :
             null}
         </PageHeader>
-        {this.props.news.map(x => <NewsArticle key={x.id} article={x} isCommittee={this.props.isCommittee} />)}
+        {this.props.news.map(x => <NewsArticle key={x.id} article={x} isCommittee={this.props.isCommittee} error={this.props.error} />)}
         {this.state.mode === MODES.NEW ? this.renderEditor() : null}
       </div>
     )
