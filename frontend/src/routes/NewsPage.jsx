@@ -24,6 +24,7 @@ class NewsPage extends Component {
   }
 
   setMode(mode) {
+    this.transition = undefined;
     this.setState({ mode: mode });
     this.forceUpdate();
   }
@@ -37,18 +38,19 @@ class NewsPage extends Component {
     var title = editState.title;
     var news = { content, title };
     var action = createNewsAction(news);
-    this.setState({ mode: MODES.NORMAL });
+    this.transition = MODES.NORMAL;
     dispatch(action);
   }
 
   renderEditor() {
     var content = ContentState.createFromText('');
-    return <NewsEditor 
+    return (this.transition === MODES.NORMAL && this.props.error) || (this.transition !== MODES.NORMAL) ? <NewsEditor 
       content={content} 
       title={''}
       onSave={this.createNewArticle.bind(this)}
       onCancel={() => this.setMode(MODES.NORMAL)}
-      />;
+      error={this.props.error}
+      /> : null;
   }
 
   render() {

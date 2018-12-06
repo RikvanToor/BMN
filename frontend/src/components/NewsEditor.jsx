@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Alert } from 'react-bootstrap';
 import RichEditor from '@Components/RichEditor.jsx';
+import { printErrors } from '../GeneralExtensions.js';
 
 class NewsArticle extends Component {
   constructor(props) {
@@ -27,6 +28,10 @@ class NewsArticle extends Component {
   render() {
     return <div className="static-modal">
       <Modal.Dialog>
+        {this.props.error ?
+          <Alert bsStyle="danger">
+            {printErrors(this.props.error.data)}
+          </Alert> : null}
         <Modal.Header>
           <Modal.Title>Nieuwsbericht bewerken</Modal.Title>
         </Modal.Header>

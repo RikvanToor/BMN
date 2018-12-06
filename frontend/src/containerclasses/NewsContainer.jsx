@@ -16,6 +16,7 @@ class NewsContainer extends Component {
   static calculateState(prevState) {
     return {
       news: NewsStore.news,
+      error: NewsStore.error,
       isCommittee: UserStore.user.isCommittee,
       isLoggedIn: UserStore.user.isLoggedIn
     };
@@ -25,6 +26,7 @@ class NewsContainer extends Component {
     return (
       <NewsPage
         news={this.state.news}
+        error={this.state.error}
         isCommittee={this.state.isCommittee}
         isLoggedIn={this.state.isLoggedIn}
       />
