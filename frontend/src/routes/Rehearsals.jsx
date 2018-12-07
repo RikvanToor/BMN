@@ -7,7 +7,7 @@ import { printTime } from '../GeneralExtensions.js';
 /**
  * The rehearsals page. Since no state is needed, this is a Pure component that is rerendered
  * only when new properties are provided.
-  */
+ */
 class RehearsalsPage extends PureComponent {
     constructor(props) {
         super(props);

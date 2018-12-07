@@ -10,6 +10,7 @@ import { Grid, Row } from 'react-bootstrap';
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
+import SongsContainer from '@Containers/SongsContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
@@ -31,6 +32,7 @@ const routes = [
   {target:'/home',            component:Home,                 role:'guest'},
   {target:'/login',           component:LoginContainer,       role:'guest'},
   {target:'/rooster',         component:RehearsalContainer,   role:'user'},
+  {target:'/nummers',         component:SongsContainer,       role:'user'},
   {target:'/suggesties',      component:SuggestionList,       role:'committee'},
   {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
   {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
