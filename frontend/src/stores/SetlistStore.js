@@ -38,4 +38,4 @@ class SetlistStore extends Store {
   }
 }
 
-export default new RehearsalStore(AppDispatcher);
+export default new SetlistStore(AppDispatcher);

@@ -11,46 +11,36 @@
 |
  */
 
+ function getMultiple($router, $routes, $func){
+     foreach($routes as $route){
+         $router->get($route, $func);
+     }
+ }
+
 /**
  * 
  * Route all relevant links to the index. There, the routing will be handled via the React
  * Router. 
  */
-$router->get('/', function () use ($router) {
+$indexRoutes = [
+    '/',
+    '/home',
+    '/nummers',
+    '/suggesties',
+    '/roosterAanpassen',
+    '/rooster',
+    '/aanwezigheid',
+    '/gebruikersbeheer',
+    '/account',
+    '/wachtwoordreset',
+    '/setlist',
+];
+getMultiple( $router, $indexRoutes, function() use($router){
     return view('index');
-});
-$router->get('/home', function () use ($router) {
-    return view('index');
-});
-$router->get('/nummers', function () use ($router) {
-    return view('index');
-});
-$router->get('/suggesties', function () use ($router) {
-    return view('index');
-});
+} );
 $router->get('/login', ['as'=>'login', function () use ($router) {
     return view('index');
 }]);
-$router->get('/roosterAanpassen', function () use ($router) {
-    return view('index');
-});
-$router->get('/rooster', function () use ($router) {
-    return view('index');
-});
-$router->get('/aanwezigheid', function () use ($router) {
-    return view('index');
-});
-$router->get('/gebruikersbeheer', function () use ($router) {
-    return view('index');
-});
-$router->get('/account', function () use ($router) {
-    return view('index');
-});
-
-//Route reset to the index for React router to pick up, The 
-$router->get('/wachtwoordreset', function() use ($router){
-    return view('index');
-});
 $router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use ($router){
     return view('index');
 }]);

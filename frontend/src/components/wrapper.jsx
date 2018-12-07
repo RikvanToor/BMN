@@ -18,6 +18,7 @@ import AccountPage from '@Routes/AccountPage.jsx'
 import PasswordResetPage from '@Routes/PasswordResetPage.jsx'
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
+import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 
 
 /**
@@ -30,15 +31,18 @@ import SuggestionList from '@Routes/SuggestionList.jsx';
 const routes = [
   {target:'/home',            component:Home,                 role:'guest'},
   {target:'/login',           component:LoginContainer,       role:'guest'},
-  {target:'/rooster',         component:RehearsalContainer,   role:'user'},
-  {target:'/suggesties',      component:SuggestionList,       role:'committee'},
-  {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
-  {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
-  {target:'/aanwezigheid',    component:AvailabilityContainer,role:'user'},
-  {target:'/gebruikersbeheer',component:UsersPage,            role:'committee'},
-  {target:'/account',         component:AccountPage,          role:'user'},
   {target:'/wachtwoordreset', component:PasswordResetPage,    role:'guest'},
-  {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage, role:'guest'}
+  {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage, role:'guest'},
+
+  {target:'/rooster',         component:RehearsalContainer,   role:'user'},
+  {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
+  {target:'/aanwezigheid',    component:AvailabilityContainer,role:'user'},
+  {target:'/account',         component:AccountPage,          role:'user'},
+
+  {target:'/suggesties',      component:SuggestionList,       role:'committee'},
+  {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
+  {target:'/gebruikersbeheer',component:UsersPage,            role:'committee'},
+  {target:'/setlist',           component:SetlistEditPage,            role:'committee'},
 ];
 
 class Wrapper extends Component {
