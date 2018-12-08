@@ -17,34 +17,73 @@ import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
 import RehearsalManipulationStore, { loadAllRehearsals } from '@Stores/RehearsalManipulationStore.js';
 import RehearsalStore from '@Stores/RehearsalStore.js';
 import { getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities } from '@Actions/RehearsalActions.js';
+import {printTime} from '../GeneralExtensions.js';
 
-class Home extends Component {
-  super(props) {
-    this.state = {
-
-    };
-  }
-
+class CheckAvailabilityPage extends Component {
   componentDidMount() {
     deferredDispatch(getAllAvailabilities());
+  }
+  getAvailabilitiesPerUser(availabilities){
+    let users = {};
+    availabilities.forEach((el)=>{
+      if(!(el.id in users)){
+        users[el.id] = [];
+      }
+      users[el.id].push(el);
+    });
+    return users;
+  }
+  renderAvailabilities(rehearsalObj){
+    let startTime = new Date(rehearsalObj.start);
+    let endTime = new Date(rehearsalObj.end);
+    let availPerUser = this.getAvailabilitiesPerUser(rehearsalObj.availabilities);
+    return (
+      <div key={rehearsalObj.location+rehearsalObj.start}>
+        <h3>{startTime.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+        <h4>{printTime(startTime)}-{printTime(endTime)} @ {rehearsalObj.location}</h4>
+        <Table striped bordered condensed hover responsive style={{ marginTop: '10px' }}>
+          <thead>
+            <tr>
+              <th>Naam</th>
+              <th>Beschikbaarheid</th>
+            </tr>
+          </thead>
+          <tbody>
+              {
+                Object.keys(availPerUser).map((key)=>{
+                  let av = availPerUser[key];
+                  let str = av.map((el)=>{
+                    return printTime(el.start)+'-'+printTime(el.end);
+                  }).join(', ');
+                  return(
+                    <tr key={av[0].name}>
+                      <td>{av[0].name}</td>
+                      <td>{str}</td>
+                    </tr>
+                  );
+                })
+              }
+          </tbody>
+        </Table>
+      </div>
+    )
   }
 
   render() {
     return (
       <div>
-        <Table striped bordered condensed hover responsive style={{ marginTop: '10px' }}>
-          <thead>
-            <tr>
-              <th>Naam</th>
-              <th>Datum</th>
-              <th>Beschikbaarheid</th>
-            </tr>
-          </thead>
-          <tbody />
-        </Table>
+        {this.props.rehearsals.map(rehearsal=>this.renderAvailabilities(rehearsal))}
       </div>
     );
   }
 }
 
-export default Home;
+export default Container.createFunctional(
+  (state)=><CheckAvailabilityPage rehearsals={state.rehearsals} />,
+  ()=>[RehearsalStore],
+  (prevState)=>{
+    return {
+      rehearsals: RehearsalStore.allAvailabilities
+    };
+  }
+);

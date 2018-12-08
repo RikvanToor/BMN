@@ -3,10 +3,12 @@ import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { RehearsalActions, updateRehearsalsAction, updateAvailabilitiesAction } from '@Actions/RehearsalActions.js';
 import { List } from 'immutable';
+import {withKeys} from '@Utils/ObjectUtils.js';
 
 const getRehearsals = 'rehearsals/schedules';
 const getRehearsalsForPlayer = 'rehearsals/schedules/for/';
 const getAvailabilities = 'rehearsals/availabilities';
+const getAllAvailabilities = 'rehearsals/availabilities/all';
 const setAvailabilities = rehearsalId => `rehearsals/${rehearsalId}/availabilities`;
 
 
@@ -23,12 +25,14 @@ class RehearsalStore extends Store {
     //Personal availabilities of current user
     this.myAvailabilities = new List();
 
+    this.allAvailabilities = new List();
+
     // Possible errors
     this.error = undefined;
   }
 
   /**
-     * Override of base class that is called when handling actions. Remember to not
+    * Override of base class that is called when handling actions. Remember to not
      * dispatch new actions in this function.
      * @param {object} payload
      */
@@ -68,6 +72,26 @@ class RehearsalStore extends Store {
           },
         );
         break;
+
+        //Retrieve availability 
+      case RehearsalActions.GET_ALL_AVAILABILITIES:
+          console.log(payload);
+        this.allAvailabilities = payload.responseData.map((rehearsal)=>{
+          let newRehearsal = withKeys(rehearsal, ['id','location','start','end']);
+          newRehearsal.start = new Date(newRehearsal.start);
+          newRehearsal.end = new Date(newRehearsal.end);
+          //Create the availabilities in a compact manner.
+          newRehearsal.availabilities = rehearsal.availabilities.map((el)=>{
+            let av = withKeys(el, ['name','id']);
+            av.start = new Date(el.pivot.start);
+            av.end = new Date(el.pivot.end);
+            console.log(av);
+            return av;
+          });
+          return newRehearsal;
+        });
+        this.__emitChange();
+      break;
         
       //Add newly created rehearsals after being added on the server
       case RehearsalActions.CREATE_REHEARSALS:
