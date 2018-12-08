@@ -1,11 +1,12 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import { updateSongsAction, SongActions } from '@Actions/SongActions.js';
+import { updateSongsAction, updateSongAction, updateErrorAction, SongActions } from '@Actions/SongActions.js';
 import { List } from 'immutable';
 
 const Endpoints = {
-  getSongs: 'songs/mineAndAll'
+  getSongs: 'songs/mineAndAll',
+  getSong: id => 'songs/' + id + '/withusers'
 };
 
 /**
@@ -20,6 +21,8 @@ class SongsStore extends Store {
     this.songs = new List();
     //Songs the current user plays
     this.mySongs = new List();
+    //One specific song
+    this.song = undefined;
 
     // Possible errors
     this.error = undefined;
@@ -43,11 +46,31 @@ class SongsStore extends Store {
         break;
       case SongActions.UPDATE_SONGS:
         if (payload.songs) {
+          this.error = undefined;
           this.songs = new List(payload.songs.allSongs);
           this.mySongs = new List(payload.songs.mySongs);
           this.__emitChange();
         }
         break;
+      case SongActions.GET_SONG:
+        AppDispatcher.dispatchPromisedFn(
+          ApiService.readAuthenticatedData(Endpoints.getSong(payload.id), {}),
+          data => updateSongAction(data),
+          (errData) => updateErrorAction()
+        );
+        break;
+      case SongActions.UPDATE_SONG:
+        if (payload.song) {
+          this.error = undefined;
+          this.song = payload.song;
+          this.__emitChange();
+        }
+        break;
+      case SongActions.UPDATE_ERROR:
+        if (payload.error) {
+          this.error = payload.error;
+          this.__emitChange();
+        }
       default:
         break;
     }

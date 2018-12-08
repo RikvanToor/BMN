@@ -11,6 +11,7 @@ import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import SongsContainer from '@Containers/SongsContainer.jsx';
+import SongContainer from '@Containers/SongContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
@@ -29,17 +30,18 @@ import SuggestionList from '@Routes/SuggestionList.jsx';
 
 //Routes in the app
 const routes = [
-  {target:'/home',            component:Home,                 role:'guest'},
-  {target:'/login',           component:LoginContainer,       role:'guest'},
-  {target:'/rooster',         component:RehearsalContainer,   role:'user'},
-  {target:'/nummers',         component:SongsContainer,       role:'user'},
-  {target:'/suggesties',      component:SuggestionList,       role:'committee'},
-  {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
-  {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
-  {target:'/aanwezigheid',    component:AvailabilityContainer,role:'user'},
-  {target:'/gebruikersbeheer',component:UsersPage,            role:'committee'},
-  {target:'/account',         component:AccountPage,          role:'user'},
-  {target:'/wachtwoordreset', component:PasswordResetPage,    role:'guest'},
+  {target:'/home',                   component:Home,                 role:'guest'},
+  {target:'/login',                  component:LoginContainer,       role:'guest'},
+  {target:'/rooster',                component:RehearsalContainer,   role:'user'},
+  {target:'/nummers',                component:SongsContainer,       role:'user'},
+  {target:'/nummer/:id',             component:SongContainer,        role:'user'},
+  {target:'/suggesties',             component:SuggestionList,       role:'committee'},
+  {target:'/homeParticipant',        component:ParticipantHome,      role:'user'},
+  {target:'/roosterAanpassen',       component:RehearsalEditPage,    role:'committee'},
+  {target:'/aanwezigheid',           component:AvailabilityContainer,role:'user'},
+  {target:'/gebruikersbeheer',       component:UsersPage,            role:'committee'},
+  {target:'/account',                component:AccountPage,          role:'user'},
+  {target:'/wachtwoordreset',        component:PasswordResetPage,    role:'guest'},
   {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage, role:'guest'}
 ];
 

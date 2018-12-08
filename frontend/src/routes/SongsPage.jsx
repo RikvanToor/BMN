@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getSongsAction } from '@Actions/SongActions.js';
-import { Table, PageHeader, NavItem } from 'react-bootstrap';
+import { Table, PageHeader } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 /**
