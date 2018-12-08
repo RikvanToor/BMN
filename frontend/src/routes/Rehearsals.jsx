@@ -1,7 +1,8 @@
-import React, { Component, PureComponent } from "react";
+import React, { PureComponent } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
 import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { printTime } from '../GeneralExtensions.js';
 
 /**
@@ -115,7 +116,7 @@ class RehearsalsPage extends PureComponent {
                                 var songstart = new Date(y.pivot.start);
                                 var songend = new Date(y.pivot.end);
                                 return <tr key={y.id}>
-                                    <td>{y.artist} - {y.title}</td>
+                                    <td><LinkContainer to={'/nummer/' + y.id}><a>{y.artist} - {y.title}</a></LinkContainer></td>
                                     <td>{printTime(songstart)}</td>
                                     <td>{printTime(songend)}</td>
                                     <td>
