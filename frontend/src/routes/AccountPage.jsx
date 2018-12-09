@@ -4,7 +4,7 @@ import { dispatch } from '@Services/AppDispatcher.js';
 import PropTypes from 'prop-types';
 import { changePassword } from '@Actions/PasswordActions.js'
 import { Redirect } from 'react-router';
-import { FormGroup, Form,  FormControl, Alert, ControlLabel, Button, HelpBlock} from 'react-bootstrap';
+import { FormGroup, Form,  FormControl, Alert, ControlLabel, Button, HelpBlock, PageHeader} from 'react-bootstrap';
 import {isEmptyString} from '@Utils/TypeChecks.js';
 import PasswordChangeComponent from '@Components/PasswordChangeComponent.jsx';
 
@@ -30,6 +30,7 @@ class AccountPage extends Component {
         //Otherwise, render the login page
         return (
             <div>
+                <PageHeader>Account</PageHeader>
                 <h3>Wijzig mijn gegevens</h3>
                 <b>TODO</b>
                 <h3>Wijzig wachtwoord</h3>
