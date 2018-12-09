@@ -24,29 +24,26 @@ function objectToFormData(formDataObj, obj, prefix=''){
   const hasPrefix = prefix.length !== 0;
   let newKeyName = (name)=>hasPrefix ? '[' + name + ']' : name;
   
-  if(!(obj instanceof Object) && !Array.isArray(obj)){
-    formDataObj.append(prefix, obj);
-    return;
-  }
-  
-  Object.keys(obj).forEach((key)=>{
-    if(isPOJO(obj[key])){
+  //Handle object
+  if(isPOJO(obj)){
+    Object.keys(obj).forEach((key)=>{
       objectToFormData(formDataObj, obj[key],prefix+newKeyName(key));
+    });
+  }
+  //Handle array element
+  else if(isArray(obj)){
+    for(let i =0; i < obj.length; i++){
+      objectToFormData(formDataObj, obj[i],prefix+'['+i+']');
     }
-    else if(isArray(obj[key])){
-      for(let i =0; i < obj[key].length; i++){
-        objectToFormData(formDataObj, obj[key],prefix+newKeyName(key)+'['+i+']');
-      }
-    }
-    //Convert date to usable PHP string
-    else if(isDate(obj[key])){
-      formDataObj.append(prefix + newKeyName(key), toPhpString(obj[key]));
-    }
-    //Just set the value
-    else{
-      formDataObj.append(prefix + newKeyName(key), obj[key]);
-    }
-  });
+  }
+  //Convert date to usable PHP string
+  else if(isDate(obj)){
+    formDataObj.append(prefix, toPhpString(obj));
+  }
+  //Just set the value
+  else{
+    formDataObj.append(prefix, obj);
+  }
 }
 
 /**

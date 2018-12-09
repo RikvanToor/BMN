@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
-import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
 import { getAvailabilitiesAction } from '@Actions/RehearsalActions.js';
-import AvailabilityWidget from '../components/AvailabilityWidget.jsx';
+import AvailabilityWidget from '@Components/AvailabilityWidget.jsx';
 
 /**
  * The availabilities page. Since no state is needed, this is a Pure component that is rerendered
@@ -31,6 +31,7 @@ class AvailabilityPage extends Component {
     render() {
         return (
             <div>
+                <PageHeader>Aanwezigheid</PageHeader>
                 {this.props.availabilities.map(x => this.renderRehearsal(x))}
             </div>
         )

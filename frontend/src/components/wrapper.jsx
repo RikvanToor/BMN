@@ -9,6 +9,7 @@ import { Grid, Row } from 'react-bootstrap';
 //Routes
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
+import NewsContainer from '@Containers/NewsContainer.jsx';
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
 import SongsContainer from '@Containers/SongsContainer.jsx';
 import SongContainer from '@Containers/SongContainer.jsx';
@@ -32,6 +33,7 @@ import SuggestionList from '@Routes/SuggestionList.jsx';
 const routes = [
   {target:'/home',                   component:Home,                 role:'guest'},
   {target:'/login',                  component:LoginContainer,       role:'guest'},
+  {target:'/nieuws',                 component:NewsContainer,        role:'user'},
   {target:'/rooster',                component:RehearsalContainer,   role:'user'},
   {target:'/nummers',                component:SongsContainer,       role:'user'},
   {target:'/nummer/:id',             component:SongContainer,        role:'user'},

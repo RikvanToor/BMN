@@ -7,7 +7,7 @@ import { dispatch} from '@Services/AppDispatcher.js';
 import {logOut} from '@Actions/UserActions.js';
 
 const userLinks = {
-  'Home' : 'home',
+  'Nieuws' : 'nieuws',
   'Rooster' : 'rooster',
   'Nummers' : 'nummers',
   'Aanwezigheid' : 'aanwezigheid',
@@ -77,7 +77,7 @@ class Navigation extends PureComponent {
             <Navbar inverse collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <LinkContainer to='/home'>
+                        <LinkContainer to='/'>
                             <NavItem href="#">
                                 <img className="logo" src={Logo} />
                             </NavItem>

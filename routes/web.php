@@ -140,5 +140,14 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->delete('{id}/removesong/{song_id}', 'RehearsalsController@removeSong');
             });
         });
+
+        $router->group(['prefix' => '/news'], function() use ($router) {
+            $router->get('', 'NewsController@showAllNews');
+            $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->post('', 'NewsController@createNews');
+                $router->post('/update', 'NewsController@updateNews');
+                $router->delete('/{id}', 'NewsController@deleteNews');
+            });
+        });
     });
 });

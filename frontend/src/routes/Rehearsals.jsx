@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
-import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { printTime } from '../GeneralExtensions.js';
 
@@ -138,11 +138,13 @@ class RehearsalsPage extends PureComponent {
 
         return (
             <div>
-                <h1>Rooster</h1>
-                <ButtonGroup>
-                    <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>
-                    <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
-                </ButtonGroup>
+                <PageHeader>
+                    <div>Rooster</div>
+                    <ButtonGroup>
+                        <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>
+                        <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
+                    </ButtonGroup>
+                </PageHeader>
                 {table}
             </div>
         );
