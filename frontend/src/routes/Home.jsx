@@ -1,7 +1,19 @@
 import React, { Component } from "react";
-import Carousel from "../components/carousel.jsx";
+import { draftToMarkdown } from 'markdown-draft-js';
+import RichEditor from '@Components/RichEditor.jsx';
+
+const styles = {
+  editor: {
+    border: '1px solid gray',
+    minHeight: '6em'
+  }
+};
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
         <div>

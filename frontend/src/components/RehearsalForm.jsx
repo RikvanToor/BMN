@@ -54,7 +54,6 @@ export default class RehearsalForm extends Component{
       
       if('rehearsalid' in domNode.dataset){
         let rehearsals = this.state.rehearsals.delete(domNode.dataset.rehearsalid);
-        console.log(rehearsals);
         this.setState({
           rehearsals: this.state.rehearsals.delete(domNode.dataset.rehearsalid)
         });
@@ -92,8 +91,6 @@ export default class RehearsalForm extends Component{
       }
       //Set the validation errors and visualize.
       else{
-        console.log('Has errs');
-        console.log(totalErrs);
         let inputErrs = fromJS(totalErrs);
         this.setState({
           errs: inputErrs

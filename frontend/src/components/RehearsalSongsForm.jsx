@@ -197,7 +197,6 @@ export default class RehearsalSongsForm extends Component{
       );
     }
     render(){
-      console.log(this.state.songs);
       return (
         <React.Fragment>
           <Row>

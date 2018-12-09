@@ -96,7 +96,7 @@ class PasswordController extends Controller {
         $tokenObj->save();
 
         //Generate an url to the named 'newPasswordSet' route (see routes.php)
-        $resetUrl = route('newPasswordSet',['token'=>$tokenObj->token]);
+        $resetUrl = str_replace('/public', '', route('newPasswordSet',['token'=>$tokenObj->token]));
         
         //Send the email. Takes email address from the user object
         Mail::to($user)->send(new ResetMyPasswordMail($resetUrl,$user->name));

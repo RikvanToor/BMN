@@ -9,8 +9,9 @@ import { Grid, Row } from "react-bootstrap";
 //Routes
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
-import RehearsalContainer from "@Containers/RehearsalContainer.jsx";
-import AvailabilityContainer from "@Containers/AvailabilityContainer.jsx";
+import NewsContainer from '@Containers/NewsContainer.jsx';
+import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
+import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from "@Routes/RehearsalEditPage.jsx";
 import UsersPage from "@Routes/UsersPage.jsx";
@@ -28,30 +29,19 @@ import SuggestionList from "@Routes/SuggestionList.jsx";
 
 //Routes in the app
 const routes = [
-  { target: "/home", component: Home, role: "guest" },
-  { target: "/login", component: LoginContainer, role: "guest" },
-  { target: "/rooster", component: RehearsalContainer, role: "user" },
-  { target: "/suggesties", component: SuggestionList, role: "committee" },
-  { target: "/homeParticipant", component: ParticipantHome, role: "user" },
-  {
-    target: "/roosterAanpassen",
-    component: RehearsalEditPage,
-    role: "committee"
-  },
-  { target: "/aanwezigheid", component: AvailabilityContainer, role: "user" },
-  { target: "/gebruikersbeheer", component: UsersPage, role: "committee" },
-  { target: "/account", component: AccountPage, role: "user" },
-  { target: "/wachtwoordreset", component: PasswordResetPage, role: "guest" },
-  {
-    target: "/nieuwwachtwoord/:token",
-    component: ChangePasswordPage,
-    role: "guest"
-  },
-  {
-    target: "/beschikbaarheidBekijken",
-    component: CheckAvailability,
-    role: "committee"
-  }
+  {target:'/home',                    component:Home,                  role:'guest'},
+  {target:'/login',                   component:LoginContainer,        role:'guest'},
+  {target:'/nieuws',                  component:NewsContainer,         role:'user'},
+  {target:'/rooster',                 component:RehearsalContainer,    role:'user'},
+  {target:'/suggesties',              component:SuggestionList,        role:'committee'},
+  {target:'/homeParticipant',         component:ParticipantHome,       role:'user'},
+  {target:'/roosterAanpassen',        component:RehearsalEditPage,     role:'committee'},
+  {target:'/aanwezigheid',            component:AvailabilityContainer, role:'user'},
+  {target:'/gebruikersbeheer',        component:UsersPage,             role:'committee'},
+  {target:'/account',                 component:AccountPage,           role:'user'},
+  {target:'/wachtwoordreset',         component:PasswordResetPage,     role:'guest'},
+  {target:'/nieuwwachtwoord/:token',  component:ChangePasswordPage,    role:'guest'},
+  {target:'/beschikbaarheidBekijken', component:CheckAvailability,     role:'committee'},
 ];
 
 class Wrapper extends Component {
