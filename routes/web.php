@@ -46,7 +46,7 @@ $router->get('/gebruikersbeheer', function () use ($router) {
 $router->get('/account', function () use ($router) {
     return view('index');
 });
-$router->get('/beschikbaarheidBekijken', function () use ($router) {
+$router->get('/beschikbaarheden', function () use ($router) {
     return view('index');
 });
 

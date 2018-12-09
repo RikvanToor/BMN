@@ -35,8 +35,8 @@ const routes = [
   {target:'/login',                   component:LoginContainer,        role:'guest'},
   {target:'/nieuws',                  component:NewsContainer,         role:'user'},
   {target:'/rooster',                 component:RehearsalContainer,    role:'user'},
-  {target:'/nummers',                component:SongsContainer,       role:'user'},
-  {target:'/nummer/:id',             component:SongContainer,        role:'user'},
+  {target:'/nummers',                 component:SongsContainer,       role:'user'},
+  {target:'/nummer/:id',              component:SongContainer,        role:'user'},
   {target:'/suggesties',              component:SuggestionList,        role:'committee'},
   {target:'/homeParticipant',         component:ParticipantHome,       role:'user'},
   {target:'/roosterAanpassen',        component:RehearsalEditPage,     role:'committee'},
@@ -45,7 +45,7 @@ const routes = [
   {target:'/account',                 component:AccountPage,           role:'user'},
   {target:'/wachtwoordreset',         component:PasswordResetPage,     role:'guest'},
   {target:'/nieuwwachtwoord/:token',  component:ChangePasswordPage,    role:'guest'},
-  {target:'/beschikbaarheidBekijken', component:CheckAvailability,     role:'committee'},
+  {target:'/beschikbaarheden',        component:CheckAvailability,     role:'committee'},
 ];
 
 class Wrapper extends Component {

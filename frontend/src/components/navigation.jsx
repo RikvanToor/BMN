@@ -1,12 +1,6 @@
 import React, { PureComponent } from "react";
 import Logo from "../images/bmnlogo.png";
-import {
-  Navbar,
-  Nav,
-  NavItem,
-  NavDropdown,
-  MenuItem
-} from "react-bootstrap/lib";
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap/lib";
 import { Redirect } from "react-router";
 import { LinkContainer } from "react-router-bootstrap";
 import { dispatch } from "@Services/AppDispatcher.js";
@@ -26,7 +20,7 @@ const committeeLinks = {
   Tickets: "tickets",
   Setlist: "setlist",
   Gebuikersbeheer: "gebruikersbeheer",
-  "Bekijk Beschikbaarheid": "beschikbaarheidBekijken"
+  "Bekijk Beschikbaarheid": "beschikbaarheden"
 };
 
 /**

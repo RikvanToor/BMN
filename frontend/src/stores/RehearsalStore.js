@@ -85,7 +85,6 @@ class RehearsalStore extends Store {
             let av = withKeys(el, ['name','id']);
             av.start = new Date(el.pivot.start);
             av.end = new Date(el.pivot.end);
-            console.log(av);
             return av;
           });
           return newRehearsal;
