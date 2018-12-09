@@ -73,6 +73,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
         //prefix /api/songs
         $router->group(['prefix' => '/songs'], function () use ($router) {
             $router->get('', 'SongsController@showAllSongs');
+            $router->get('/mineAndAll', 'SongsController@showMySongsAndAllSongs');
             $router->get('/genre/{genre}', 'SongsController@showGenre');
 
             $router->group(['middleware' => 'committee'], function () use ($router) {

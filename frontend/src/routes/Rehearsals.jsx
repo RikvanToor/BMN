@@ -1,13 +1,14 @@
-import React, { Component, PureComponent } from "react";
+import React, { PureComponent } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
 import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { printTime } from '../GeneralExtensions.js';
 
 /**
  * The rehearsals page. Since no state is needed, this is a Pure component that is rerendered
  * only when new properties are provided.
-  */
+ */
 class RehearsalsPage extends PureComponent {
     constructor(props) {
         super(props);
@@ -115,7 +116,7 @@ class RehearsalsPage extends PureComponent {
                                 var songstart = new Date(y.pivot.start);
                                 var songend = new Date(y.pivot.end);
                                 return <tr key={y.id}>
-                                    <td>{y.artist} - {y.title}</td>
+                                    <td><LinkContainer to={'/nummer/' + y.id}><a>{y.artist} - {y.title}</a></LinkContainer></td>
                                     <td>{printTime(songstart)}</td>
                                     <td>{printTime(songend)}</td>
                                     <td>
