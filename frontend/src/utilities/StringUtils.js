@@ -25,3 +25,19 @@ export function delimSubstring(string, start, delim){
   }
   return {str:'',ind:-1};
 }
+
+export function replace(string, loc, char){
+  if(loc == 0){
+    return char + string.slice(1);
+  }
+  else if(loc == string.length){
+    return string.slice(0,string.length-1) + char;
+  }
+  return string.slice(0,loc) + char + string.slice(loc+1);
+}
+export function leftPad(string, length, char){
+  if(string.length < length){
+    return char.repeat(length-string.length) + string;
+  }
+  return string;
+}

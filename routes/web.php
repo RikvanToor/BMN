@@ -129,5 +129,9 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->delete('{id}/removesong/{song_id}', 'RehearsalsController@removeSong');
             });
         });
+
+        $router->group(['prefix'=>'/setlist'], function() use($router){
+            $router->get('/all', 'SetlistController@getAllSetlistSongs');
+        });
     });
 });

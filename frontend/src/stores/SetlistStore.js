@@ -16,9 +16,8 @@ class SetlistStore extends Store {
     super(dispatcher);
 
     //All rehearsals
-    this.setList = new List();
+    this.setlist = new List();
 
-    // Possible errors
     this.setlistSong = new SetlistSong;
   }
 
