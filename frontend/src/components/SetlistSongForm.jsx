@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Form, FormControl, ControlLabel, FormGroup, Button} from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import FormattedTextField, {timeFormat} from '@Components/FormattedTextField.jsx';
+import DurationField from '@Components/DurationField.jsx';
 
 export default class SetlistSongForm extends Component{
     constructor(props){
@@ -12,13 +12,16 @@ export default class SetlistSongForm extends Component{
         this.handleSave = this.handleSave.bind(this);
     }
     changeValue(e){
-        console.log(e.target);
         this.setState({song: this.state.song.set(e.currentTarget.id,e.target.value)});
+    }
+    changeValueDirect(id, val){
+        this.setState({song: this.state.song.set(id,val)});
     }
     handleSave(e){
         if(this.props.onSave){
             this.props.onSave(this.state.song);
         }
+        e.preventDefault();
     }
     renderFormEl(title, name, type, value, props){
         return (
@@ -43,9 +46,9 @@ export default class SetlistSongForm extends Component{
         };
         return (
             <Form inline onSubmit={this.handleSave}>
-                {this.renderFormEl('Titel','title','text',this.state.title, sharedProps)}
-                {this.renderFormEl('Artiest','artist','text',this.state.title, sharedProps)}
-                {this.renderCustomEl('Lengte','duration',FormattedTextField,this.state.title, Object.assign(sharedProps,{format:timeFormat}))}
+                {this.renderFormEl('Titel','title','text',this.state.song.title, sharedProps)}
+                {this.renderFormEl('Artiest','artist','text',this.state.song.artist, sharedProps)}
+                {this.renderCustomEl('Lengte','duration',DurationField,this.state.song.duration, Object.assign(sharedProps,{onValueChange:(val)=>{this.changeValueDirect('duration',val)}}))}
                 <Button bsStyle="primary" type="submit">Opslaan</Button>
             </Form>
         );

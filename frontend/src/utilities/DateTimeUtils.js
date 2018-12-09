@@ -34,6 +34,12 @@ function leftPad(str,val, length){
   return pad + str;
 }
 
+export function formatDuration(durationSeconds){
+  let min = Math.floor(durationSeconds/60);
+  let secs = durationSeconds - min*60;
+  return min + ':' + secs;
+}
+
 /**
  * Returns a string format for a datetime date that PHP understands
  * @param {Date} date The date to format

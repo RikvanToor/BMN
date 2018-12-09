@@ -18,10 +18,10 @@ const Endpoints = {
 };
 
 export function addSetlistSong(song){
-    return ApiActions.createAuth({
-        action: SetlistActions.ADD_SETLIST_SONG,
-        song : song
-    }, Endpoints.addSetlistSong
+    return ApiActions.createAuth(Object.assign({
+        action: SetlistActions.ADD_SETLIST_SONG
+    },song),
+     Endpoints.addSetlistSong
     );
 }
 export function getSetlistSongs(){

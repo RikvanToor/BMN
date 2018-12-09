@@ -132,6 +132,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
 
         $router->group(['prefix'=>'/setlist'], function() use($router){
             $router->get('/all', 'SetlistController@getAllSetlistSongs');
+
+            //Committee only
+            $router->group(['middleware'=>'committee'], function() use($router){
+                $router->post('/add', 'SetlistController@addSetlistSong');
+            });
         });
     });
 });

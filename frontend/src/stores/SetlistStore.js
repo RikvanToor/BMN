@@ -4,8 +4,7 @@ import AppDispatcher from '@Services/AppDispatcher.js';
 import { List, Record } from 'immutable';
 
 import {SetlistActions } from '@Actions/SetlistActions.js';
-
-class SetlistSong extends Record({title:'',artist:'',durationS:0, comment:'',spotify:'',youtube:''}){}
+import SetlistSong from '@Models/SetlistSong.js';
 
 /**
  * Stores retrieved data with respect to rehearsals
@@ -28,8 +27,17 @@ class SetlistStore extends Store {
      */
   __onDispatch(payload) {
     switch (payload.action) {
-        case SetlistActions.ADD_SETLIST_SONG:
-            
+        case SetlistActions.GET_SETLIST:
+            if(payload.error){
+
+            }
+            else{
+              this.setlist = new List(payload.responseData.map(el=>{
+                //TODO add players
+                return new SetlistSong({title:el.title, artist:el.artist, duration:el.duration, isPublished: el.is_published });
+              }));
+              this.__emitChange();
+            }
         break;
       default:
         break;

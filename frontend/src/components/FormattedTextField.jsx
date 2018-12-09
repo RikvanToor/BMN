@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {FormControl} from 'react-bootstrap';
-import {delimSubstring, replace as strReplace} from '@Utils/StringUtils.js';
 import Format from '@Components/FormatParts/Format.js';
 import ValueHolder from '@Components/FormatParts/ValueHolder.js';
 
