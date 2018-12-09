@@ -96,6 +96,19 @@ class SongsController extends Controller {
     }
 
     /**
+     * Return all songs and the songs for the user of the request
+     */
+    public function showMySongsAndallSongs(Request $request) {
+        $all = Song::all();
+        $mine = $request->user()->songs()->get();
+        $result = [
+            'allSongs' => $all,
+            'mySongs'  => $mine
+        ];
+        return response()->json($result, 200);
+    }
+
+    /**
      * Show the players of a specific song
      */
     public function showUsers($id) {
