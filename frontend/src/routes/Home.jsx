@@ -18,7 +18,6 @@ class Home extends Component {
     return (
         <div>
             <h1>I'm home!</h1>
-        <RichEditor/>
         </div>
     );
   }
