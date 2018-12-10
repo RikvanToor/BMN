@@ -4,6 +4,7 @@ import {Table, Label, Button, ButtonGroup, Modal, Panel} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import SetlistSongForm from '@Components/SetlistSongForm.jsx';
 import PlayersForm from '@Components/SetlistComponents/PlayersForm.jsx';
+import SortableTable from '@Components/SortableTable.jsx';
 
 //Data imports
 import {Container} from 'flux/utils';
@@ -216,6 +217,9 @@ class SetlistEditPage extends Component{
 
     render(){
         let modal = this.state.modal;
+
+        let songTableHeaders = ['Titel','Artiest','Lengte','Bezetting','Gepubliceerd?','Acties'];
+        let tableSorters = {0: 'title', 1: 'artist', 2:'duration', 4:'isPublished'};
         return (
             <div>
                 <h4>Voeg een song toe</h4>
@@ -228,21 +232,10 @@ class SetlistEditPage extends Component{
                     </ButtonGroup>
                 </Panel>
                 
-                <Table striped bordered condensed hover responsive>
-                    <thead>
-                        <tr>
-                            <td>Titel</td>
-                            <td>Artiest</td>
-                            <td>Lengte</td>
-                            <td>Bezetting</td>
-                            <td>Gepubliceerd?</td>
-                            <td>Acties</td>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <SortableTable striped bordered condensed hover responsive 
+                    headers={songTableHeaders} data={this.props.setlist} sorters={tableSorters}>
                         {this.props.setlist.map((el,ind)=>this.renderSetlistSong(el,ind))}
-                    </tbody>
-                </Table>
+                </SortableTable>
                 {modal? this.displayModal(modal.title,modal.body, modal.onCancel, modal.onAccept) : null}
             </div>
         );
