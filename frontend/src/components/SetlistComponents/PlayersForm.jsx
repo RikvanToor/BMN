@@ -84,9 +84,6 @@ export default class PlayersForm extends Component{
     }
     renderPlayer(playerObj, i, playerOpts, rowStyle){
         let ind = [playerObj.name];
-        if(playerObj.ind == this.props.possiblePlayers.length - 1){
-            ind == [];
-        }
         return (
             <Row key={playerObj.name} style={rowStyle}>
                 <Col xs={1} md={1} style={pullBottomStyle}>
@@ -94,7 +91,7 @@ export default class PlayersForm extends Component{
                 </Col>
                 <Col xs={2} md={2} style={pullBottomStyle}>
                     <Label>Speler</Label>
-                    <Typeahead options={playerOpts} selected={ind} onChange={(selected)=>{this.updatePlayer(i,selected[0]);}} labelKey="name"/>
+                    <Typeahead options={playerOpts} selected={ind} onChange={(selected)=>{if(selected.length > 0)this.updatePlayer(i,selected[0]);}} labelKey="name"/>
                 </Col>
                 <Col xs={2} md={2} style={pullBottomStyle}>
                     <Label>Instrument</Label>

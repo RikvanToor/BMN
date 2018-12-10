@@ -49,7 +49,8 @@ export function updateCrew(id, newCrew){
     return ApiActions.updateAuth(
         {
             action: SetlistActions.UPDATE_CREW,
-            players: newCrew
+            players: newCrew,
+            id: id
         },
         format(Endpoints.updateCrew, id)
     )

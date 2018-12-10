@@ -124,7 +124,7 @@ export default class FormattedTextField extends Component{
             let loc = dom.selectionStart;
             part = this.state.format.findPart(loc);
             relLoc = this.state.format.relativeLocation(part,loc);
-            success = this.state.format.part(part).delete(e.target.value[loc]);
+            success = this.state.format.part(part).delete(relLoc,false);
         }
         if(success){
             let nextMod = this.state.format.nextModifiablePart(part);

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Form, FormControl, ControlLabel, FormGroup, Button} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import DurationField from '@Components/DurationField.jsx';
+import SetlistSong from '@Models/SetlistSong.js';
 
 export default class SetlistSongForm extends Component{
     constructor(props){
@@ -22,6 +23,7 @@ export default class SetlistSongForm extends Component{
             this.props.onSave(this.state.song);
         }
         e.preventDefault();
+        this.setState({song: new SetlistSong()});
     }
     renderFormEl(title, name, type, value, props){
         return (

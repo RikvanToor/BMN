@@ -22,6 +22,29 @@ class SetlistStore extends Store {
   }
 
   /**
+   * Acquire players from a Song object response from the API
+   * @param {object} song The song object, returned by the API 
+   */
+  static playersForSong(song){
+    return song.players.map((player)=>{
+      //Basic player info
+      let basePlayer = withKeys(player,['name','id']);
+      //Get instrument from pivot
+      basePlayer.instrument = player.pivot.instrument;
+      return basePlayer;
+    });
+  }
+  static songFromResponse(songObj){
+    let song = new SetlistSong(withKeys(songObj,['id','title','artist','duration',['isPublished','is_published']]));
+                
+    //Set players if available
+    if('players' in songObj)
+      return song.set('players',SetlistStore.playersForSong(songObj));
+    
+    return song;
+  }
+
+  /**
      * Override of base class that is called when handling actions. Remember to not
      * dispatch new actions in this function.
      * @param {object} payload
@@ -29,30 +52,25 @@ class SetlistStore extends Store {
   __onDispatch(payload) {
     switch (payload.action) {
         case SetlistActions.GET_SETLIST:
-            if(payload.error){
-
-            }
-            else{
               //Process the response data
-              this.setlist = new List(payload.responseData.map(el=>{
-
-                let song = new SetlistSong(withKeys(el,['id','title','artist','duration',['isPublished','is_published']]));
-                
-                //Set players
-                return song.set('players', el.players.map((player)=>{
-                  //Basic player info
-                  let basePlayer = withKeys(player,['name','id']);
-                  //Get instrument from pivot
-                  basePlayer.instrument = player.pivot.instrument;
-                  return basePlayer;
-                }))
-              }));
+              this.setlist = new List(payload.responseData.map(el=>SetlistStore.songFromResponse(el)));
               this.__emitChange();
-            }
         break;
+        case SetlistActions.ADD_SETLIST_SONG:
+          this.setlist = this.setlist.push(SetlistStore.songFromResponse(payload.responseData));
+          this.__emitChange();
+        break;
+        case SetlistActions.UPDATE_CREW:
+            //Find the index of the song
+            let index = this.setlist.findKey((val)=>val.id == payload.id);
+            if(index < 0) return;
+            this.setlist = this.setlist.setIn([index,'players'], SetlistStore.playersForSong({players: payload.responseData}) );
+            this.__emitChange();
+          break;
         case SetlistActions.REMOVE_SETLIST_SONG:
             this.setlist = this.setlist.filter((val)=>val.id != payload.id);
             this.__emitChange();
+            break;
       default:
         break;
     }

@@ -121,10 +121,7 @@ class SetlistEditPage extends Component{
     stopEditting(e){
         this.setState({edittingPlayersForSong: -1});
     }
-    
-    publishNonPublished(){
-        
-    }
+
     /**
      * Prints the players in the format <player>(<instrument>) in <p> elements.
      * The laste element is placed in a span.
@@ -182,6 +179,7 @@ class SetlistEditPage extends Component{
         //Load users for modifying crew per song
         deferredDispatch(loadUsersAction());
     }
+    
     /**
      * Handles creation of a new setlist song
      * @param {SetlistSong} song The setlist song object that was created 
@@ -189,6 +187,7 @@ class SetlistEditPage extends Component{
     handleNewSetlistSong(song){
         deferredDispatch(addSetlistSong(song.toJS()));
     }
+    
     /**
      * Displays a modal
      * @param {string} title 

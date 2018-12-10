@@ -18,7 +18,7 @@ export default class ValueHolder{
         return new ValueHolder(value, false);
     }
     static number(defaultValue, size=-1, pad=''){
-        let vh = new ValueHolder(defaultValue, true, (val)=>/\d+/.test(val));
+        let vh = new ValueHolder(defaultValue, true, (val)=>/^\d+$/.test(val));
         vh.maxSize = size;
         vh.leftPad = pad;
         return vh;
@@ -65,7 +65,9 @@ export default class ValueHolder{
         return this.trySetValue(value);
     }
     trySetValue(value){
-        if(!this.valid(value)) return false;
+        if(!this.valid(value)) {
+            return false;
+        }
         if(this.maxSize > 0 && value.length < this.maxSize){
             value = this.leftPad.repeat(this.maxSize-value.length) + value;
         }

@@ -40,7 +40,7 @@ class SetlistController extends Controller {
         //Attach new players
         $song->players()->attach($toAttach);
         $song->save();
-        return response()->json($song, ResponseCodes::HTTP_OK);
+        return response()->json($song->players()->get(), ResponseCodes::HTTP_OK);
     }
 
     /**
