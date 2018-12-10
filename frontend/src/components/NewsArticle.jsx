@@ -89,7 +89,6 @@ class NewsArticle extends Component {
    * Renders an editor to edit an article
    */
   renderEditor() {
-    console.log(this.props.error);
     var content = convertFromRaw(markdownToDraft(this.props.article.content));
 
     return <NewsEditor
