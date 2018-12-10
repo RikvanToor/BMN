@@ -48,7 +48,7 @@ export default class SetlistSongForm extends Component{
             <Form inline onSubmit={this.handleSave}>
                 {this.renderFormEl('Titel','title','text',this.state.song.title, sharedProps)}
                 {this.renderFormEl('Artiest','artist','text',this.state.song.artist, sharedProps)}
-                {this.renderCustomEl('Lengte','duration',DurationField,this.state.song.duration, Object.assign(sharedProps,{onValueChange:(val)=>{this.changeValueDirect('duration',val)}}))}
+                {this.renderCustomEl('Lengte','duration',DurationField,this.state.song.duration,{onValueChange:(val)=>{this.changeValueDirect('duration',val);}})}
                 <Button bsStyle="primary" type="submit">Opslaan</Button>
             </Form>
         );

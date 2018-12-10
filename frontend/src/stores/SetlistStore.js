@@ -5,6 +5,7 @@ import { List, Record } from 'immutable';
 
 import {SetlistActions } from '@Actions/SetlistActions.js';
 import SetlistSong from '@Models/SetlistSong.js';
+import {withKeys} from '@Utils/ObjectUtils.js';
 
 /**
  * Stores retrieved data with respect to rehearsals
@@ -32,13 +33,26 @@ class SetlistStore extends Store {
 
             }
             else{
+              //Process the response data
               this.setlist = new List(payload.responseData.map(el=>{
-                //TODO add players
-                return new SetlistSong({title:el.title, artist:el.artist, duration:el.duration, isPublished: el.is_published });
+
+                let song = new SetlistSong(withKeys(el,['id','title','artist','duration',['isPublished','is_published']]));
+                
+                //Set players
+                return song.set('players', el.players.map((player)=>{
+                  //Basic player info
+                  let basePlayer = withKeys(player,['name','id']);
+                  //Get instrument from pivot
+                  basePlayer.instrument = player.pivot.instrument;
+                  return basePlayer;
+                }))
               }));
               this.__emitChange();
             }
         break;
+        case SetlistActions.REMOVE_SETLIST_SONG:
+            this.setlist = this.setlist.filter((val)=>val.id != payload.id);
+            this.__emitChange();
       default:
         break;
     }

@@ -138,6 +138,9 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             //Committee only
             $router->group(['middleware'=>'committee'], function() use($router){
                 $router->post('/add', 'SetlistController@addSetlistSong');
+                $router->post('/{id}/players', 'SetlistController@updateSongPlayers');
+                $router->delete('/{id}', 'SetlistController@deleteSetlistSong');
+                $router->post('/publish', 'SetlistController@publishSongs');
             });
         });
 
