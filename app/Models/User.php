@@ -54,6 +54,10 @@ class User extends Model implements JWTSubject, AuthenticatableContract, Authori
             ->withPivot('yes_or_maybe');
     }
     
+    /**
+     * Creates a password reset token for this user
+     * @return PasswordResetToken The password reset token Model object.
+     */
     public function createPasswordResetToken(){
         //Grab token data from environment
         $tokenLength = intval(env('PW_RESET_TOKEN_LENGTH'));

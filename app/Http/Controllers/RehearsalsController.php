@@ -123,7 +123,8 @@ class RehearsalsController extends Controller {
             'ends'      => 'array',
         ]);
 
-        if(count($validatedData['starts']) == 0) {
+        
+        if(!array_key_exists('starts', $validatedData) || count($validatedData['starts']) == 0) {
             $availabilities->attach($userid, [
                 'reason' => $validatedData['reason'],
                 'start' => NULL,
