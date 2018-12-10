@@ -9,7 +9,10 @@ import { Grid, Row } from 'react-bootstrap';
 //Routes
 import LoginContainer from "@Containers/LoginContainer.jsx";
 import NavigationContainer from "@Containers/NavigationContainer.jsx";
+import NewsContainer from '@Containers/NewsContainer.jsx';
 import RehearsalContainer from '@Containers/RehearsalContainer.jsx';
+import SongsContainer from '@Containers/SongsContainer.jsx';
+import SongContainer from '@Containers/SongContainer.jsx';
 import AvailabilityContainer from '@Containers/AvailabilityContainer.jsx';
 import ParticipantHome from "@Routes/ParticipantHome.jsx";
 import RehearsalEditPage from '@Routes/RehearsalEditPage.jsx';
@@ -27,23 +30,40 @@ import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 import Home from '@Routes/Home.jsx';
 import SuggestionList from '@Routes/SuggestionList.jsx';
 
+const Roles = {
+    GUEST : 'guest',
+    USER: 'user',
+    COMMITTEE: 'committee'
+};
+
+function withRole(role, routes){
+    return routes.map((route)=>Object.assign(route,{role:role}));
+}
+
 //Routes in the app
-const routes = [
-  {target:'/home',            component:Home,                 role:'guest'},
-  {target:'/login',           component:LoginContainer,       role:'guest'},
-  {target:'/wachtwoordreset', component:PasswordResetPage,    role:'guest'},
-  {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage, role:'guest'},
-
-  {target:'/rooster',         component:RehearsalContainer,   role:'user'},
-  {target:'/homeParticipant', component:ParticipantHome,      role:'user'},
-  {target:'/aanwezigheid',    component:AvailabilityContainer,role:'user'},
-  {target:'/account',         component:AccountPage,          role:'user'},
-
-  {target:'/suggesties',      component:SuggestionList,       role:'committee'},
-  {target:'/roosterAanpassen',component:RehearsalEditPage,    role:'committee'},
-  {target:'/gebruikersbeheer',component:UsersPage,            role:'committee'},
-  {target:'/setlist',           component:SetlistEditPage,            role:'committee'},
-];
+const routes = [].concat(
+    withRole(Roles.GUEST, [
+        {target:'/home',            component:Home},
+        {target:'/login',           component:LoginContainer},
+        {target:'/wachtwoordreset', component:PasswordResetPage},
+        {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
+    ]),
+    withRole(Roles.USER, [
+        {target:'/rooster',         component:RehearsalContainer},
+        {target:'/homeParticipant', component:ParticipantHome},
+        {target:'/aanwezigheid',    component:AvailabilityContainer},
+        {target:'/account',         component:AccountPage},
+        {target:'/nummers',                component:SongsContainer},
+        {target:'/nummer/:id',             component:SongContainer},
+        {target:'/nieuws',                 component:NewsContainer},
+    ]),
+    withRole(Roles.COMMITTEE, [
+        {target:'/suggesties',      component:SuggestionList},
+        {target:'/roosterAanpassen',component:RehearsalEditPage},
+        {target:'/gebruikersbeheer',component:UsersPage},
+        {target:'/setlist',           component:SetlistEditPage},
+    ]) 
+);
 
 class Wrapper extends Component {
     render() {

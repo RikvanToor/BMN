@@ -1,11 +1,10 @@
 import React, { Component, PureComponent } from "react";
-import Carousel from "../components/carousel.jsx";
+import Carousel from "@Components/carousel.jsx";
 import { dispatch } from '@Services/AppDispatcher.js';
 import { logInAction } from '@Actions/UserActions.js'
-import { Redirect} from 'react-router';
-import {Link} from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
-import { FormGroup, FormControl, ControlLabel, Button, Row, Col, Alert } from 'react-bootstrap';
+import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
+import { FormGroup, FormControl, ControlLabel, Button, Row, Col, Alert, PageHeader } from 'react-bootstrap';
 
 /**
  * The login page. Since no state is needed, this is a Pure component that is rerendered
@@ -35,34 +34,34 @@ class LoginPage extends PureComponent {
         //Otherwise, render the login page
         return (
             <Row>
-              <Col mdOffset={4} md={4}>
-                <h1>Login</h1>
-                <form onSubmit={(e) => this.logIn(e)}>
-                    <FormGroup controlId="formUsername">
-                        <ControlLabel>Gebruikersnaam</ControlLabel>
-                        <FormControl
-                            type="text"
-                            placeholder="Voer naam in"
-                            inputRef={ref => { this.userInput = ref; }}
-                        />
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <FormGroup
-                        controlId="formPassword"
-                    >
-                        <ControlLabel>Wachtwoord</ControlLabel>
-                        <FormControl
-                            type="password"
-                            inputRef={ref => { this.passInput = ref; }}
-                        />
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    {this.props.loginFailed ? (<Alert bsStyle="danger">Deze combo kennen we niet. Nog een keer proberen?</Alert>) : null}
-                    <Button type="submit">Log in</Button>
-                    <div style={{marginTop:'5px'}}><Link to="/wachtwoordreset">Wachtwoord vergeten?</Link></div>
-                </form>
-              </Col>
-            </Row>
+                <Col mdOffset={4} md={4}>
+                    <PageHeader>Login</PageHeader>
+                    <form onSubmit={(e) => this.logIn(e)}>
+                        <FormGroup controlId="formUsername">
+                            <ControlLabel>Gebruikersnaam</ControlLabel>
+                            <FormControl
+                                type="text"
+                                placeholder="Voer naam in"
+                                inputRef={ref => { this.userInput = ref; }}
+                            />
+                            <FormControl.Feedback />
+                        </FormGroup>
+                        <FormGroup
+                            controlId="formPassword"
+                        >
+                            <ControlLabel>Wachtwoord</ControlLabel>
+                            <FormControl
+                                type="password"
+                                inputRef={ref => { this.passInput = ref; }}
+                            />
+                            <FormControl.Feedback />
+                        </FormGroup>
+                        {this.props.loginFailed ? (<Alert bsStyle="danger">Deze combo kennen we niet. Nog een keer proberen?</Alert>) : null}
+                        <Button type="submit">Log in</Button>
+                        <div style={{ marginTop: '5px' }}><Link to="/wachtwoordreset">Wachtwoord vergeten?</Link></div>
+                    </form>
+                </Col>
+            </Row >
         );
     }
 }

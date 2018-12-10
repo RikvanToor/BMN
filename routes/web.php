@@ -63,6 +63,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
         //prefix /api/songs
         $router->group(['prefix' => '/songs'], function () use ($router) {
             $router->get('', 'SongsController@showAllSongs');
+            $router->get('/mineAndAll', 'SongsController@showMySongsAndAllSongs');
             $router->get('/genre/{genre}', 'SongsController@showGenre');
 
             $router->group(['middleware' => 'committee'], function () use ($router) {
@@ -130,12 +131,23 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             });
         });
 
+        //prefix /api/setlist 
         $router->group(['prefix'=>'/setlist'], function() use($router){
             $router->get('/all', 'SetlistController@getAllSetlistSongs');
 
             //Committee only
             $router->group(['middleware'=>'committee'], function() use($router){
                 $router->post('/add', 'SetlistController@addSetlistSong');
+            });
+        });
+
+        //prefix /api/news
+        $router->group(['prefix' => '/news'], function() use ($router) {
+            $router->get('', 'NewsController@showAllNews');
+            $router->group(['middleware' => 'committee'], function () use ($router) {
+                $router->post('', 'NewsController@createNews');
+                $router->post('/update', 'NewsController@updateNews');
+                $router->delete('/{id}', 'NewsController@deleteNews');
             });
         });
     });

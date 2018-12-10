@@ -25,8 +25,11 @@ class AddYesOrMaybeFieldToCanSing extends Migration
      */
     public function down()
     {
-        Schema::table('can_sing', function (Blueprint $table) {
-            $table->dropColumn('yes_or_maybe');
-        });
+        if (Schema::hasColumn('can_sing', 'yes_or_maybe'))
+        {
+            Schema::table('can_sing', function (Blueprint $table) {
+                $table->dropColumn('yes_or_maybe');
+            });
+        }
     }
 }
