@@ -65,7 +65,6 @@ export default class PlayersForm extends Component{
      * @param {Player} selectedPlayer The Player object for a setlist song 
      */
     updatePlayer(ind, selectedPlayer){
-        console.log(selectedPlayer);
         this.setState({players: 
             this.state.players.setIn([ind, 'id'], selectedPlayer.id)
             .setIn([ind, 'name'], selectedPlayer.name)

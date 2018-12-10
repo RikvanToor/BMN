@@ -33,10 +33,10 @@ export default class FormattedTextField extends Component{
     }
     triggerCaretTo(loc,state = false){
         if(!state){
-            this.setState({format:this.state.format},()=>{console.log('Caret to'+loc);this.setCaretTo(loc);});
+            this.setState({format:this.state.format},()=>{this.setCaretTo(loc);});
         }
         else{
-            this.setState(state,()=>{console.log('Caret to'+loc);this.setCaretTo(loc);});
+            this.setState(state,()=>{this.setCaretTo(loc);});
         }
     }
     /**

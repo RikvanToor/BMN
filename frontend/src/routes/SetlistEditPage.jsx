@@ -49,7 +49,6 @@ class SetlistEditPage extends Component{
         this.setState({modal:false});
     }
     startDeleteSong(e){
-        console.log('Start delete song');
         let ind = e.target.dataset.ind;
         let modal = {
             body: (<p>Weet je zeker dat je {this.state.songToDeleteInd >= 0 ? this.props.setlist[ind].title:''} wil verwijderen?</p>),
@@ -115,7 +114,6 @@ class SetlistEditPage extends Component{
 
     editCrew(e){
         let ind = e.target.dataset.ind;
-        console.log("Starting edit");
         this.setState({edittingPlayersForSong: ind});
     }
 
