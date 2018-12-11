@@ -14,7 +14,10 @@ export default class PlayersForm extends Component{
         super(props);
         let players = '';
         if(Array.isArray(this.props.players)){
-            players = new List(this.props.players)
+            players = new List(this.props.players.map((el)=>{
+                if(el instanceof Player) return el;
+                return new Player(el);
+            }));
         }
         else if(this.props.players instanceof List){
             players = this.props.players.map((el)=>{
@@ -22,6 +25,7 @@ export default class PlayersForm extends Component{
                 return new Player(el);
             });
         }
+        //Default list with a single new player
         else{
             players = new List([new Player({ind:0, id:props.possiblePlayers.get(0).id, name:props.possiblePlayers.get(0).name })]);
         }
