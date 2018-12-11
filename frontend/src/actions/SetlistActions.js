@@ -25,7 +25,7 @@ const Endpoints = {
 export function addSetlistSong(song){
     return ApiActions.createAuth(Object.assign({
         action: SetlistActions.ADD_SETLIST_SONG
-    },song),
+    },song.forRequest()),
      Endpoints.addSetlistSong
     );
 }

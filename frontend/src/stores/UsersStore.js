@@ -53,7 +53,6 @@ class UsersStore extends BmnStore {
         break;
       // Handle the users request action
       case UserActions.LOAD_USERS:
-        console.log('Loading users');
         // Apply the auth request promise and react to it by dispatching new actions
         AppDispatcher.dispatchPromisedFn(
           ApiService.readAuthenticatedData('users'), // Promise to perform
