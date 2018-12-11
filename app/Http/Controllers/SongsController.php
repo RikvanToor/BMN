@@ -99,8 +99,8 @@ class SongsController extends Controller {
      * Return all songs and the songs for the user of the request
      */
     public function showMySongsAndallSongs(Request $request) {
-        $all = Song::all();
-        $mine = $request->user()->songs()->get();
+        $all = Song::where('is_published', true)->get();
+        $mine = $request->user()->songs()->where('is_published', true)->get();
         $result = [
             'allSongs' => $all,
             'mySongs'  => $mine
