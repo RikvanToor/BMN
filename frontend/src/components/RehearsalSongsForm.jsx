@@ -11,12 +11,13 @@ import {Typeahead} from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import {pullBottomStyle} from '@Components/UiHelpers.js';
 import * as typeChecks from '@Utils/TypeChecks.js';
+import ColorRanges from '@Components/ColorRanges.jsx';
 
 //Property checking
 import PropTypes from 'prop-types';
 
 //Data imports
-import {Record, Map, fromJS} from 'immutable';
+import {Record, Map, fromJS, List, Set as ImmutableSet} from 'immutable';
 import {intRange} from '@Utils/Ranges.js';
 
 function toHourMinute(int){
@@ -44,44 +45,6 @@ function toVal(start, hourMinutes, minuteSteps){
   const diff = minutesDiff(start,hourMinutes);
   return diff / minuteSteps;
 }
-
-class ColorRanges extends PureComponent{
-  render(){
-    const valSpan = this.props.end - this.props.start;
-    const defaultStyle = {
-      position: 'absolute',
-      display: 'inline-block',
-      height:'5px',
-      top:0
-    };
-    
-    return(
-      <div style={{position:'relative'}}>
-        {
-          this.props.ranges.map((range)=>{
-            const left = 100*(range.start - this.props.start)/valSpan;
-            const width = 100*(range.end-range.start)/valSpan;
-            let styling = { left: left+'%', width:width+'%', ...defaultStyle};
-            if('color' in range) styling.backgroundColor = range.color;
-            const clsName = 'cls' in range ? range.cls : '';
-            const el = (<span key={range.start} className={clsName} style={styling}/>);
-            if('toolTip' in range){
-              return(<OverlayTrigger key={range.start} placement="bottom" overlay={<Tooltip id={range.start}>{range.toolTip}</Tooltip>}>{el}</OverlayTrigger>);
-            }
-            else{
-              return el;
-            }
-          })
-        }
-      </div>
-    );
-  }
-}
-ColorRanges.propTypes = {
-  ranges: PropTypes.array,
-  start: PropTypes.number,
-  end: PropTypes.number
-};
 
 class SongSlider extends PureComponent{
   constructor(props){
@@ -136,8 +99,8 @@ export default class RehearsalSongsForm extends Component{
       
       this.state = {
         selectedSong: [],
-        songs: !typeChecks.isUndefined(this.props.songsAvailabilities) ? fromJS(this.props.songs) : new Map(),
-        songsLeft : new Set(props.songs)
+        songs: !typeChecks.isUndefined(this.props.availabilities) ? fromJS(this.props.songs) : new Map(),
+        songIds: new ImmutableSet()
       };
       
       //Bound callbacks
@@ -171,9 +134,6 @@ export default class RehearsalSongsForm extends Component{
     addRehearsalSong(){
       if(this.state.selectedSong.length === 0) return;
       
-      let newSongsLeft = this.state.songsLeft;
-      newSongsLeft.delete(this.state.selectedSong[0]);
-      
       //Prepare song to be used with slider.
       let songObj = this.state.selectedSong[0];
       songObj.range = {min: this.props.startTime, max:this.props.endTime};
@@ -181,7 +141,7 @@ export default class RehearsalSongsForm extends Component{
       
       let newState = {
         selectedSong: [],
-        songsLeft: newSongsLeft,
+        songIds: this.state.songIds.delete(this.state.selectedSong[0].id),
         songs: this.state.songs.set(songObj.id, songObj),
       };
       this.setState(newState);
@@ -197,6 +157,10 @@ export default class RehearsalSongsForm extends Component{
       );
     }
     render(){
+      let songs = Array.isArray(this.props.songs) ? new List(this.props.songs) : this.props.songs;
+      let songsLeft = songs.filter((val)=>{
+        return !this.state.songIds.contains(val.id);
+      });
       return (
         <React.Fragment>
           <Row>
@@ -205,7 +169,7 @@ export default class RehearsalSongsForm extends Component{
           </Col>
           <Col xs={3} style={pullBottomStyle}>
             <Label>Zoek een nummer</Label>
-            <Typeahead options={Array.from(this.state.songsLeft)} selected={this.state.selectedSong} onChange={this.updateSelectedSong} labelKey="title"></Typeahead>
+            <Typeahead options={songsLeft.toJS()} selected={this.state.selectedSong} onChange={this.updateSelectedSong} labelKey="title"></Typeahead>
           </Col>
           <Col xs={3} style={pullBottomStyle}>
               <GlyphButton glyph="plus" color="green" onClick={this.addRehearsalSong}>Voeg toe</GlyphButton>
@@ -227,7 +191,7 @@ export default class RehearsalSongsForm extends Component{
     }
 }
 RehearsalSongsForm.propTypes = {
-  songs : PropTypes.array.isRequired,
+  songs : PropTypes.oneOfType([PropTypes.array, PropTypes.instanceOf(List)]).isRequired,
   startTime: PropTypes.number.isRequired,
   endTime: PropTypes.number.isRequired,
   availabilities: PropTypes.object

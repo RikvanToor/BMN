@@ -16,13 +16,18 @@ import UserStore from '@Stores/UserStore.js';
 import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
 import RehearsalManipulationStore, { loadAllRehearsals } from '@Stores/RehearsalManipulationStore.js';
 import RehearsalStore from '@Stores/RehearsalStore.js';
+import SetlistStore from '@Stores/SetlistStore.js';
 import { getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities } from '@Actions/RehearsalActions.js';
+import {getSetlistSongs} from '@Actions/SetlistActions.js';
 
 //Utils
 import * as typeChecks from '@Utils/TypeChecks.js';
 //Datetime formatting functions
 import { readableDate, readableTime } from '@Utils/DateTimeUtils.js';
 
+/**
+ * Page for editting rehearsals: creating new rehearsals and adding songs per rehearsal.
+ */
 class RehearsalEditPage extends Component {
   constructor(props) {
     super(props);
@@ -41,10 +46,14 @@ class RehearsalEditPage extends Component {
       showRehearsalDayForm: visible
     });
   }
+  /**
+   * Trigger loads for data
+   */
   componentDidMount() {
     //Load rehearsals  
     deferredDispatch(getScheduleAction());
     deferredDispatch(getAllAvailabilities());
+    deferredDispatch(getSetlistSongs());
   }
   removeRehearsals() {
     if (this.state.selectedRehearsalDays.size > 0) {
@@ -54,7 +63,10 @@ class RehearsalEditPage extends Component {
       this.setState({ selectedRehearsalDays: new Set() });
     }
   }
-
+  /**
+   * 
+   * @param {*} e 
+   */
   startRehearsalAdd(e) {
     this.toggleRehearsalForm(true);
   }
@@ -116,7 +128,7 @@ class RehearsalEditPage extends Component {
               this.props.rehearsals.valueSeq().map((obj) => {
                 const hasSongs = 'songs' in obj && obj.songs.length > 0;
                 const songText = hasSongs ? obj.songs.map((el) => el.title).join('<br/>') : 'Nog geen';
-
+ 
                 return (<React.Fragment key={obj.start}><tr>
                   <td><Checkbox checked={this.state.selectedRehearsalDays.has(obj.id)} onChange={(e) => this.selectRehearsal(e, obj.id)} /></td>
                   <td>{readableDate(new Date(obj.start))}</td>
@@ -125,7 +137,7 @@ class RehearsalEditPage extends Component {
                   <td>{readableTime(new Date(obj.end))}</td>
                   <td>{songText}</td>
                 </tr><tr><td colSpan="6">
-                  <RehearsalSongsForm songs={[{ id: 0, title: 'Song1' }, { id: 1, title: 'Song2' }]} startTime={1800} endTime={2100} />
+                  <RehearsalSongsForm songs={this.props.setlist} startTime={1800} endTime={2100} />
                 </td></tr></React.Fragment>);
               })
             }
@@ -143,11 +155,11 @@ RehearsalEditPage.propTypes = {
 
 //Wrap the page in a Flux container that relays data from stores
 export default Container.createFunctional(
-  (state) => (<RehearsalEditPage isAdmin={state.isAdmin} rehearsals={state.rehearsals} />), //View function
+  (state) => (<RehearsalEditPage isAdmin={state.isAdmin} rehearsals={state.rehearsals} setlist={state.setlist} />), //View function
 
-  () => [UserStore, RehearsalManipulationStore, RehearsalStore], //Required stores
+  () => [UserStore, RehearsalManipulationStore, RehearsalStore, SetlistStore], //Required stores
 
   (prevState) => { //Determine the state needed
-    return { isAdmin: UserStore.user.isCommittee, rehearsals: RehearsalStore.rehearsals };
+    return { isAdmin: UserStore.user.isCommittee, rehearsals: RehearsalStore.rehearsals, setlist: SetlistStore.setlist };
   }
 );

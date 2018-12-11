@@ -5,6 +5,7 @@ import {List, Map, Record, fromJS} from 'immutable';
 import * as apiActions from '@Actions/ApiActions.js';
 import {RehearsalActions} from '@Actions/RehearsalActions.js';
 import {toHoursMinutesInt} from '@Utils/DateTimeUtils.js';
+import {withKeys} from '@Utils/ObjectUtils.js';
 
 /**
  * Stores retrieved data with respect to user
@@ -24,13 +25,21 @@ class RehearsalManipulationStore extends Store{
           const rehearsalData = data[key];
           let availabilities = rehearsalData.availabilities.reduce((accum,value)=>{
             const uid = value.id;
-            const valObj = {user: value.name, start:toHoursMinutesInt(value.pivot.start), end:toHoursMinutesInt(value.pivot.end)};
-            if(uid in accum){
-              accum[uid].push(valObj);
+            let valObj = null;
+            //Parse the given availability: either a reason or a start/end combo
+            if(value.reason && value.reason.length > 0){
+              valObj = {user:value.name, reason:value.reason};
             }
             else{
-              accum[uid] = [valObj];
+              valObj = {user: value.name, start:toHoursMinutesInt(value.pivot.start), end:toHoursMinutesInt(value.pivot.end)};
             }
+            //Create a list for the user availabilities if not present yet
+            if(!(uid in accum)){
+              accum[uid] = [];
+            }
+            //Add the element
+            accum[uid].push(valObj);
+
             return accum;
           },{});
           map.set(key, availabilities);
@@ -42,9 +51,18 @@ class RehearsalManipulationStore extends Store{
          const rehearsalData = data[key];
          let songs = rehearsalData.songs.map((value)=>{
             const uid = value.id;
-            let valObj = {id: value.id, title:value.title, 
-              start:toHoursMinutesInt(value.pivot.start), 
-              end:toHoursMinutesInt(value.pivot.end)};
+            let valObj = null;
+            console.log(value);
+            if(value.reason && value.reason.length > 0){
+              //Create a new object with the id, title and reason keys
+              valObj = withKeys(value,['id','title','reason']);
+            }
+            else{
+              valObj = {id: value.id, title:value.title, 
+                start:toHoursMinutesInt(value.pivot.start), 
+                end:toHoursMinutesInt(value.pivot.end)};
+            }
+            
             valObj.players = value.players.map((player)=>{return{name:player.name, id:player.id}});
             return valObj;
           },);
@@ -57,6 +75,7 @@ class RehearsalManipulationStore extends Store{
         switch(payload.action){
             //Handle the load
             case RehearsalActions.GET_ALL_AVAILABILITIES:
+            break;
               console.log(payload.responseData);
               //Get the availabilities per rehearsal day, per user ID.
               this.parseAvailabilityData(payload.responseData);

@@ -15,6 +15,9 @@ class Rehearsal extends Record({date:new Date(), startTime:1800, endTime:2100, l
 const availableHours = intRange(0,24);
 const availableMinutes = intRange(0,60,5);
 
+/**
+ * Form for creating one or more new rehearsals
+ */
 export default class RehearsalForm extends Component{
     constructor(props){
       super(props);
@@ -42,11 +45,14 @@ export default class RehearsalForm extends Component{
     addNewRehearsalForm(){
       //Update the state
       let newState = {
+        //Create a new rehearsal in the Map
         rehearsals: this.state.rehearsals.set((this.state.maxId+1).toString(), new Rehearsal()),
+        //Update maximum ID
         maxId : this.state.maxId + 1
       };
       this.setState(newState);
     }
+
     /**
      * Delete a rehearsals row from the form
      */
@@ -111,8 +117,13 @@ export default class RehearsalForm extends Component{
         rehearsals: this.state.rehearsals.setIn([props.rehearsalId,'date'], new Date(newValue))
       });
     }
+    /**
+     * Handle changes in the location text input
+     * @param {SyntheticEvent} e Change event
+     */
     handleLocationChange(e){
       let domNode = e.target;
+      //Find associated ID for the element
       if('rehearsalid' in domNode.dataset){
         const id = domNode.dataset.rehearsalid;
         this.setState({
@@ -179,6 +190,10 @@ export default class RehearsalForm extends Component{
       </Row>);
     }
     
+    /**
+     * Validates a rehearsal
+     * @param {Rehearsal} rehearsal 
+     */
     validateRehearsal(rehearsal){
       let errs = {};
       if(isDateLess(rehearsal.date, new Date())){
