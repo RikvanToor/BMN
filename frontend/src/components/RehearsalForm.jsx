@@ -11,6 +11,7 @@ import {changeMinutes, changeHour, isDateLess} from '@Utils/DateTimeUtils.js';
 
 class Rehearsal extends Record({date:new Date(), startTime:1800, endTime:2100, location:"dB's"}){}
 
+//Possible hours and minutes to select for rehearsal
 const availableHours = intRange(0,24);
 const availableMinutes = intRange(0,60,5);
 
@@ -52,8 +53,9 @@ export default class RehearsalForm extends Component{
     deleteRehearsal(e){
       let domNode = e.currentTarget; //Refers to the button here. e.target may be a child element
       
+      //Select ID via data-* attributes on the DOM node
       if('rehearsalid' in domNode.dataset){
-        let rehearsals = this.state.rehearsals.delete(domNode.dataset.rehearsalid);
+        //Set new state by deleting element in immutable map
         this.setState({
           rehearsals: this.state.rehearsals.delete(domNode.dataset.rehearsalid)
         });
@@ -113,9 +115,6 @@ export default class RehearsalForm extends Component{
       let domNode = e.target;
       if('rehearsalid' in domNode.dataset){
         const id = domNode.dataset.rehearsalid;
-        const newState = {
-          rehearsals: this.state.rehearsals.setIn([id, 'location'],domNode.value)
-        };
         this.setState({
           rehearsals: this.state.rehearsals.setIn([id, 'location'],domNode.value)
         });
@@ -155,7 +154,7 @@ export default class RehearsalForm extends Component{
       };
       
       return (<Row key={id}>
-        <Col xs={3} md={3} style={pullBottom}>
+        <Col xs={2} md={2} style={pullBottom}>
           <Label>Datum</Label>
           <DatePicker rehearsalId={id} value={rehearsal.date.toISOString()} onChange={this.handleDateSelect}/>
         </Col>
@@ -163,15 +162,15 @@ export default class RehearsalForm extends Component{
           <Label>Locatie</Label>
           <FormControl type="text" value={rehearsal.location} onChange={this.handleLocationChange} data-rehearsalid={id}></FormControl>
         </Col>
-        <Col xs={2} md={2} style={pullBottom}>
+        <Col xs={3} md={3} style={pullBottom}>
           <Label>Begintijd</Label>
           <TimeSelector type="start" value={rehearsal.startTime} {...timeSelectorOpts}/>
         </Col>
-        <Col xs={2} md={2} style={pullBottom}>
+        <Col xs={3} md={3} style={pullBottom}>
           <Label>Eindtijd</Label>
           <TimeSelector type="end" value={rehearsal.endTime} {...timeSelectorOpts}/>
         </Col>
-        <Col xs={2} md={2} style={pullBottom}>
+        <Col xs={1} md={1} style={pullBottom}>
           <ButtonGroup>
           <Button onClick={this.addNewRehearsalForm} data-rehearsalid={id} style={{marginRight:'5px'}}><Glyphicon glyph="duplicate" style={{color:'orange'}}/></Button>
             {!isOnly ? (<Button data-rehearsalid={id} onClick={this.deleteRehearsal}><Glyphicon glyph="minus" style={{color:'red'}}/></Button>) : null}

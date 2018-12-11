@@ -11,49 +11,37 @@
 |
  */
 
+ function getMultiple($router, $routes, $func){
+     foreach($routes as $route){
+         $router->get($route, $func);
+     }
+ }
+
 /**
  * 
  * Route all relevant links to the index. There, the routing will be handled via the React
  * Router. 
  */
-$router->get('/', function () use ($router) {
+$indexRoutes = [
+    '/',
+    '/home',
+    '/nummers',
+    '/suggesties',
+    '/roosterAanpassen',
+    '/rooster',
+    '/aanwezigheid',
+    '/gebruikersbeheer',
+    '/account',
+    '/wachtwoordreset',
+    '/setlist',
+    '/beschikbaarheden'
+];
+getMultiple( $router, $indexRoutes, function() use($router){
     return view('index');
-});
-$router->get('/home', function () use ($router) {
-    return view('index');
-});
-$router->get('/nummers', function () use ($router) {
-    return view('index');
-});
-$router->get('/suggesties', function () use ($router) {
-    return view('index');
-});
+} );
 $router->get('/login', ['as'=>'login', function () use ($router) {
     return view('index');
 }]);
-$router->get('/roosterAanpassen', function () use ($router) {
-    return view('index');
-});
-$router->get('/rooster', function () use ($router) {
-    return view('index');
-});
-$router->get('/aanwezigheid', function () use ($router) {
-    return view('index');
-});
-$router->get('/gebruikersbeheer', function () use ($router) {
-    return view('index');
-});
-$router->get('/account', function () use ($router) {
-    return view('index');
-});
-$router->get('/beschikbaarheden', function () use ($router) {
-    return view('index');
-});
-
-//Route reset to the index for React router to pick up, The 
-$router->get('/wachtwoordreset', function() use ($router){
-    return view('index');
-});
 $router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use ($router){
     return view('index');
 }]);
@@ -144,6 +132,20 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             });
         });
 
+        //prefix /api/setlist 
+        $router->group(['prefix'=>'/setlist'], function() use($router){
+            $router->get('/all', 'SetlistController@getAllSetlistSongs');
+
+            //Committee only
+            $router->group(['middleware'=>'committee'], function() use($router){
+                $router->post('/add', 'SetlistController@addSetlistSong');
+                $router->post('/{id}/players', 'SetlistController@updateSongPlayers');
+                $router->delete('/{id}', 'SetlistController@deleteSetlistSong');
+                $router->post('/publish', 'SetlistController@publishSongs');
+            });
+        });
+
+        //prefix /api/news
         $router->group(['prefix' => '/news'], function() use ($router) {
             $router->get('', 'NewsController@showAllNews');
             $router->group(['middleware' => 'committee'], function () use ($router) {

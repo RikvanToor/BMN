@@ -151,3 +151,10 @@ footer {
 .tab-content{
     padding-top: 15px;
 }
+/**
+* Style sortable table headers
+*/
+th.sortable:hover {
+  background-color: rgb(205, 205, 205);
+  cursor: pointer;
+}
