@@ -58,9 +58,6 @@ export class IntegerTime{
     return hours + ':' + minutes;
   }
   static compare(date1, date2){
-    console.log('Compare');
-    console.log(date1);
-    console.log(date2);
     if(date1.lessThan(date2)) return -1;
     else if(date1.greaterThan(date2)) return 1;
     return 0;
@@ -143,6 +140,10 @@ export class IntegerTime{
       return Math.floor((mins-startTime.toMinutes())/stepSize);
     }
   }
+  copyFrom(other){
+    this.h = other.h;
+    this.m = other.m;
+  }
   lessThan(other){
     return this.h < other.h || (this.h == other.h && this.m < other.m);
   }
@@ -173,6 +174,33 @@ export class IntegerTimeInterval{
     this.start = start;
     this.end = end;
   }
+  /**
+   * Clamps the given object to this interval in place. Note that
+   * an IntegerTimeInterval may collapse if it is outside this interval.
+   * @param {IntegerTime|IntegerTimeInterval} object 
+   */
+  clamp(object){
+    if(object instanceof IntegerTime){
+      if(object.lessThan(this.start)){
+        object.copyFrom(this.start);
+      }
+      else if(object.greaterThan(this.end)){
+        object.copyFrom(this.end);
+      }
+    }
+    else if(object instanceof IntegerTimeInterval){
+      this.clamp(object.start);
+      this.clamp(object.end);
+    }
+  }
+  /**
+   * Copies the object
+   * @return A copy of this interval
+   */
+  copy(){
+    return new IntegerTimeInterval(this.start.copy(), this.end.copy());
+  }
+
   static fromDateString(start, end){
     return new IntegerTimeInterval(IntegerTime.fromDate(new Date(start)), IntegerTime.fromDate(new Date(end)));
   }

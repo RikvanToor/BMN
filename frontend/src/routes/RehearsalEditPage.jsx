@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import Carousel from "../components/carousel.jsx";
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ConditionalComponet from '@Components/ConditionalComponent.jsx';
-import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox, PageHeader } from 'react-bootstrap';
+import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox, PageHeader, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import RehearsalForm from '@Components/RehearsalComponents/RehearsalForm.jsx';
-import RehearsalSongsForm from '@Components/RehearsalComponents/RehearsalSongsForm.jsx';
+import RehearsalSongsForm, {SongEditStyles} from '@Components/RehearsalComponents/RehearsalSongsForm.jsx';
 
 //Data imports
 import { Container } from 'flux/utils';
@@ -26,10 +26,7 @@ import * as typeChecks from '@Utils/TypeChecks.js';
 //Datetime formatting functions
 import { readableDate, readableTime, IntegerTime } from '@Utils/DateTimeUtils.js';
 
-const SongEditStyles = { 
-  SLIDER: 0,
-  TEXTBOX: 1
-};
+
 
 /**
  * Page for editting rehearsals: creating new rehearsals and adding songs per rehearsal.
@@ -41,7 +38,7 @@ class RehearsalEditPage extends Component {
       showRehearsalDayForm: false, 
       selectedRehearsalDays: new Set(), 
       editRehearsalInd: -1,
-      songTimEditStyle :  SongEditStyles.SLIDER
+      songTimEditStyle :  SongEditStyles.TEXTBOX
     };
 
     //Bound callbacks
@@ -52,6 +49,7 @@ class RehearsalEditPage extends Component {
     this.stopEditRehearsal = this.stopEditRehearsal.bind(this);
     this.saveRehearsalSongs = this.saveRehearsalSongs.bind(this);
     this.editRehearsalSongs = this.editRehearsalSongs.bind(this);
+    this.changeEditStyle = this.changeEditStyle.bind(this);
   }
   /**
    * Shows or hides the rehearsal creation form.
@@ -62,7 +60,7 @@ class RehearsalEditPage extends Component {
 
     this.setState({
       showRehearsalDayForm: visible,
-      editRehearsalId: -1
+      editRehearsalInd: -1,
     });
   }
   /**
@@ -123,19 +121,23 @@ class RehearsalEditPage extends Component {
     this.toggleRehearsalForm(false);
   }
   stopEditRehearsal(){
-    this.setState({editRehearsalId: -1});
+    this.setState({editRehearsalInd: -1});
   }
   /**
    * 
    * @param {Map<int,RehearsalSong>} songs The map of songs to add to the rehearsal 
    */
   saveRehearsalSongs(songs){
-    let rehearsal = this.props.rehearsals.get(this.state.editRehearsalId);
+    let rehearsal = this.props.rehearsals.get(this.state.editRehearsalInd);
     //Save the songs for the rehearsal
     dispatch(setRehearsalSongs(rehearsal,songs));
+    this.setState({editRehearsalInd: -1});
   }
   editRehearsalSongs(ind){
-    this.setState({editRehearsalId: ind});
+    this.setState({editRehearsalInd: ind});
+  }
+  changeEditStyle(v){
+    this.setState({songTimEditStyle: v});
   }
 
   /**
@@ -157,8 +159,6 @@ class RehearsalEditPage extends Component {
     const start = new Date(rehearsal.start);
     const end = new Date(rehearsal.end);
 
-    console.log(this.props.rehearsals);
-
     return (
     <React.Fragment key={ind}>
     <tr>
@@ -170,10 +170,15 @@ class RehearsalEditPage extends Component {
       <td><Button data-id={rehearsal.di} onClick={()=>this.editRehearsalSongs(ind)}>Bewerk rooster</Button></td>
     </tr>
     {
-      this.state.editRehearsalId == ind ? 
+      this.state.editRehearsalInd == ind ? 
       (<tr>
       <td colSpan="6">
-        <RehearsalSongsForm songs={this.props.setlist} schedule={rehearsal.songs ? rehearsal.songs : []} startTime={IntegerTime.fromDate(start)} endTime={IntegerTime.fromDate(end)} onCancel={this.stopEditRehearsal} onSave={this.saveRehearsalSongs} />
+        <RehearsalSongsForm songs={this.props.setlist} schedule={rehearsal.songs ? rehearsal.songs : []} 
+          editStyle={this.state.songTimEditStyle}
+          startTime={IntegerTime.fromDate(start)} 
+          endTime={IntegerTime.fromDate(end)} 
+          onCancel={this.stopEditRehearsal}
+          onSave={this.saveRehearsalSongs} />
       </td>
       </tr>) :
       null
@@ -190,6 +195,10 @@ class RehearsalEditPage extends Component {
             <Button onClick={this.startRehearsalAdd}><Glyphicon glyph="plus" style={{ color: 'green', marginRight: '5px' }} />Nieuwe repetitiedag(en)</Button>
             <Button onClick={this.removeRehearsals}><Glyphicon glyph="minus" style={{ color: 'red' }} />Verwijder repetitiedag</Button>
           </ButtonGroup>
+          <ToggleButtonGroup className="pull-right" type="radio" name="editstyle" value={this.state.songTimEditStyle} onChange={this.changeEditStyle}>
+            <ToggleButton value={SongEditStyles.TEXTBOX}>Nummertijd als dropdown</ToggleButton>
+            <ToggleButton value={SongEditStyles.SLIDER}>Nummertijd als slider</ToggleButton>
+          </ToggleButtonGroup>
         </ButtonToolbar>
         <ConditionalComponent condition={this.state.showRehearsalDayForm}>
           <RehearsalForm onCancel={this.hideRehearsalCreation} onSave={this.saveNewRehearsals} />
