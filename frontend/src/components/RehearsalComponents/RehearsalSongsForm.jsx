@@ -230,9 +230,9 @@ export default class RehearsalSongsForm extends Component{
           <ConditionalComponent condition={this.state.rehearsalSongs.size > 0}>
             <Panel style={{marginTop:'10px',padding:'5px'}}>
               {songs.map((song)=>this.renderSongForm(song, timeRange))}
-              <Row>
+              <Row style={{paddingTop:'10px'}}>
                 <Col xs={5} md={5}>
-                  <Button bsStyle='success' onClick={this.onSave}>Opslaan</Button>
+                  <Button bsStyle='success' onClick={this.onSave} style={{marginRight:'10px'}}>Opslaan</Button>
                   <Button bsStyle='danger' onClick={this.props.onCancel}>Annuleren</Button>
                 </Col>
               </Row>

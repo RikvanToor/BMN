@@ -118,11 +118,11 @@ export default class SongTimeSlider extends PureComponent{
             return (
             <React.Fragment>
                 <Row>
-                <Col xs={4} md={4}>
+                <Col xs={6} md={6}>
                 <Label>Begintijd</Label>
                 <TimeSelector type="start" value={this.props.value.start} {...timeSelectorOpts}/>
                 </Col>
-                <Col xs={4} md={4}>
+                <Col xs={6} md={6}>
                 <Label>Eindtijd</Label>
                 <TimeSelector type="end" value={this.props.value.end} {...timeSelectorOpts}/>
                 </Col>

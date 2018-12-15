@@ -172,7 +172,7 @@ class RehearsalEditPage extends Component {
     {
       this.state.editRehearsalInd == ind ? 
       (<tr>
-      <td colSpan="6">
+      <td colSpan="6" style={{padding:'20px'}}>
         <RehearsalSongsForm songs={this.props.setlist} schedule={rehearsal.songs ? rehearsal.songs : []} 
           editStyle={this.state.songTimEditStyle}
           startTime={IntegerTime.fromDate(start)} 
