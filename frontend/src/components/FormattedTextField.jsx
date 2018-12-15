@@ -160,6 +160,7 @@ export default class FormattedTextField extends Component{
         //Hard code a FormControl element for now
         return (
             <FormControl onKeyDown={this.onKeyDown} 
+                type="text"
                 inputRef={(ref)=>{this.dom = ref;}} 
                 onChange={this.onChange} 
                 onKeyUp={this.onKeyUp} 
