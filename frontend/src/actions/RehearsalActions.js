@@ -1,7 +1,8 @@
 import * as typeChecks from '@Utils/TypeChecks.js';
 import {List} from 'immutable';
-import {createAuth, deleteAuth, postAuth, readAuth} from '@Actions/ApiActions.js';
+import {createAuth, deleteAuth, updateAuth, postAuth, readAuth} from '@Actions/ApiActions.js';
 import {dateWithIntTime} from '@Utils/DateTimeUtils.js';
+import {format} from '@Utils/StringUtils.js';
 
 export const RehearsalActions = {
   GET_REHEARSALS: 'GET_REHEARSALS',
@@ -10,9 +11,14 @@ export const RehearsalActions = {
   GET_REHEARSAL: 'GET_REHEARSAL',
   CREATE_REHEARSAL: 'CREATE_REHEARSAL',
   CREATE_REHEARSALS: 'CREATE_REHEARSALS',
+
+  //Song management
+  SET_REHEARSAL_SONGS: 'SET_REHEARSAL_SONGS',
   ADD_SONG: 'ADD_SONG',
   REMOVE_SONG: 'REMOVE_SONG',
   DELETE_REHEARSALS: 'DELETE_REHEARSALS',
+
+  //Availability actions
   GET_AVAILABILITIES: 'GET_AVAILABILITIES',
   SET_AVAILABILITIES: 'SET_AVAILABILITIES',
   UPDATE_AVAILABILITIES: 'UPDATE_AVAILABILITIES',
@@ -23,7 +29,8 @@ const Endpoints = {
   createMultiple: 'rehearsals/createMultiple',
   deleteSingle: (id)=>`rehearsals/${id}`,
   deleteMultiple: 'rehearsals/delete',
-  readAllAvailabilities: 'rehearsals/availabilities/all'
+  readAllAvailabilities: 'rehearsals/availabilities/all',
+  rehearsalSongs: 'rehearsals/{0}/songs'
 };
 
 export function getAllAvailabilities(){
@@ -70,7 +77,6 @@ export function createRehearsals(rehearsals){
   }
   //Convert to data to use.
   rehearsalsToSend = rehearsalsToSend.map((el)=>{
-    console.log(el.date);
     return {
       location: el.location, 
       start:dateWithIntTime(el.date,el.startTime),
@@ -113,6 +119,28 @@ export function deleteRehearsals(rehearsalIds){
       action: RehearsalActions.DELETE_REHEARSALS, 
       ids:rehearsalIds
     }, Endpoints.deleteMultiple);
+}
+
+/**
+ * Sets songs for the rehearsal with start and end times.
+ * @param {Rehearsal} rehearsal The rehearsal object (Models/Rehearsal) 
+ * @param {Map<int, RehearsalSong>} songs Map of songs to add to the rehearsal 
+ */
+export function setRehearsalSongs(rehearsal, songs){
+  let songsToSend = songs.valueSeq().map((el)=>{
+    //Convert to POJO
+    return {
+      id: el.id, 
+      start: el.rehearsalTime.start.toDate(rehearsal.start),  //Start, with time as specified and date of the rehearsal
+      end: el.rehearsalTime.end.toDate(rehearsal.start) //End, with time as specified and date of the rehearsal
+    };
+  }).toJS();
+  console.log(songsToSend);
+  return updateAuth({
+    action: RehearsalActions.SET_REHEARSAL_SONGS,
+    songs: songsToSend
+  }
+  , format(Endpoints.rehearsalSongs, rehearsal.id))
 }
 
 

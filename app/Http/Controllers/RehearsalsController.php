@@ -40,6 +40,11 @@ class RehearsalsController extends Controller {
         return response()->json($validatedData,200);
     }
     
+    /**
+     * Create multiple rehearsals simultaneous. Requires an array
+     * structure in the request with key 'rehearsals' containing
+     * objects with keys 'location','start' and 'end'.
+     */
     public function createMultiple(Request $request){
     
         $validatedData = $this->validate($request,[
@@ -157,21 +162,26 @@ class RehearsalsController extends Controller {
         $rehearsal = Rehearsal::findOrFail($id);
         $validatedData = $this->validate($request, [
             'songs.*.id' => 'required',
-            'songs.*.start' => 'required|date|after_or_equal' . $rehearsal->start,
+            'songs.*.start' => 'required|date|after_or_equal:' . $rehearsal->start,
             'songs.*.end' => 'required|date|before_or_equal:' . $rehearsal->end,
         ]);
-        //Create all rehearsals
-        $rehearsals = [];
+
+        //Remove old songs
+        $rehearsal->songs()->detach();
+        
+        //TODO maybe again check here that songs do not overlap.
+
         foreach($validatedData['songs'] as $elem){
             //Make sure the song exists
             $song = Song::findOrFail($elem["id"]);
+            //Attach the song
             $rehearsal->songs()->attach($elem['id'], [
                'start'=>$elem['start'],
                'end'=>$elem['end']
             ]);
         }
         //Send created rehearsals
-        return response()->json($rehearsals, 201);
+        return response()->json($rehearsal, 201);
     }
 
     public function addSong($id, Request $request) {

@@ -118,6 +118,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             $router->get('/schedules/for/{id}', 'RehearsalsController@showFutureRehearsalsWithScheduleForPlayer');
             $router->get('/availabilities', 'RehearsalsController@showFutureRehearsalsOwnAvailabilities');
             $router->post('/{id}/availabilities/', 'RehearsalsController@saveAvailabilities');
+            $router->post('/{id}/songs', 'RehearsalsController@setSongs');
             $router->get('/{id}', 'RehearsalsController@showRehearsalWithSchedule');
             
             //Rehearsal management
