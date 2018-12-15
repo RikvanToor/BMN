@@ -52,7 +52,6 @@ class RehearsalManipulationStore extends Store{
          let songs = rehearsalData.songs.map((value)=>{
             const uid = value.id;
             let valObj = null;
-            console.log(value);
             if(value.reason && value.reason.length > 0){
               //Create a new object with the id, title and reason keys
               valObj = withKeys(value,['id','title','reason']);
@@ -76,11 +75,8 @@ class RehearsalManipulationStore extends Store{
             //Handle the load
             case RehearsalActions.GET_ALL_AVAILABILITIES:
             break;
-              console.log(payload.responseData);
               //Get the availabilities per rehearsal day, per user ID.
               this.parseAvailabilityData(payload.responseData);
-              console.log(this.availabilities);
-              console.log(this.rehearsalSongs);
               this.__emitChange();
             break;
             case 'ERROR_MSG':

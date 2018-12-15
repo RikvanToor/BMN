@@ -135,7 +135,6 @@ export function setRehearsalSongs(rehearsal, songs){
       end: el.rehearsalTime.end.toDate(rehearsal.start) //End, with time as specified and date of the rehearsal
     };
   }).toJS();
-  console.log(songsToSend);
   return updateAuth({
     action: RehearsalActions.SET_REHEARSAL_SONGS,
     songs: songsToSend

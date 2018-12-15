@@ -66,9 +66,6 @@ class RehearsalStore extends Store {
       case RehearsalActions.SET_REHEARSAL_SONGS:
         let rehearsalId = payload.responseData.id;
         let ind = this.rehearsals.findIndex((el)=>el.id == rehearsalId);
-        console.log(ind);
-        console.log(rehearsalId);
-        console.log(payload.responseData);
         this.rehearsals = this.rehearsals.set(ind, payload.responseData);
         this.__emitChange();
         break;

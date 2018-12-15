@@ -74,7 +74,6 @@ export default class SongTimeSlider extends PureComponent{
         }
 
         //Trigger the change handler
-        console.log(this.props);
         this.props.onChange(time, this.props);
       }
 

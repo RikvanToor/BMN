@@ -76,7 +76,6 @@ export default class DatePicker extends Component{
       this.setState(this.makeDateValues(null));
     }
     
-    console.log("Triggering from clear");
     this.triggerChange(null,null);
   }
 
@@ -140,8 +139,6 @@ export default class DatePicker extends Component{
    */
   triggerChange(isoDate, formattedDate){
     if (this.props.onChange) {
-      console.log('Triggering change with props:');
-      console.log(this.props);
       this.props.onChange(isoDate, formattedDate, this.props);
     }
   }
@@ -229,7 +226,6 @@ export default class DatePicker extends Component{
   }
 
   handleInputChange() {
-    console.log("Handling input change");
     const originalValue = ReactDOM.findDOMNode(this.refs.input).value;
     const inputValue = originalValue.replace(/(-|\/\/)/g, this.state.separator).slice(0,10);
 
@@ -279,7 +275,6 @@ export default class DatePicker extends Component{
         displayDate: selectedDate,
         value: selectedDate.toISOString()
       });
-      console.log("triggering change from input value changed");
       //Trigger the change
       this.triggerChange(selectedDate.toISOString(), inputValue);
     }
@@ -296,17 +291,7 @@ export default class DatePicker extends Component{
   }
 
   onChangeDate(newSelectedDate) {
-    console.log("Changing date" + newSelectedDate);
     const inputValue = this.makeInputValueString(newSelectedDate);
-    console.log("Date value" + inputValue);
-    console.log("New state:");
-    console.log({
-      inputValue: inputValue,
-      selectedDate: newSelectedDate,
-      displayDate: newSelectedDate,
-      value: newSelectedDate.toISOString(),
-      focused: false
-    });
     this.setState({
       inputValue: inputValue,
       selectedDate: newSelectedDate,
@@ -319,7 +304,6 @@ export default class DatePicker extends Component{
       const evt = this.dispathCustomEvent();
       this.props.onBlur(evt);
     }
-    console.log("triggering change from onchangedate");
     this.triggerChange(newSelectedDate.toISOString(), inputValue);
   }
 
@@ -367,8 +351,6 @@ export default class DatePicker extends Component{
       noValidate: this.props.noValidate,
     };
 
-    console.log("Rendering with " + this.state.inputValue);
-
     //Either use a custom control or a default form control by react bootstrap.
     const control = this.props.customControl ? React.cloneElement(this.props.customControl, controlProps)
       : (<FormControl type="text" autoFocus={this.props.autoFocus} {...controlProps}/>);
@@ -396,7 +378,7 @@ export default class DatePicker extends Component{
         container={() => {
             return this.props.calendarContainer || this.overlayContainer.current;
           }}
-        target={() => { console.log(this.hiddenInput.current);
+        target={() => {
           return this.overlayTarget.current;
           }}
         placement={this.state.calendarPlacement}

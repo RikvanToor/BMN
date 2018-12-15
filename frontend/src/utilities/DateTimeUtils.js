@@ -258,9 +258,6 @@ export class IntegerTimeInterval{
    * @param {IntegerTimeInterval} interVal 
    */
   intersects(interval, ignoreEndPoints = false){
-    console.log("intersects");
-    console.log(this);
-    console.log(interval);
     return this.contains(interval.start, ignoreEndPoints) || this.contains(interval.end, ignoreEndPoints) || this.isSubsetOf(interval);
   }
   /**
