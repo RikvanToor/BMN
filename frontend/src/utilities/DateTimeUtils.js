@@ -225,8 +225,13 @@ export class IntegerTimeInterval{
    * Returns whether a time is contained in this interval
    * @param {IntegerTime} time 
    */
-  contains(time){
-    return this.start.lessThanEqual(time) && this.end.greaterThanEqual(time);
+  contains(time, ignoreEndPoints = false){
+    if(ignoreEndPoints){
+      return this.start.lessThan(time) && this.end.greaterThan(time);
+    }
+    else{
+      return this.start.lessThanEqual(time) && this.end.greaterThanEqual(time);
+    }
   }
   set(start, end){
     this.check(start,end);
@@ -252,8 +257,11 @@ export class IntegerTimeInterval{
    * intersecting
    * @param {IntegerTimeInterval} interVal 
    */
-  intersects(interval){
-    return this.contains(interval.start) || this.contains(interval.end) || this.isSubsetOf(interval);
+  intersects(interval, ignoreEndPoints = false){
+    console.log("intersects");
+    console.log(this);
+    console.log(interval);
+    return this.contains(interval.start, ignoreEndPoints) || this.contains(interval.end, ignoreEndPoints) || this.isSubsetOf(interval);
   }
   /**
    * Returns whether this interval is a subset of the other interval, i.e. is 

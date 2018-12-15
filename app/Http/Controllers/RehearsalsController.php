@@ -181,7 +181,7 @@ class RehearsalsController extends Controller {
             ]);
         }
         //Send created rehearsals
-        return response()->json($rehearsal, 201);
+        return response()->json($rehearsal->schedule(), 201);
     }
 
     public function addSong($id, Request $request) {

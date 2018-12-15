@@ -59,6 +59,7 @@ export default class RehearsalSongsForm extends Component{
       this.updateSongRange = this.updateSongRange.bind(this);
       this.onSave = this.onSave.bind(this);
       this.handleTimeChange = this.handleTimeChange.bind(this);
+      this.removeSong = this.removeSong.bind(this);
     }
     /**
      * Updates the song time range value.
@@ -99,6 +100,12 @@ export default class RehearsalSongsForm extends Component{
 
       this.setState(newState);
     }
+    removeSong(e, props){
+      this.setState({
+        songIds: this.state.songIds.delete(props.songid),
+        rehearsalSongs: this.state.rehearsalSongs.delete(props.songid)
+      });
+    }
 
     /**
      * Handles time change on a TimeSelector component
@@ -130,11 +137,19 @@ export default class RehearsalSongsForm extends Component{
      */
     renderSongForm(song, timeRange){
       return (
-        <React.Fragment key={song.title} >
-          <SongTimeSlider editStyle={this.props.editStyle} songTitle={song.title} timeRange={timeRange}
-            onChange={this.updateSongRange} songid={song.id} value={song.rehearsalTime} step={5}/>
-            {this.state.songErrs[song.id]? (<Alert bsStyle="danger">{this.state.songErrs[song.id]}</Alert>) : null}
-        </React.Fragment>
+        <Row key={song.title} style={{paddingBottom:'5px',paddingTop:'5px'}}>
+            <Col xs={1} md={1} style={pullBottomStyle}>
+              <GlyphButton songid={song.id} glyph="remove" color="red" onClick={this.removeSong}></GlyphButton>
+            </Col>
+            <Col xs={3} md={3} style={pullBottomStyle}>
+                    <h4>{song.title}</h4>
+            </Col>
+            <Col xs={7} md={7} style={pullBottomStyle}>
+              <SongTimeSlider editStyle={this.props.editStyle} songTitle={song.title} timeRange={timeRange}
+              onChange={this.updateSongRange} songid={song.id} value={song.rehearsalTime} step={5}/>
+              {this.state.songErrs[song.id]? (<Alert bsStyle="danger">{this.state.songErrs[song.id]}</Alert>) : null}
+            </Col>
+          </Row>
       );
     }
 
@@ -158,8 +173,8 @@ export default class RehearsalSongsForm extends Component{
       let songs = this.state.rehearsalSongs.valueSeq();
       for(let i = 0; i < songs.size; i++){
         for(let j = i+1; j < songs.size; j++){
-          //Check for intersection
-          if(songs.getIn([i,'rehearsalTime']).intersects(songs.getIn([j,'rehearsalTime']))){
+          //Check for intersection, ignore when start/end are the same
+          if(songs.getIn([i,'rehearsalTime']).intersects(songs.getIn([j,'rehearsalTime']), true)){
             overlaps = true;
 
             let i1 = songs.get(i).id;
@@ -186,14 +201,15 @@ export default class RehearsalSongsForm extends Component{
       }
     }
     render(){
-      let songs = Array.isArray(this.props.songs) ? new List(this.props.songs) : this.props.songs;
+      let availableSongs = Array.isArray(this.props.songs) ? new List(this.props.songs) : this.props.songs;
 
       //Remaining songs to select
-      let songsLeft = songs.filter((val)=>{
+      let songsLeft = availableSongs.filter((val)=>{
         return !this.state.songIds.contains(val.id);
       });
-      console.log("SONGS MAP");
-      console.log(this.state.rehearsalSongs);
+
+      //Active songs
+      let songs = this.state.rehearsalSongs.valueSeq();
 
       //Start and end time
       let timeRange = this.getTimeRange();
@@ -213,7 +229,7 @@ export default class RehearsalSongsForm extends Component{
           </Row>
           <ConditionalComponent condition={this.state.rehearsalSongs.size > 0}>
             <Panel style={{marginTop:'10px',padding:'5px'}}>
-              {this.state.rehearsalSongs.valueSeq().map((song)=>this.renderSongForm(song, timeRange))}
+              {songs.map((song)=>this.renderSongForm(song, timeRange))}
               <Row>
                 <Col xs={5} md={5}>
                   <Button bsStyle='success' onClick={this.onSave}>Opslaan</Button>

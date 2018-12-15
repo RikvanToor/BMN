@@ -55,6 +55,24 @@ export default class SongTimeSlider extends PureComponent{
         //Clamp
         this.props.timeRange.clamp(time[type]);
 
+        let span = time.span();
+        //The interval got flipped: exchange start and end
+        if(span < 0){
+          let temp = time.start;
+          time.start = time.end;
+          time.end = temp;
+        }
+        //The interval is empty: expand the end by 5.
+        else if(span == 0){
+          //The interval is at the end of the range: expand the start.
+          if(time.end.equals(this.props.timeRang.end)){
+            time.start.m -= 5;
+          }
+          //Expand the end
+          else
+            time.end.m += 5;
+        }
+
         //Trigger the change handler
         console.log(this.props);
         this.props.onChange(time, this.props);
@@ -115,7 +133,7 @@ export default class SongTimeSlider extends PureComponent{
     }
     
     render(){
-        let {songTitle, value, timeRange,editStyle, onChange, ...rest} = this.props;
+        let {value, timeRange,editStyle, onChange, ...rest} = this.props;
         let range = timeRange.span() / 5;
   
         let startTime = this.props.timeRange.start;
@@ -146,20 +164,10 @@ export default class SongTimeSlider extends PureComponent{
           );
         }
   
-        return (
-            <Row {...rest} style={{paddingBottom:'5px',paddingTop:'5px'}}>
-            <Col xs={3} md={3} style={pullBottomStyle}>
-                    <h4>{songTitle}</h4>
-            </Col>
-            <Col xs={7} md={7} style={pullBottomStyle}>
-                  {this.renderInput(range, valObj, availabilityIndicator)}
-            </Col>
-            </Row>
-        );
+        return this.renderInput(range, valObj, availabilityIndicator);
       }
   }
   SongTimeSlider.propTypes = {
-    songTitle: PropTypes.string.isRequired,
     //Shape of objects: start, end, notAvailableNum, unavailableUsers
     availabilityIntervals: (props, propName)=>{
       if(typeChecks.isUndefined(props[propName])) return;
