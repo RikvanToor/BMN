@@ -1,10 +1,11 @@
 //UI imports
 import React, {Component} from 'react';
-import {Table, Label, Button, ButtonGroup, Modal, Panel} from 'react-bootstrap';
+import {Table, Label, Button, ButtonGroup, Modal, Panel, Tabs, Tab} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import SetlistSongForm from '@Components/SetlistSongForm.jsx';
 import PlayersForm from '@Components/SetlistComponents/PlayersForm.jsx';
 import SortableTable from '@Components/SortableTable.jsx';
+import PlayerStatistics from '@Components/SetlistComponents/PlayerStatistics.jsx';
 
 //Data imports
 import {Container} from 'flux/utils';
@@ -103,7 +104,7 @@ class SetlistEditPage extends Component{
                 <ul>
                 {unpublished.map((el)=><li key={el.title}>{el.title}</li>)}
                 </ul>
-                <p>Klopt data?</p>
+                <p>Klopt dat?</p>
                 </React.Fragment>),
             onCancel: this.clearModal,
             onAccept: this.publishAll,
@@ -212,28 +213,62 @@ class SetlistEditPage extends Component{
             </Modal>
         );
     }
+    renderPlayerStatistics(){
+        let playerStats = this.props.setlist.reduce((accum, song)=>{
+            if(song.players){
+                let seen = new Set();
+                song.players.forEach((player)=>{
+                    if(!seen.has(player.id)){
+                        seen.add(player.id);
+
+                        if(!(player.id in accum)){
+                            accum[player.id] = {id: player.id, name:player.name, instruments:new Set(), playTime:0, songNum:0};
+                        }
+                        //Add data for player
+                        accum[player.id].playTime += song.duration;
+                        accum[player.id].instruments.add(player.instrument);
+                        accum[player.id].songNum += 1;
+                    }
+                });
+            }
+            return accum;
+        },{});
+        playerStats = Object.values(playerStats);
+        return (
+            <PlayerStatistics playerStats={playerStats}/>
+        );
+    }
 
     render(){
         let modal = this.state.modal;
+        console.log(this.props.setlist);
 
         let songTableHeaders = ['Titel','Artiest','Lengte','Bezetting','Gepubliceerd?','Acties'];
         let tableSorters = {0: 'title', 1: 'artist', 2:'duration', 4:'isPublished'};
         return (
             <div>
-                <h4>Voeg een song toe</h4>
-                <SetlistSongForm song={new SetlistSong()} onSave={this.handleNewSetlistSong}/>
-                <h2>Huidige setlist</h2>
-                <Panel style={{padding:'15px'}}>
-                    <p style={{display:'inline-block',paddingRight:'15px'}}><Label bsStyle="info">Acties: </Label></p>
-                    <ButtonGroup>
-                        <Button onClick={this.tryPublishAll}>Publiceer alle nummers</Button>
-                    </ButtonGroup>
-                </Panel>
+                <Tabs defaultActiveKey={1} animation={false} id="setlistTabs">
+                    <Tab eventKey={1} title="Setlist">
+                    <h4>Voeg een song toe</h4>
+                    <SetlistSongForm song={new SetlistSong()} onSave={this.handleNewSetlistSong}/>
+                    <h2>Huidige setlist</h2>
+                    <Panel style={{padding:'15px'}}>
+                        <p style={{display:'inline-block',paddingRight:'15px'}}><Label bsStyle="info">Acties: </Label></p>
+                        <ButtonGroup>
+                            <Button onClick={this.tryPublishAll}>Publiceer alle nummers</Button>
+                        </ButtonGroup>
+                    </Panel>
+                    
+                    <SortableTable striped bordered condensed hover responsive 
+                        headers={songTableHeaders} data={this.props.setlist} sorters={tableSorters}>
+                            {this.props.setlist.map((el,ind)=>this.renderSetlistSong(el,ind))}
+                    </SortableTable>
+                    </Tab>
+                    <Tab eventKey={2} title="Nummers/Tijd per speler">
+                        {this.renderPlayerStatistics()}
+                    </Tab>
+                </Tabs>
                 
-                <SortableTable striped bordered condensed hover responsive 
-                    headers={songTableHeaders} data={this.props.setlist} sorters={tableSorters}>
-                        {this.props.setlist.map((el,ind)=>this.renderSetlistSong(el,ind))}
-                </SortableTable>
                 {modal? this.displayModal(modal.title,modal.body, modal.onCancel, modal.onAccept) : null}
             </div>
         );

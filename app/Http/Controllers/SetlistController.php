@@ -22,13 +22,19 @@ class SetlistController extends Controller {
     }
 
     /**
-     * 
+     * Sets players for a selected setlist song.
+     * @param integer $id  The ID of the song to update
      */
     public function updateSongPlayers($id, Request $request){
         $data = $this->validate($request, [
             'players.*.id' => 'required|integer',
             'players.*.instrument' => 'required'
         ]);
+
+        //Empty array was given, so we want to delete all players
+        if(!array_key_exists('players', $data)){
+            $data['players'] = [];
+        }
         $song = Song::findOrFail($id);
         //Clear previous players
         $song->players()->detach();
@@ -37,8 +43,14 @@ class SetlistController extends Controller {
             $accum[$value['id']] = ['instrument' => $value['instrument']];
             return $accum;
         },array());
-        //Attach new players
-        $song->players()->attach($toAttach);
+        
+        //If new players are available, attach them
+        if(count($data['players']) > 0){
+            //Attach new players
+            $song->players()->attach($toAttach);
+        }
+
+        //Save and respond
         $song->save();
         return response()->json($song->players()->get(), ResponseCodes::HTTP_OK);
     }

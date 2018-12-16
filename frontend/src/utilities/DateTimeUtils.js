@@ -33,11 +33,6 @@ function leftPad(str,val, length){
   }
   return pad + str;
 }
-function clamp(val, min, max){
-  if(val < min) return min;
-  if(val > max) return max;
-  return val;
-}
 
 
 
@@ -45,7 +40,7 @@ export function formatDuration(durationSeconds){
   let min = Math.floor(durationSeconds/60);
   min = min < 10 ? '0' + min : min;
   let secs = durationSeconds - min*60;
-
+  secs = secs < 10 ? '0' + secs : secs;
   return min + ':' + secs;
 }
 
