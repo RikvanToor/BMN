@@ -11,7 +11,8 @@ import TimeSelector, {TimeParts} from '@Components/TimeSelector.jsx';
 import PropTypes from 'prop-types';
 import * as typeChecks from '@Utils/TypeChecks.js';
 import {intRange} from '@Utils/Ranges.js';
-import {IntegerTime, IntegerTimeInterval} from '@Utils/DateTimeUtils.js';
+import IntegerTime from '@Utils/IntegerTime.js';
+import IntegerTimeInterval from '@Utils/IntegerTimeInterval.js';
 
 export const SongEditStyles = { 
     SLIDER: 0,
