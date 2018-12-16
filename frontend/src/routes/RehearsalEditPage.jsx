@@ -147,15 +147,16 @@ class RehearsalEditPage extends Component {
    * @param {integer} ind Index of the rehearsal in the list 
    */
   renderRehearsal(rehearsal, ind){
-    let songs = rehearsal.songs.map((el)=>{
-      return {title: el.title, start: IntegerTime.fromDateString(el.pivot.start), end: IntegerTime.fromDateString(el.pivot.end)};
-    }).sort((a,b)=>IntegerTime.compare(a.start,b.start));
-
     const hasSongs = 'songs' in rehearsal && rehearsal.songs.length > 0;
+
+    let songs = hasSongs ? rehearsal.songs.map((el)=>{
+      return {title: el.title, start: IntegerTime.fromDateString(el.pivot.start), end: IntegerTime.fromDateString(el.pivot.end)};
+    }).sort((a,b)=>IntegerTime.compare(a.start,b.start)) : [];
+    
     const songText = hasSongs ? songs.map((el) =>{
       return (<p key={el.title}>{el.title} ({el.start.toReadableTime()} - {el.end.toReadableTime()}) </p>)
     }) : (<span>Nog geen</span>);
-    
+
     const start = new Date(rehearsal.start);
     const end = new Date(rehearsal.end);
 
