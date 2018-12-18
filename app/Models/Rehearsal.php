@@ -57,7 +57,7 @@ class Rehearsal extends Model {
     public function schedule() {
         $result       = $this->toArray();
         $rehearsal_id = $this->id;
-        $songs        = $this->songs()->with(['players' => function ($p) use ($rehearsal_id) {
+        $songs        = $this->songs()->orderBy('pivot_start', 'ASC')->with(['players' => function ($p) use ($rehearsal_id) {
             $p->with(['availabilities' => function ($a) use ($rehearsal_id) {
                 $a->where('rehearsal_id', $rehearsal_id);
             }]);
@@ -74,7 +74,7 @@ class Rehearsal extends Model {
     public function scheduleForPlayer($playerid) {
         $result       = $this->toArray();
         $rehearsal_id = $this->id;
-        $songs        = $this->songs()->whereHas('players', function($q) use ($playerid){
+        $songs        = $this->songs()->orderBy('pivot_start', 'ASC')->whereHas('players', function($q) use ($playerid){
             $q->where('user_id', $playerid);
         })->with(['players' => function ($p) use ($rehearsal_id) {
             $p->with(['availabilities' => function ($a) use ($rehearsal_id) {
