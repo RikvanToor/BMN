@@ -74,7 +74,7 @@ class RehearsalsController extends Controller {
      * Get every rehearsal that ends after this very moment including songs and players.
      */
     public function showFutureRehearsalsWithSchedule() {
-        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->get();
+        $rehearsals = Rehearsal::where('end', '>=', date('Y-m-d H:i:s'))->orderBy('start', 'ASC')->get();
         $result = $rehearsals->map(function ($x) {
             return $x->schedule();
         });

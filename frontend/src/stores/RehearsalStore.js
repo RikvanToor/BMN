@@ -6,7 +6,6 @@ import { List } from 'immutable';
 import {withKeys} from '@Utils/ObjectUtils.js';
 
 const getRehearsals = 'rehearsals/schedules';
-const getRehearsalsForPlayer = 'rehearsals/schedules/for/';
 const getAvailabilities = 'rehearsals/availabilities';
 const getAllAvailabilities = 'rehearsals/availabilities/all';
 const setAvailabilities = rehearsalId => `rehearsals/${rehearsalId}/availabilities`;
@@ -41,15 +40,6 @@ class RehearsalStore extends Store {
       case RehearsalActions.GET_REHEARSALS:
         AppDispatcher.dispatchPromisedFn(
           ApiService.readAuthenticatedData(getRehearsals, {}),
-          data => updateRehearsalsAction(data),
-          (errData) => {
-            this.error = errData;
-          },
-        );
-        break;
-      case RehearsalActions.GET_REHEARSALS_FOR_PLAYER:
-        AppDispatcher.dispatchPromisedFn(
-          ApiService.readAuthenticatedData(getRehearsalsForPlayer + payload.playerid, {}),
           data => updateRehearsalsAction(data),
           (errData) => {
             this.error = errData;

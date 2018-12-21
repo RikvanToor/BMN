@@ -6,7 +6,6 @@ import {format} from '@Utils/StringUtils.js';
 
 export const RehearsalActions = {
   GET_REHEARSALS: 'GET_REHEARSALS',
-  GET_REHEARSALS_FOR_PLAYER: 'GET_REHEARSALS_FOR_PLAYER',
   UPDATE_REHEARSALS: 'UPDATE_REHEARSALS',
   GET_REHEARSAL: 'GET_REHEARSAL',
   CREATE_REHEARSAL: 'CREATE_REHEARSAL',
@@ -41,10 +40,6 @@ export function getAllAvailabilities(){
 
 export function getScheduleAction() {
   return { action: RehearsalActions.GET_REHEARSALS };
-}
-
-export function getScheduleForPlayerAction(playerid) {
-  return { action: RehearsalActions.GET_REHEARSALS_FOR_PLAYER, playerid };
 }
 
 export function updateRehearsalsAction(rehearsals) {
