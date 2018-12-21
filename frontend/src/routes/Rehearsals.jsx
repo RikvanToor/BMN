@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import { getScheduleAction, getScheduleForPlayerAction } from '@Actions/RehearsalActions.js'
 import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
@@ -9,30 +9,31 @@ import { printTime } from '../GeneralExtensions.js';
  * The rehearsals page. Since no state is needed, this is a Pure component that is rerendered
  * only when new properties are provided.
  */
-class RehearsalsPage extends PureComponent {
+class RehearsalsPage extends Component {
     constructor(props) {
         super(props);
         this.fullStyle = 'primary';
         this.myStyle = 'default';
-        this.getFullSchedule = this.getFullSchedule.bind(this);
-        this.getMySchedule = this.getMySchedule.bind(this);
+        this.state = { rehearsals: this.props.rehearsals, mode: Modes.ALL };
     }
 
     componentDidMount() {
-        if (this.props.isLoggedIn)
-            this.getFullSchedule();
+        if (this.props.isLoggedIn) {
+            deferredDispatch(getScheduleAction());
+            this.setState({ rehearsals: this.props.rehearsals });
+        }
     }
 
     getFullSchedule() {
-        deferredDispatch(getScheduleAction());
         this.fullStyle = 'primary';
         this.myStyle = 'default';
+        this.setState({ rehearsals: this.props.rehearsals, mode: Modes.ALL });
     }
 
     getMySchedule() {
-        deferredDispatch(getScheduleForPlayerAction(this.props.userid));
         this.myStyle = 'primary';
         this.fullStyle = 'default';
+        this.setState({ rehearsals: this.props.personalRehearsals, mode: Modes.OWN });
     }
 
     /**
@@ -90,14 +91,23 @@ class RehearsalsPage extends PureComponent {
         return text;
     }
 
+    /**
+     * Sets the set of rehearsals to the current state to be able to render both total and personal schedules
+     * @param {Props} props 
+     * @param {State} state 
+     */
+    static getDerivedStateFromProps(props, state) {
+        state.rehearsals = state.mode === Modes.ALL ? props.rehearsals : props.personalRehearsals;
+        return state;
+    }
+
     render() {
-        // For each rehearsal
-        var table = this.props.rehearsals.map(x => {
+        // For each rehearsallength
+        var table = this.state.rehearsals.map(x => {
             var startTime = new Date(x.start);
             var endTime = new Date(x.end);
 
             return (<div key={x.id}>
-                {/* Write a header */}
                 <h3>{startTime.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
                 <h4>{printTime(startTime)}-{printTime(endTime)} @ {x.location}</h4>
                 <Table striped bordered condensed hover responsive>
@@ -141,14 +151,19 @@ class RehearsalsPage extends PureComponent {
                 <PageHeader>
                     <div>Rooster</div>
                     <ButtonGroup>
-                        <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule}>Volledig rooster</Button>
-                        <Button bsStyle={this.myStyle} onClick={this.getMySchedule}>Persoonlijk rooster</Button>
+                        <Button bsStyle={this.fullStyle} onClick={this.getFullSchedule.bind(this)}>Volledig rooster</Button>
+                        <Button bsStyle={this.myStyle} onClick={this.getMySchedule.bind(this)}>Persoonlijk rooster</Button>
                     </ButtonGroup>
                 </PageHeader>
                 {table}
             </div>
         );
     }
+}
+
+const Modes = {
+    ALL: 'ALL',
+    OWN: 'OWN'
 }
 
 export default RehearsalsPage;
