@@ -22,6 +22,7 @@ import PasswordResetPage from '@Routes/PasswordResetPage.jsx'
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
 import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
+import AddSuggestionPage from '@Routes/AddSuggestionPage.jsx';
 
 
 /**
@@ -56,6 +57,7 @@ const routes = [].concat(
         {target:'/nummers',                component:SongsContainer},
         {target:'/nummer/:id',             component:SongContainer},
         {target:'/nieuws',                 component:NewsContainer},
+        {target:'/suggestieToevoegen',     component:AddSuggestionPage},
     ]),
     withRole(Roles.COMMITTEE, [
         {target:'/suggesties',      component:SuggestionList},

@@ -11,7 +11,8 @@ const userLinks = {
   'Rooster': 'rooster',
   'Nummers': 'nummers',
   'Aanwezigheid': 'aanwezigheid',
-  'Account': 'account'
+  'Account': 'account',
+  'Suggesties': 'suggestieToevoegen'
 };
 const committeeLinks = {
   Suggesties: "suggesties",
