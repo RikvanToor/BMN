@@ -40,7 +40,7 @@ class SongsStore extends Store {
   __onDispatch(payload) {
     switch (payload.action) {
       case SongActions.ADD_SONG:
-        this.song = this.song.push(SongsStore.songFromResponse(payload.responseData));
+        this.song = this.songs.push(SongsStore.songFromResponse(payload.responseData));
         this.__emitChange();
       break;
       case SongActions.GET_SONGS:

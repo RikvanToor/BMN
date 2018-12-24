@@ -10,7 +10,7 @@ import Song from '@Models/Song.js';
 import SongsStore from '@Stores/SongsStore.js';
 
 //Interaction imports
-import {addSong} from '@Actions/SongActions.js';
+import {addSongAction} from '@Actions/SongActions.js';
 import {deferredDispatch, dispatch} from '@Services/AppDispatcher.js';
 
 class AddSuggestionPage extends Component{
@@ -28,7 +28,7 @@ class AddSuggestionPage extends Component{
      * @param {Song} song The song object that was created 
      */
     handleNewSong(song){
-        deferredDispatch(addSong(song.toJS()));
+        deferredDispatch(addSongAction(song.toJS()));
     }
 
     render(){
