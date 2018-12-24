@@ -1,13 +1,11 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
-import { updateSongsAction, updateSongAction, updateErrorAction, SongActions } from '@Actions/SongActions.js';
-import { List } from 'immutable';
+import { List, Record } from 'immutable';
 
-const Endpoints = {
-  getSongs: 'songs/mineAndAll',
-  getSong: id => 'songs/' + id + '/withusers'
-};
+import {SongActions} from '@Actions/SongActions.js';
+import Song from '@Models/Song.js';
+import {withKeys} from '@Utils/ObjectUtils.js';
 
 /**
  * Stores retrieved data with respect to rehearsals
@@ -22,10 +20,16 @@ class SongsStore extends Store {
     //Songs the current user plays
     this.mySongs = new List();
     //One specific song
-    this.song = undefined;
+    this.song = new Song;
 
     // Possible errors
     this.error = undefined;
+  }
+
+  static songFromResponse(songObj){
+    let song = new Song(withKeys(songObj,['id','title','artist','genre', 'spotify_link']));
+                   
+    return song;
   }
 
   /**
@@ -35,6 +39,10 @@ class SongsStore extends Store {
      */
   __onDispatch(payload) {
     switch (payload.action) {
+      case SongActions.ADD_SONG:
+        this.song = this.song.push(SongsStore.songFromResponse(payload.responseData));
+        this.__emitChange();
+      break;
       case SongActions.GET_SONGS:
         AppDispatcher.dispatchPromisedFn(
           ApiService.readAuthenticatedData(Endpoints.getSongs, {}),

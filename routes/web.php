@@ -146,6 +146,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             });
         });
 
+        //prefix /api/suggestions
+        $router->group(['prefix'=>'suggestions'], function() use ($router){
+            $router->post('/add', 'SongsController@addSong');
+        });
+
         //prefix /api/news
         $router->group(['prefix' => '/news'], function() use ($router) {
             $router->get('', 'NewsController@showAllNews');

@@ -1,6 +1,6 @@
 //UI imports
 import React, {Component} from 'react';
-import {Table, Label, Button, ButtonGroup, Modal, Panel, PageHeader} from 'react-bootstrap';
+import {PageHeader} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import SongForm from '@Components/SongForm.jsx';
 
@@ -10,9 +10,8 @@ import Song from '@Models/Song.js';
 import SongsStore from '@Stores/SongsStore.js';
 
 //Interaction imports
-import {getSongs, addSong, updateSong, updateSongs} from '@Actions/SongActions.js';
+import {addSong} from '@Actions/SongActions.js';
 import {deferredDispatch, dispatch} from '@Services/AppDispatcher.js';
-import {formatDuration} from '@Utils/DateTimeUtils.js';
 
 class AddSuggestionPage extends Component{
     constructor(props){
@@ -41,7 +40,9 @@ class AddSuggestionPage extends Component{
         );
     }
 }
-
+AddSuggestionPage.propTypes = {
+    song: PropTypes.object.isRequired
+};
 export default Container.createFunctional(
     (state) => (<AddSuggestionPage song={state.song} />),
     ()=> [SongsStore],
