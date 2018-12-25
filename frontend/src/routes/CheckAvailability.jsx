@@ -7,8 +7,8 @@ import Carousel from "../components/carousel.jsx";
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ConditionalComponet from '@Components/ConditionalComponent.jsx';
 import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox } from 'react-bootstrap';
-import RehearsalForm from '@Components/RehearsalForm.jsx';
-import RehearsalSongsForm from '@Components/RehearsalSongsForm.jsx';
+import RehearsalForm from '@Components/RehearsalComponents/RehearsalForm.jsx';
+import RehearsalSongsForm from '@Components/RehearsalComponents/RehearsalSongsForm.jsx';
 
 //Data imports
 import { Container } from 'flux/utils';

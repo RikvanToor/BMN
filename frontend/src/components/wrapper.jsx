@@ -23,7 +23,7 @@ import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
 import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 import AddSuggestionPage from '@Routes/AddSuggestionPage.jsx';
-
+import CheckAvailability from '@Routes/CheckAvailability.jsx';
 
 /**
  * Main routes in the application
@@ -44,9 +44,9 @@ function withRole(role, routes){
 //Routes in the app
 const routes = [].concat(
     withRole(Roles.GUEST, [
-        {target:'/home',            component:Home},
-        {target:'/login',           component:LoginContainer},
-        {target:'/wachtwoordreset', component:PasswordResetPage},
+        {target:'/home',                   component:Home},
+        {target:'/login',                  component:LoginContainer},
+        {target:'/wachtwoordreset',        component:PasswordResetPage},
         {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
     ]),
     withRole(Roles.USER, [
@@ -58,12 +58,14 @@ const routes = [].concat(
         {target:'/nummer/:id',             component:SongContainer},
         {target:'/nieuws',                 component:NewsContainer},
         {target:'/suggestieToevoegen',     component:AddSuggestionPage},
+
     ]),
     withRole(Roles.COMMITTEE, [
-        {target:'/suggesties',      component:SuggestionList},
-        {target:'/roosterAanpassen',component:RehearsalEditPage},
-        {target:'/gebruikersbeheer',component:UsersPage},
+        {target:'/suggesties',        component:SuggestionList},
+        {target:'/roosterAanpassen',  component:RehearsalEditPage},
+        {target:'/gebruikersbeheer',  component:UsersPage},
         {target:'/setlist',           component:SetlistEditPage},
+        {target:'/beschikbaarheden',  component:CheckAvailability}
     ]) 
 );
 

@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import Carousel from "../components/carousel.jsx";
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ConditionalComponet from '@Components/ConditionalComponent.jsx';
-import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox, PageHeader } from 'react-bootstrap';
-import RehearsalForm from '@Components/RehearsalForm.jsx';
-import RehearsalSongsForm from '@Components/RehearsalSongsForm.jsx';
+import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox, PageHeader, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import RehearsalForm from '@Components/RehearsalComponents/RehearsalForm.jsx';
+import RehearsalSongsForm, {SongEditStyles} from '@Components/RehearsalComponents/RehearsalSongsForm.jsx';
 
 //Data imports
 import { Container } from 'flux/utils';
@@ -16,36 +16,67 @@ import UserStore from '@Stores/UserStore.js';
 import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
 import RehearsalManipulationStore, { loadAllRehearsals } from '@Stores/RehearsalManipulationStore.js';
 import RehearsalStore from '@Stores/RehearsalStore.js';
-import { getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities } from '@Actions/RehearsalActions.js';
+import SetlistStore from '@Stores/SetlistStore.js';
+import { getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities, setRehearsalSongs } from '@Actions/RehearsalActions.js';
+import {getSetlistSongs} from '@Actions/SetlistActions.js';
+import {List} from 'immutable';
 
 //Utils
 import * as typeChecks from '@Utils/TypeChecks.js';
 //Datetime formatting functions
-import { readableDate, readableTime } from '@Utils/DateTimeUtils.js';
+import { readableDate, readableTime, IntegerTime } from '@Utils/DateTimeUtils.js';
 
+
+
+/**
+ * Page for editting rehearsals: creating new rehearsals and adding songs per rehearsal.
+ */
 class RehearsalEditPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { showRehearsalDayForm: false, selectedRehearsalDays: new Set() };
+    this.state = { 
+      showRehearsalDayForm: false, 
+      selectedRehearsalDays: new Set(), 
+      editRehearsalInd: -1,
+      songTimEditStyle :  SongEditStyles.TEXTBOX
+    };
 
     //Bound callbacks
     this.hideRehearsalCreation = this.hideRehearsalCreation.bind(this);
     this.startRehearsalAdd = this.startRehearsalAdd.bind(this);
     this.saveNewRehearsals = this.saveNewRehearsals.bind(this);
     this.removeRehearsals = this.removeRehearsals.bind(this);
+    this.stopEditRehearsal = this.stopEditRehearsal.bind(this);
+    this.saveRehearsalSongs = this.saveRehearsalSongs.bind(this);
+    this.editRehearsalSongs = this.editRehearsalSongs.bind(this);
+    this.changeEditStyle = this.changeEditStyle.bind(this);
   }
+  /**
+   * Shows or hides the rehearsal creation form.
+   * @param {boolean} visible 
+   */
   toggleRehearsalForm(visible) {
     if (this.state.showRehearsalDayForm === visible) return;
 
     this.setState({
-      showRehearsalDayForm: visible
+      showRehearsalDayForm: visible,
+      editRehearsalInd: -1,
     });
   }
+  /**
+   * Trigger loads for data
+   */
   componentDidMount() {
     //Load rehearsals  
     deferredDispatch(getScheduleAction());
+    //Load user availabilities
     deferredDispatch(getAllAvailabilities());
+    //Load setlist songs.
+    deferredDispatch(getSetlistSongs());
   }
+  /**
+   * Deletes selected rehearsals.
+   */
   removeRehearsals() {
     if (this.state.selectedRehearsalDays.size > 0) {
       dispatch(deleteRehearsals(Array.from(this.state.selectedRehearsalDays)));
@@ -54,7 +85,10 @@ class RehearsalEditPage extends Component {
       this.setState({ selectedRehearsalDays: new Set() });
     }
   }
-
+  /**
+   * 
+   * @param {*} e 
+   */
   startRehearsalAdd(e) {
     this.toggleRehearsalForm(true);
   }
@@ -86,6 +120,72 @@ class RehearsalEditPage extends Component {
   hideRehearsalCreation() {
     this.toggleRehearsalForm(false);
   }
+  stopEditRehearsal(){
+    this.setState({editRehearsalInd: -1});
+  }
+  /**
+   * 
+   * @param {Map<int,RehearsalSong>} songs The map of songs to add to the rehearsal 
+   */
+  saveRehearsalSongs(songs){
+    let rehearsal = this.props.rehearsals.get(this.state.editRehearsalInd);
+    //Save the songs for the rehearsal
+    dispatch(setRehearsalSongs(rehearsal,songs));
+    this.setState({editRehearsalInd: -1});
+  }
+  editRehearsalSongs(ind){
+    this.setState({editRehearsalInd: ind});
+  }
+  changeEditStyle(v){
+    this.setState({songTimEditStyle: v});
+  }
+
+  /**
+   * Renders a rehearsal row in the rehearsal table, including the songs time form if the
+   * reheaersal is being editted.
+   * @param {object} rehearsal The rehearsal object
+   * @param {integer} ind Index of the rehearsal in the list 
+   */
+  renderRehearsal(rehearsal, ind){
+    const hasSongs = 'songs' in rehearsal && rehearsal.songs.length > 0;
+
+    let songs = hasSongs ? rehearsal.songs.map((el)=>{
+      return {title: el.title, start: IntegerTime.fromDateString(el.pivot.start), end: IntegerTime.fromDateString(el.pivot.end)};
+    }).sort((a,b)=>IntegerTime.compare(a.start,b.start)) : [];
+    
+    const songText = hasSongs ? songs.map((el) =>{
+      return (<p key={el.title}>{el.title} ({el.start.toReadableTime()} - {el.end.toReadableTime()}) </p>)
+    }) : (<span>Nog geen</span>);
+
+    const start = new Date(rehearsal.start);
+    const end = new Date(rehearsal.end);
+
+    return (
+    <React.Fragment key={ind}>
+    <tr>
+      <td><Checkbox checked={this.state.selectedRehearsalDays.has(rehearsal.id)} onChange={(e) => this.selectRehearsal(e, rehearsal.id)} /></td>
+      <td>{readableDate(start)}</td>
+      <td>{rehearsal.location}</td>
+      <td>{readableTime(start)} - {readableTime(end)}</td>
+      <td>{songText}</td>
+      <td><Button data-id={rehearsal.di} onClick={()=>this.editRehearsalSongs(ind)}>Bewerk rooster</Button></td>
+    </tr>
+    {
+      this.state.editRehearsalInd == ind ? 
+      (<tr>
+      <td colSpan="6" style={{padding:'20px'}}>
+        <RehearsalSongsForm songs={this.props.setlist} schedule={rehearsal.songs ? rehearsal.songs : []} 
+          editStyle={this.state.songTimEditStyle}
+          startTime={IntegerTime.fromDate(start)} 
+          endTime={IntegerTime.fromDate(end)} 
+          onCancel={this.stopEditRehearsal}
+          onSave={this.saveRehearsalSongs} />
+      </td>
+      </tr>) :
+      null
+    }
+    </React.Fragment>);
+  }
 
   render() {
     return (
@@ -96,6 +196,10 @@ class RehearsalEditPage extends Component {
             <Button onClick={this.startRehearsalAdd}><Glyphicon glyph="plus" style={{ color: 'green', marginRight: '5px' }} />Nieuwe repetitiedag(en)</Button>
             <Button onClick={this.removeRehearsals}><Glyphicon glyph="minus" style={{ color: 'red' }} />Verwijder repetitiedag</Button>
           </ButtonGroup>
+          <ToggleButtonGroup className="pull-right" type="radio" name="editstyle" value={this.state.songTimEditStyle} onChange={this.changeEditStyle}>
+            <ToggleButton value={SongEditStyles.TEXTBOX}>Nummertijd als dropdown</ToggleButton>
+            <ToggleButton value={SongEditStyles.SLIDER}>Nummertijd als slider</ToggleButton>
+          </ToggleButtonGroup>
         </ButtonToolbar>
         <ConditionalComponent condition={this.state.showRehearsalDayForm}>
           <RehearsalForm onCancel={this.hideRehearsalCreation} onSave={this.saveNewRehearsals} />
@@ -106,29 +210,13 @@ class RehearsalEditPage extends Component {
               <th>#</th>
               <th>Datum</th>
               <th>Locatie</th>
-              <th>Begintijd</th>
-              <th>Eindtijd</th>
+              <th>Tijd</th>
               <th>Nummers</th>
+              <th>Acties</th>
             </tr>
           </thead>
           <tbody>
-            {
-              this.props.rehearsals.valueSeq().map((obj) => {
-                const hasSongs = 'songs' in obj && obj.songs.length > 0;
-                const songText = hasSongs ? obj.songs.map((el) => el.title).join('<br/>') : 'Nog geen';
-
-                return (<React.Fragment key={obj.start}><tr>
-                  <td><Checkbox checked={this.state.selectedRehearsalDays.has(obj.id)} onChange={(e) => this.selectRehearsal(e, obj.id)} /></td>
-                  <td>{readableDate(new Date(obj.start))}</td>
-                  <td>{obj.location}</td>
-                  <td>{readableTime(new Date(obj.start))}</td>
-                  <td>{readableTime(new Date(obj.end))}</td>
-                  <td>{songText}</td>
-                </tr><tr><td colSpan="6">
-                  <RehearsalSongsForm songs={[{ id: 0, title: 'Song1' }, { id: 1, title: 'Song2' }]} startTime={1800} endTime={2100} />
-                </td></tr></React.Fragment>);
-              })
-            }
+            {this.props.rehearsals.valueSeq().map((obj,ind) =>this.renderRehearsal(obj,ind))}
           </tbody>
         </Table>
       </div>
@@ -138,16 +226,17 @@ class RehearsalEditPage extends Component {
 
 //Setup proptypes for development checking
 RehearsalEditPage.propTypes = {
-  isAdmin: PropTypes.bool.isRequired
+  isAdmin: PropTypes.bool.isRequired,
+  reherasals: PropTypes.instanceOf(List)
 };
 
 //Wrap the page in a Flux container that relays data from stores
 export default Container.createFunctional(
-  (state) => (<RehearsalEditPage isAdmin={state.isAdmin} rehearsals={state.rehearsals} />), //View function
+  (state) => (<RehearsalEditPage isAdmin={state.isAdmin} rehearsals={state.rehearsals} setlist={state.setlist} />), //View function
 
-  () => [UserStore, RehearsalManipulationStore, RehearsalStore], //Required stores
+  () => [UserStore, RehearsalManipulationStore, RehearsalStore, SetlistStore], //Required stores
 
   (prevState) => { //Determine the state needed
-    return { isAdmin: UserStore.user.isCommittee, rehearsals: RehearsalStore.rehearsals };
+    return { isAdmin: UserStore.user.isCommittee, rehearsals: RehearsalStore.rehearsals, setlist: SetlistStore.setlist };
   }
 );

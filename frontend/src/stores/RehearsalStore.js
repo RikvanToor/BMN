@@ -62,6 +62,14 @@ class RehearsalStore extends Store {
         this.__emitChange();
         break;
         
+      //Handle setting new song times on the rehearsal
+      case RehearsalActions.SET_REHEARSAL_SONGS:
+        let rehearsalId = payload.responseData.id;
+        let ind = this.rehearsals.findIndex((el)=>el.id == rehearsalId);
+        this.rehearsals = this.rehearsals.set(ind, payload.responseData);
+        this.__emitChange();
+        break;
+
       //Retrieve availability 
       case RehearsalActions.GET_AVAILABILITIES:
         AppDispatcher.dispatchPromisedFn(
@@ -75,7 +83,6 @@ class RehearsalStore extends Store {
 
         //Retrieve availability 
       case RehearsalActions.GET_ALL_AVAILABILITIES:
-          console.log(payload);
         this.allAvailabilities = payload.responseData.map((rehearsal)=>{
           let newRehearsal = withKeys(rehearsal, ['id','location','start','end']);
           newRehearsal.start = new Date(newRehearsal.start);

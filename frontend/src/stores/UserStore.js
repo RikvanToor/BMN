@@ -51,8 +51,6 @@ class UserStore extends Store {
         this.__emitChange();
         break;
       case PasswordActions.REQUEST_PASSWORD_FAIL:
-        console.log('Req fail');
-        console.log(payload);
         this.requestPasswordError = payload.data.error;
         this.__emitChange();
         break;
