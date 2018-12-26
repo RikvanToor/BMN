@@ -18,3 +18,12 @@ export function withKeys(obj, keys){
     });
     return newObj;
 }
+export function withChangedKeys(obj, keyChanges){
+    let newObj = Object.assign({},obj);
+    keyChanges.forEach((change)=>{
+        if(change[1].length > 0)
+            newObj[change[1]] = newObj[change[0]];
+        delete newObj[change[0]];
+    })
+    return newObj;
+}

@@ -184,7 +184,7 @@ class SetlistEditPage extends Component{
      * @param {SetlistSong} song The setlist song object that was created 
      */
     handleNewSetlistSong(song){
-        deferredDispatch(addSetlistSong(song.toJS()));
+        deferredDispatch(addSetlistSong(song));
     }
     
     /**

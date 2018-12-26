@@ -16,7 +16,7 @@ export const SetlistActions = {
 const Endpoints = {
     addSetlistSong: 'setlist/add',
     getSetlist: 'setlist/all',
-    modifySong: 'setlist/{id}',
+    modifySong: 'setlist/{0}',
     updateCrew: 'setlist/{0}/players',
     removeSetlistSong: 'setlist/{0}',
     publishSongs: 'setlist/publish'
@@ -25,7 +25,7 @@ const Endpoints = {
 export function addSetlistSong(song){
     return ApiActions.createAuth(Object.assign({
         action: SetlistActions.ADD_SETLIST_SONG
-    },song),
+    },song.forRequest()),
      Endpoints.addSetlistSong
     );
 }
