@@ -1,16 +1,23 @@
+//UI
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import SortableTable from '@Components/SortableTable.jsx';
-import {Form, FormControl, FormGroup, ControlLabel, Checkbox} from 'react-bootstrap';
-import {formatDuration} from '@Utils/DateTimeUtils.js';
-import {unionIn} from '@Utils/SetUtils.js';
+import {Form, FormControl, FormGroup, ControlLabel, Checkbox, OverlayTrigger} from 'react-bootstrap';
 import HSLGradient from '@Utils/Color/HSLGradient.js';
 import {SelectFormField} from '@Components/FormElement.jsx';
+import Tooltip from '@Components/Tooltip.jsx';
+
+//Helper elements and functions
+import {formatDuration} from '@Utils/DateTimeUtils.js';
+import {unionIn} from '@Utils/SetUtils.js';
+import {Set as ImmutableSet} from 'immutable';
+import Interval from '@Utils/Interval.js'
 
 const ColorCols = {
-  PlayTime: 0,
-  
-}
+  PlayTime: 'PlayTime',
+  SongNumber: 'SongNumber',
+  CustomFunction: 'CustomFunction'
+};
 
 /**
  * Component displaying number of songs and playtime per player.
@@ -21,20 +28,25 @@ export default class PlayerStatistics extends Component{
       super(props);
       this.state = {
         selectedInstrument: -1,
-        colorColumns: new Set()
+        colorColumns: new ImmutableSet()
       };
       //Memoize
       this.instruments = new Set();
       //Setup gradient for coloring players according to playtime.
-      this.gradient = new HSLGradient(0, 109, 65, 51);
+      this.playerGradient = new HSLGradient(0, 109, 65, 51);
+      this.songNumGradient = new HSLGradient(0, 109, 65, 51);
       
       this.setFilter = this.setFilter.bind(this);
       this.setColorColumn = this.setColorColumn.bind(this);
     }
     setColorColumn(e){
       let id = e.target.id;
-      let val = e.target.val;
-
+      let val = e.target.checked;
+      //Remove 'color-' prefix
+      let type = id.substr(6);
+      
+      if(val) this.setState({colorColumns:this.state.colorColumns.add(ColorCols[type])});
+      else this.setState({colorColumns:this.state.colorColumns.delete(ColorCols[type])});
     }
     /**
      * Set the filter to use
@@ -50,24 +62,34 @@ export default class PlayerStatistics extends Component{
       }
     }
     renderPlayerRow(playerStats){
-        return (
-            <tr key={playerStats.name}>
-                <td>{playerStats.name}</td>
-                <td>{Array.from(playerStats.instruments).join(', ')}</td>
-                <td>{playerStats.songNum}</td>
-                <td style={{backgroundColor:this.gradient.get(playerStats.playTime)}}>{formatDuration(playerStats.playTime)}</td>
-            </tr>
-        )
+      let styles={songNum:{}, playTime:{}};
+      if(this.state.colorColumns.has(ColorCols.PlayTime)){
+        styles.playTime = {backgroundColor: this.playerGradient.get(playerStats.playTime)};
+      }
+      if(this.state.colorColumns.has(ColorCols.SongNumber)){
+        styles.songNum = {backgroundColor: this.songNumGradient.get(playerStats.songNum)};
+      }
+      return (
+          <tr key={playerStats.name}>
+              <td>{playerStats.name}</td>
+              <td>{Array.from(playerStats.instruments).join(', ')}</td>
+              <td style={styles.songNum}>{playerStats.songNum}</td>
+              <td style={styles.playTime}>{formatDuration(playerStats.playTime)}</td>
+          </tr>
+      )
     }
     render(){
         let playerStats = this.props.playerStats ? this.props.playerStats : [];
         
-        let span = playerStats.reduce((accum,val,i)=>{
-          accum.min = Math.min(accum.min, val.playTime);
-          accum.max = Math.max(accum.max, val.playTime);
-          return accum;
-        },{min:10000000,max:-1});
-        this.gradient.setMinMax(span.min, span.max);       
+        let spans = {playTime: Interval.empty(), songNum: Interval.empty()};
+        playerStats.forEach((stat)=>{
+          spans.playTime.add(stat.playTime);
+          spans.songNum.add(stat.songNum);
+        });
+
+        //Update the gradient ranges
+        this.playerGradient.setMinMax(spans.playTime.min, spans.playTime.max);       
+        this.songNumGradient.setMinMax(spans.songNum.min, spans.songNum.max);
         
         if(this.instruments.size === 0){
           playerStats.forEach((stat)=>{
@@ -87,11 +109,14 @@ export default class PlayerStatistics extends Component{
         return (
             <React.Fragment>
               <div>
-                <Form inline>
+                <Form inline style={{marginBottom:"15px"}}>
                   <SelectFormField id="instrumentFilter" onChange={this.setFilter} label={"Toon instrumenten"} options={instrumentOptions}/>
                   <FormGroup>
-                    <ControlLabel>Pas kleur toe op: </ControlLabel>
-                    <Checkbox id="colorSongNum" inline>Aantal nummers</Checkbox> <Checkbox id="colorPlayTime" inline>Podiumtijd</Checkbox>
+                    <Tooltip placement="top" id="colorTooltip" tooltip={"Kleurt de cellen per deelnemer van hoogste(groen) naar laagste(rood)"}>
+                      <ControlLabel>Pas kleur toe op: </ControlLabel>
+                    </Tooltip>
+                    <Checkbox id={"color-"+ColorCols.SongNumber} onChange={this.setColorColumn} inline>Aantal nummers</Checkbox>{' '}
+                    <Checkbox id={"color-"+ColorCols.PlayTime} onChange={this.setColorColumn} inline>Podiumtijd</Checkbox>{' '}
                   </FormGroup>
                 </Form>
               </div>
