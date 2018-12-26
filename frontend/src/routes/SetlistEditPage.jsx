@@ -1,6 +1,6 @@
 //UI imports
 import React, {Component} from 'react';
-import {Table, Label, Button, ButtonGroup, Modal, Panel, Tabs, Tab} from 'react-bootstrap';
+import {Table, Label, Button, ButtonGroup, Modal, Panel, Tabs, Tab, FormControl, Form, ControlLabel, FormGroup} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import SetlistSongForm from '@Components/SetlistSongForm.jsx';
 import PlayersForm from '@Components/SetlistComponents/PlayersForm.jsx';
@@ -18,6 +18,7 @@ import {getSetlistSongs, addSetlistSong, updateCrew, removeSetlistSong, publishS
 import {loadUsersAction} from '@Actions/UserActions.js';
 import {deferredDispatch, dispatch} from '@Services/AppDispatcher.js';
 import {formatDuration} from '@Utils/DateTimeUtils.js';
+import * as ModalHelpers from '@Components/ModalHelpers.jsx';
 
 class SetlistEditPage extends Component{
     constructor(props){
@@ -106,13 +107,17 @@ class SetlistEditPage extends Component{
                 </ul>
                 <p>Klopt dat?</p>
                 </React.Fragment>),
-            onCancel: this.clearModal,
-            onAccept: this.publishAll,
+            onNo: this.clearModal,
+            onYes: this.publishAll,
             title: 'Nummer verwijderen'
         };
         this.setState({modal:modal});
     }
 
+    /**
+     * Start editting the crew of a song
+     * @param {SyntheticEvent} e Click event
+     */
     editCrew(e){
         let ind = e.target.dataset.ind;
         this.setState({edittingPlayersForSong: ind});
@@ -134,7 +139,7 @@ class SetlistEditPage extends Component{
                     return (<p key={player.name}>{player.name}({player.instrument})</p>);
                 return (<span key={player.name}>{player.name}({player.instrument})</span>);
             })}
-            </span>)
+            </span>);
     }
 
     /**
@@ -214,24 +219,28 @@ class SetlistEditPage extends Component{
         );
     }
     renderPlayerStatistics(){
-        let playerStats = this.props.setlist.reduce((accum, song)=>{
+        //Accumulate player statistics from the setlist
+        let playerStats = this.props.players.reduce((accum,player)=>{
+          accum[player.id] = {id: player.id, name:player.name, instruments: new Set(), playTime: 0, songNum: 0};
+          return accum;
+        },{});
+        if(Object.keys(playerStats).length === 0) return null;
+                
+        this.props.setlist.forEach((song)=>{
             if(song.players){
+                //Make sure to count everybody once
                 let seen = new Set();
                 song.players.forEach((player)=>{
                     if(!seen.has(player.id)){
                         seen.add(player.id);
 
-                        if(!(player.id in accum)){
-                            accum[player.id] = {id: player.id, name:player.name, instruments:new Set(), playTime:0, songNum:0};
-                        }
                         //Add data for player
-                        accum[player.id].playTime += song.duration;
-                        accum[player.id].instruments.add(player.instrument);
-                        accum[player.id].songNum += 1;
+                        playerStats[player.id].playTime += song.duration;
+                        playerStats[player.id].instruments.add(player.instrument);
+                        playerStats[player.id].songNum += 1;
                     }
                 });
             }
-            return accum;
         },{});
         playerStats = Object.values(playerStats);
         return (
@@ -241,7 +250,6 @@ class SetlistEditPage extends Component{
 
     render(){
         let modal = this.state.modal;
-        console.log(this.props.setlist);
 
         let songTableHeaders = ['Titel','Artiest','Lengte','Bezetting','Gepubliceerd?','Acties'];
         let tableSorters = {0: 'title', 1: 'artist', 2:'duration', 4:'isPublished'};
@@ -269,7 +277,7 @@ class SetlistEditPage extends Component{
                     </Tab>
                 </Tabs>
                 
-                {modal? this.displayModal(modal.title,modal.body, modal.onCancel, modal.onAccept) : null}
+                {modal? ModalHelpers.yesNoModalFromObj(modal) : null}
             </div>
         );
     }
