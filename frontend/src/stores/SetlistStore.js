@@ -7,6 +7,11 @@ import {SetlistActions } from '@Actions/SetlistActions.js';
 import SetlistSong from '@Models/SetlistSong.js';
 import {withKeys} from '@Utils/ObjectUtils.js';
 
+const Endpoints = {
+  getSongs: 'songs/mineAndAll',
+  getSong: id => 'songs/' + id + '/withusers'
+};
+
 /**
  * Stores retrieved data with respect to rehearsals
  */
