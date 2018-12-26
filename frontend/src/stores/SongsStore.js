@@ -7,6 +7,11 @@ import {SongActions} from '@Actions/SongActions.js';
 import Song from '@Models/Song.js';
 import {withKeys} from '@Utils/ObjectUtils.js';
 
+const Endpoints = {
+  getSongs: 'songs/mineAndAll',
+  getSong: id => 'songs/' + id + '/withusers'
+};
+
 /**
  * Stores retrieved data with respect to rehearsals
  */
