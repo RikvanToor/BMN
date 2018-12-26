@@ -33,6 +33,9 @@ export default class SortableTable extends Component{
         }
     }
     sort(data,sorters, order){
+        //ASC: 1, DESC: -1. Used in the sorting
+        let mod = 1 - 2 * this.state.sortMode;
+        
         let col = this.state.sortColumn;
         if(TypeChecks.isString(sorters[col])){
             let key = sorters[col];
@@ -50,7 +53,7 @@ export default class SortableTable extends Component{
             });
         }
         //Sorter function should always return ASC!
-        else if(TypeChecks.isFunc(sorters[col])){
+        else if(TypeChecks.isFunction(sorters[col])){
             order.sort((a,b)=>{
                 let val = sorters[col](data[a], data[b]);
                 if(val < 0) return -mod;
@@ -61,18 +64,15 @@ export default class SortableTable extends Component{
         return order;
     }
     render(){
-        let {sorters, data, icons, headers, ...props} = this.props;
+        let {sorters, data, icons, headers, filter, ...props} = this.props;
         //Get children as array.
         let children = React.Children.toArray(this.props.children);
         let order = intRange(0, children.length);
 
         //Filter data if applicable
-        if(this.props.filter){
-            order = order.filter((i)=>this.props.filter(data[i]));
+        if(filter){
+            order = order.filter((i)=>filter(data[i]));
         }
-
-        //ASC: 1, DESC: -1. Used in the sorting
-        let mod = 1 - 2 * this.state.sortMode;
         if(this.state.sortColumn != -1){
             order = this.sort(data, sorters, order);
         }
@@ -82,10 +82,10 @@ export default class SortableTable extends Component{
                 <thead>
                     <tr>
                     {headers.map((el,i)=>{
-                        let glyph = '';
-                        if(this.props.sorters[i]){
-                            glyph = icons.neutral;
+                        if(!this.props.sorters[i]){
+                          return (<th key={el}>{el}</th>);
                         }
+                        let glyph = icons.neutral;
                         if(this.state.sortColumn == i){
                             glyph = this.state.sortMode == SortModes.ASC ? icons.ascending: icons.descending;
                         }
