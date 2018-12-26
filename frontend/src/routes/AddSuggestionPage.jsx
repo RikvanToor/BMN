@@ -36,7 +36,7 @@ class AddSuggestionPage extends Component{
         deferredDispatch(addSongAction(song.toJS()));
         let modal = {
             body: ( <React.Fragment>
-                    <p>Je suggestie is nu toegevoegt aan de suggestielijst, de commissie zal er bij de volgende vergadering naar luisteren!</p>
+                    <p>Je suggestie is nu toegevoegd aan de suggestielijst, de commissie zal er bij de volgende vergadering naar luisteren!</p>
                     </React.Fragment>),
             title: 'Hoera!',
             onAccept: this.clearModal
