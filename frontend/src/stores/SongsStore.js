@@ -3,7 +3,7 @@ import ApiService from '@Services/ApiService.js';
 import AppDispatcher from '@Services/AppDispatcher.js';
 import { List, Record } from 'immutable';
 
-import {SongActions} from '@Actions/SongActions.js';
+import {SongActions, updateSongsAction, updateSongAction, updateErrorAction} from '@Actions/SongActions.js';
 import Song from '@Models/Song.js';
 import {withKeys} from '@Utils/ObjectUtils.js';
 
@@ -45,7 +45,7 @@ class SongsStore extends Store {
   __onDispatch(payload) {
     switch (payload.action) {
       case SongActions.ADD_SONG:
-        this.song = this.songs.push(SongsStore.songFromResponse(payload.responseData));
+        this.song = SongsStore.songFromResponse(payload.responseData);
         this.__emitChange();
       break;
       case SongActions.GET_SONGS:
