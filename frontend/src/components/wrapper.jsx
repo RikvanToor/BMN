@@ -22,8 +22,8 @@ import PasswordResetPage from '@Routes/PasswordResetPage.jsx'
 import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
 import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
+import AddSuggestionPage from '@Routes/AddSuggestionPage.jsx';
 import CheckAvailability from '@Routes/CheckAvailability.jsx';
-
 
 /**
  * Main routes in the application
@@ -54,9 +54,11 @@ const routes = [].concat(
         {target:'/homeParticipant', component:ParticipantHome},
         {target:'/aanwezigheid',    component:AvailabilityContainer},
         {target:'/account',         component:AccountPage},
-        {target:'/nummers',         component:SongsContainer},
-        {target:'/nummer/:id',      component:SongContainer},
-        {target:'/nieuws',          component:NewsContainer},
+        {target:'/nummers',                component:SongsContainer},
+        {target:'/nummer/:id',             component:SongContainer},
+        {target:'/nieuws',                 component:NewsContainer},
+        {target:'/suggestieToevoegen',     component:AddSuggestionPage},
+
     ]),
     withRole(Roles.COMMITTEE, [
         {target:'/suggesties',        component:SuggestionList},

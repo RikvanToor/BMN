@@ -34,7 +34,8 @@ $indexRoutes = [
     '/account',
     '/wachtwoordreset',
     '/setlist',
-    '/beschikbaarheden'
+    '/beschikbaarheden',
+    '/suggestieToevoegen'
 ];
 getMultiple( $router, $indexRoutes, function() use($router){
     return view('index');
@@ -144,6 +145,11 @@ $router->group(['prefix' => '/api'], function () use ($router) {
                 $router->delete('/{id}', 'SetlistController@deleteSetlistSong');
                 $router->post('/publish', 'SetlistController@publishSongs');
             });
+        });
+
+        //prefix /api/suggestions
+        $router->group(['prefix'=>'suggestions'], function() use ($router){
+            $router->post('/add', 'SongsController@addSong');
         });
 
         //prefix /api/news

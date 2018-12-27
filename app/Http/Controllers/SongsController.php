@@ -10,10 +10,11 @@ class SongsController extends Controller {
     /**
      * Add new entry to 'songs' table
      */
-    public function create(Request $request) {
+    public function addSong(Request $request) {
         $this->validate($request, [
             'title'        => 'required',
             'artist'       => 'required',
+            'genre'        => 'required',
             'spotify_link' => 'required',
         ]);
 
