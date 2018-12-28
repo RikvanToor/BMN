@@ -158,3 +158,16 @@ th.sortable:hover {
   background-color: rgb(205, 205, 205);
   cursor: pointer;
 }
+
+/**
+* Style stageplan editor
+*/
+svg text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+   -ms-user-select: none;
+       user-select: none;
+}
+svg text:selection {
+  background: none;
+}

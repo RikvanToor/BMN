@@ -11,6 +11,11 @@ const config = {
         filename: 'bundle.js',
         publicPath: "/"
     },
+    //Apparently, to hack css loader
+    //See: https://github.com/webpack-contrib/css-loader/issues/447
+    node : {
+        fs: 'empty'
+    },
     //Add path aliases here for easier access in frontend imports
     resolve:{
         alias:{
@@ -35,7 +40,18 @@ const config = {
 	    {
 		test: /\.css$/,
 		use: ["style-loader", "css-loader"]
-	    }
+        },
+        {
+            test: /\.svg$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'svg-react-loader',
+                options :
+                {
+                    xmlnsTest: /xmlns.*$/,
+                }
+            }
+        }
         ]
     }
 };

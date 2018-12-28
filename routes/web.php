@@ -34,7 +34,8 @@ $indexRoutes = [
     '/account',
     '/wachtwoordreset',
     '/setlist',
-    '/beschikbaarheden'
+    '/beschikbaarheden',
+    '/stageplan'
 ];
 getMultiple( $router, $indexRoutes, function() use($router){
     return view('index');
