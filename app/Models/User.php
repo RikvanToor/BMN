@@ -83,6 +83,15 @@ class User extends Model implements JWTSubject, AuthenticatableContract, Authori
     }
 
     /**
+     * The songs the user has suggested
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function suggestions() {
+        return $this->hasMany(Song::class, 'suggested_by');
+    }
+
+    /**
      * The news articles this user wrote.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
