@@ -17,8 +17,8 @@ class SongsController extends Controller {
             'genre'        => 'required',
             'spotify_link' => 'required',
         ]);
-
-        $song = Song::create($request->all());
+        // Create song and add it as a suggestion for the current user
+        $song = $request->user()->suggestions()->create($request->all());
         return response()->json($song, 201);
     }
 

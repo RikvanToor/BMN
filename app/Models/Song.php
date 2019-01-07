@@ -31,6 +31,15 @@ class Song extends Model {
     }
 
     /**
+     * The user that suggested this song
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\Has
+     */
+    public function suggester() {
+        return $this->belongsTo(User::class, 'suggested_by');
+    }
+
+    /**
      * The users can sing this song.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
