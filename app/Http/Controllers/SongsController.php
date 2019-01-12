@@ -97,6 +97,14 @@ class SongsController extends Controller {
     }
 
     /**
+     * Show all suggestions
+     */
+    public function showSuggestions() {
+        $songs = Song::where('is_setlist', false)->get();
+        return response()->json($songs, 200);
+    }
+
+    /**
      * Return all songs and the songs for the user of the request
      */
     public function showMySongsAndallSongs(Request $request) {
