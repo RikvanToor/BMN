@@ -22,7 +22,6 @@ class SuggestionsStore extends Store {
     switch (payload.action) {
       // Handle the load
       case SuggestionsActions.GET_SUGGESTIONS:
-        console.log(payload.responseData);
         this.suggestions = new List(payload.responseData);
         this.__emitChange();
         break;

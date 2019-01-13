@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container } from 'flux/utils';
-import { getSuggestions } from '@Actions/SuggestionsActions.js';
+import { getSuggestions, removeSuggestion } from '@Actions/SuggestionsActions.js';
 import { Table, PageHeader } from 'react-bootstrap';
 import { deferredDispatch } from '@Services/AppDispatcher.js';
 import SuggestionsStore from '@Stores/SuggestionsStore.js';
@@ -8,6 +8,10 @@ import SuggestionsStore from '@Stores/SuggestionsStore.js';
 class SuggestionList extends Component {
   componentDidMount() {
     deferredDispatch(getSuggestions());
+  }
+
+  removeSuggestion(index){
+
   }
 
   static renderSuggestionsTable(songs) {
@@ -25,14 +29,15 @@ class SuggestionList extends Component {
           </tr>
         </thead>
         <tbody>
-          {songs.map(s => (
+          {songs.map((s, index) => (
             <tr key={s.id}>
-              <td>{s.id}</td>
+              <td>{index + 1}</td>
               <td>{s.artist}</td>
               <td>{s.title}</td>
               <td>{s.genre}</td>
-              <td>{s.spotify_link}</td>
+              <td><a href={s.spotify_link}>Play</a></td>
               <td>{s.suggested_by ? s.suggester.name : null}</td>
+              <td>Remove</td>
             </tr>
           ))}
         </tbody>
@@ -44,14 +49,6 @@ class SuggestionList extends Component {
     return (
       <div className="container pt-5 bg-light">
         <PageHeader>Suggestielijst</PageHeader>
-        <div className="form-group mx-sm-3 mb-2">
-          <input
-            type="text"
-            className="form-control"
-            id="searchquery"
-            placeholder="Search..."
-          />
-        </div>
         {SuggestionList.renderSuggestionsTable(this.props.suggestions)}
       </div>
     );
