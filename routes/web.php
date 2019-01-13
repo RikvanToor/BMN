@@ -147,6 +147,18 @@ $router->group(['prefix' => '/api'], function () use ($router) {
             });
         });
 
+        //prefix /api/stageplan
+        $router->group(['prefix'=>'/stageplan'], function() use($router){
+            $router->get('', 'StageplanController@getLatestStageplan');
+            $router->group(['middleware'=>'committee'], function() use($router){
+                $router->post('{stageplanId}/element', 'StageplanController@addStageElement');
+                $router->delete('/{stageplanId}/element/{elementId}', 'StageplanController@deleteElement');
+                $router->post('{stageplanId}/elements', 'StageplanController@addStageElements');
+                $router->post('{stageplanId}/geometries', 'StageplanController@updateGeometries');
+                $router->post('{stageplanId}/order', 'StageplanController@updateOrder');
+            });
+        });
+
         //prefix /api/news
         $router->group(['prefix' => '/news'], function() use ($router) {
             $router->get('', 'NewsController@showAllNews');
