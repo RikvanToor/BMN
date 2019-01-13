@@ -25,7 +25,6 @@ class SuggestionList extends Component {
             <th>Genre</th>
             <th>Link</th>
             <th>Suggestie door</th>
-            <th />
           </tr>
         </thead>
         <tbody>
@@ -37,7 +36,6 @@ class SuggestionList extends Component {
               <td>{s.genre}</td>
               <td><a href={s.spotify_link}>Play</a></td>
               <td>{s.suggested_by ? s.suggester.name : null}</td>
-              <td>Remove</td>
             </tr>
           ))}
         </tbody>
