@@ -49,6 +49,23 @@ const config = {
                 options :
                 {
                     xmlnsTest: /xmlns.*$/,
+                    filters: [
+                        function(x){
+                            if(!this.key) return;
+                            // Check if this is the metadata element
+                            if(this.node.tagName){
+                                console.log(this.node);
+                            }
+                            if(this.node.tagName && this.node.tagname === 'metadata'){
+                                this.delete();
+                            }
+                            if(this.key.startsWith('xmlns')){
+                                console.log('Deleting');
+                                console.log(this);
+                                this.delete();
+                            }
+                        }
+                    ]
                 }
             }
         }

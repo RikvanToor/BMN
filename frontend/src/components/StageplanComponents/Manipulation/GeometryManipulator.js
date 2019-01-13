@@ -1,19 +1,17 @@
-import Vector, { BBox } from '@Components/StageplanComponents/SvgVector.js';
+import Vector, { BBox } from '@Utils/Svg/SvgVector.js';
 
-export const ManipulateModes = {
-  TRANSLATE: 0,
-  ROTATE: 1,
-  SCALE: 2,
-  SELECT: 3,
-};
+import ManipulateModes from './ManipulateModes';
 
 export default class GeometryManipulator {
-  constructor(mode = ManipulateModes.TRANSLATE) {
+  constructor(mode = ManipulateModes.TRANSLATE, selectionHandler, commitCb = (id, geometry) => {}) {
     // Manipulation mode
     this.mode = mode;
+    this.commitCb = commitCb;
     // Last mouse position
     this.prevPos = new Vector();
-    this.selection = null;
+
+    this.selectionHandler = selectionHandler;
+
     // Whether the selection is being manipulated
     this.manipulating = false;
 
@@ -26,20 +24,15 @@ export default class GeometryManipulator {
     this.onUp = this.onUp.bind(this);
     this.onDown = this.onDown.bind(this);
   }
-
-  setSelection(el, e) {
-    if (this.mode !== ManipulateModes.SELECT) return false;
-
-    if (this.selection) {
-      this.selection.setSelected(false);
-    }
-    this.selection = el;
-    this.prevPos.setFromMouseEvent(e);
-    return true;
+  setMode(mode) {
+    this.mode = mode;
+    if (mode === ManipulateModes.SELECT) this.manipulating = false;
+    else this.manipulating = true;
   }
 
   onMove(e) {
-    if (this.selection && this.manipulating) {
+    const select = this.selectionHandler;
+    if (select.singleSelected() && this.manipulating) {
       switch (this.mode) {
         case ManipulateModes.TRANSLATE:
           {
@@ -47,7 +40,7 @@ export default class GeometryManipulator {
             const dr = clientPos.sub(this.prevPos);
             this.prevPos.setFromMouseEvent(e);
             // Translate the selected element
-            this.selection.translate(dr);
+            select.selectionNodes[0].translate(dr);
           }
           break;
         case ManipulateModes.ROTATE:
@@ -56,16 +49,16 @@ export default class GeometryManipulator {
 
             const angle = this.prevPos.angleTo(clientPos, this.rotationPivot) / Math.PI * 180;
             this.prevPos.setFromMouseEvent(e);
-            this.selection.rotate(angle, this.rotationCenter);
+            select.selectionNodes[0].rotate(angle, this.rotationCenter);
           }
           break;
         case ManipulateModes.SCALE:
           {
             const clientPos = Vector.fromMouseClient(e);
-            const center = this.selection.getCenter();
+            const center = select.selectionNodes[0].getCenter();
             const oneScale = this.prevPos.sub(center).length();
             const newVal = clientPos.sub(center).length();
-            this.selection.scale(newVal / oneScale * this.prevScale);
+            select.selectionNodes[0].scale(newVal / oneScale * this.prevScale);
           }
           break;
         default:
@@ -75,22 +68,23 @@ export default class GeometryManipulator {
   }
 
   onUp(e) {
+    if (this.manipulating) {
+      // Bit dangerous...
+      this.commitCb(this.selectionHandler.selectionIds[0], this.selectionHandler.selectionNodes[0].state.geometry);
+    }
     // this.selection = null;
     this.manipulating = false;
   }
 
   onDown(e) {
-    if (this.selection && this.mode !== ManipulateModes.SELECT) {
-      console.log('MANIPULATING');
+    if (this.selectionHandler.singleSelected() && this.mode !== ManipulateModes.SELECT) {
       this.manipulating = true;
       this.prevPos.setFromMouseEvent(e);
       if (this.mode === ManipulateModes.SCALE) {
-        this.prevScale = this.selection.state.scale;
+        this.prevScale = this.selectionHandler.selectionNodes[0].state.geometry.get('scale');
       } else if (this.mode === ManipulateModes.ROTATE) {
-        console.log(this.selection.getClientRect());
-        this.rotationCenter = this.selection.getCenter();
-        this.rotationPivot = BBox.fromObj(this.selection.getClientRect()).center();
-        console.log(this.rotationPivot);
+        this.rotationCenter = this.selectionHandler.selectionNodes[0].getCenter();
+        this.rotationPivot = BBox.fromObj(this.selectionHandler.selectionNodes[0].getClientRect()).center();
       }
     }
   }

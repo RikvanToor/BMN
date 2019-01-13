@@ -1,25 +1,52 @@
 import React from 'react';
 
- let SvgContext = React.createContext();
- export default SvgContext;
+export class ContextObject {
+  constructor() {
+    this.onMove = [];
+    this.onUp = [];
+    this.onDown = [];
+    this.onSelect = [];
+    this.onLayout = [];
+  }
 
-export function withContext(contextType, component){
-    return (props)=>{
-        let Consumer = contextType.Consumer;
-        let Comp = component;
-        let {children, ...rest} = props; 
-        return (
-            <Consumer>
-            {(context)=>{
-                    return (
-                        <Comp context={context} {...rest}>{children}</Comp>
-                    );
-                }
-            }
-            </Consumer>
-        );
-    };
+  triggerMove(e) {
+    this.onMove.forEach(fn => fn(e));
+  }
+
+  triggerUp(e) {
+    this.onUp.forEach(fn => fn(e));
+  }
+
+  triggerDown(e) {
+    this.onDown.forEach(fn => fn(e));
+  }
+
+  triggerSelect(e, node, id) {
+    this.onSelect.forEach(fn => fn(e, node, id));
+  }
+
+  triggerLayout() {
+    this.onLayout.forEach(fn => fn());
+  }
 }
-export function withSvgContext(component){
-    return withContext(SvgContext, component);
+
+const SvgContext = React.createContext(new ContextObject());
+export default SvgContext;
+
+export function withContext(contextType, component) {
+  return (props) => {
+    const Consumer = contextType.Consumer;
+    const Comp = component;
+    const { children, ...rest } = props;
+    return (
+      <Consumer>
+        {context => (
+          <Comp context={context} {...rest}>{children}</Comp>
+        )}
+      </Consumer>
+    );
+  };
+}
+export function withSvgContext(component) {
+  return withContext(SvgContext, component);
 }

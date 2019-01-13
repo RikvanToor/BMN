@@ -15,14 +15,21 @@ export default class AppDispatcher extends Dispatcher {
   dispatch(action){
     //Try to handle the action in middleware
     let dispatchFn = this.dispatch.bind(this);
+    let dispatchPrmsFn = this.dispatchPromised.bind(this);
     for(let i = 0; i < this.middleware.length; i++){
       //Middleware handled dispatch: we are done
-      if(this.middleware[i](dispatchFn, action)){
+      if(this.middleware[i](dispatchFn, action,dispatchPrmsFn)){
         return;
       }
     }
     //Middleware did not handle action: dispatch the action regularly
     super.dispatch(action);
+  }
+  dispatchPromised(action){
+    return new Promise((resolve, reject) => {
+      this.dispatch(action);
+      resolve(action);
+    });
   }
   /**
      * Respond to a promise with an action. All resolved data of the promise will be added to the payload.

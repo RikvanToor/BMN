@@ -1,84 +1,108 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+
 import PropTypes from 'prop-types';
-import {withSvgContext} from '@Components/StageplanComponents/SvgContext.js';
-import SvgNode from '@Components/StageplanComponents/SvgNode.js';
-import Vector from './SvgVector';
+import { withSvgContext } from './SvgContext.js';
+import Vector, { BBox } from '@Utils/Svg/SvgVector.js';
+import SvgNode from '@Utils/Svg/SvgNode.js';
 
 class SvgText extends Component {
-    constructor(props){
-        super(props);
-        this.node = React.createRef();
+  constructor(props) {
+    super(props);
+    this.node = React.createRef();
+    this.ownRect = null;
+    this.state = {
+      ownRect: null
+    };
+  }
+
+  // Only triggered on first mount, not on rerenders
+  componentDidMount() {
+    if (!this.props.referenceRect) {
+      this.layout();
     }
-    //Is not triggered when first mounted
-    componentDidUpdate(){
-        this.layout();
+  }
+
+  componentDidUpdate() {
+    if (!this.props.referenceRect) {
+      this.layout();
+    } else {
+      const bbox = this.node.current.getBBox();
+      if (!this.state.ownRect || this.state.ownRect.width != bbox.width || this.state.ownRect.height != bbox.height) {
+        this.setState({ownRect: this.node.current.getBBox()});
+      }
     }
-    //Only triggered on first mount, not on rerenders
-    componentDidMount(){
-        this.layout();
+  }
+
+  layout() {
+    const node = new SvgNode(this.node.current);
+    // Get first SVG ancestor
+    const svg = node.node.ownerSVGElement;
+    if (!svg) return;
+    const parent = new SvgNode(svg.querySelector(`#${this.props.parentId}`));
+    if (node.isEmpty() || parent.isEmpty()) return;
+
+    const layoutObj = this.calcLayout(node.bbox, parent.bbox);
+
+    if (layoutObj.transform) {
+      node.transform = layoutObj.transform;
     }
-    layout(){
-        let node = new SvgNode(this.node.current);
-        //Get first SVG ancestor
-        let svg = node.node.ownerSVGElement;
-        if(!svg) return;
-        let parent = new SvgNode(svg.querySelector('#'+this.props.parentId));
-        if(node.isEmpty() || parent.isEmpty()) return;
-        
-        //Bounding boxes
-        let parentBbox = parent.bbox;
-        let bbox = node.bbox;
-        
-        if(this.props.center){
-            let diff = parentBbox.center().sub(bbox.center());
-            if(this.props.center === 'both' || this.props.center === 'b'){
-                node.pos = node.pos.add(diff);
-            }
-            else if(this.props.center === 'vertical' || this.props.center === 'v'){
-                node.pos = node.pos.add(diff.yOnly());
-            }
-            else if(this.props.center === 'horizontal' || this.props.center === 'h'){
-                node.pos = node.pos.add(diff.xOnly());
-            }
-        }
-        if(this.props.flip){
-            node.transform = bbox.center().rotateAboutStr(180);
-        }
-        else{
-            node.transform = '';
-        }
-        //Apply offset
-        if(this.props.hOffset){
-            let off = this.props.hOffset;
-            if(off > 0){
-                node.x = parentBbox.right + off;
-            }
-            else{
-                node.x = parentBbox.left + off - bbox.dims.x;
-            }
-        }
-        if(this.props.vOffset){
-            let off = this.props.vOffset;
-            if(off > 0){
-                node.y = parentBbox.bottom + off;
-            }
-            else{
-                node.y = parentBbox.top + off - bbox.dims.y;
-            }
-        }
+    node.pos = node.pos.add(layoutObj.offset);
+  }
+  
+  calcLayout(nodeBbox, parentBbox) {
+    let output = { offset: new Vector(), transform: '' };
+    let { center, flip, hOffset, vOffset } = this.props;
+
+    if (center) {
+      const diff = parentBbox.center().sub(nodeBbox.center());
+      if (center === 'both' || center === 'b') {
+        output.offset = diff;
+      } else if (center === 'vertical' || center === 'v') {
+        output.offset = diff.yOnly();
+      } else if (center === 'horizontal' || center === 'h') {
+        output.offset = diff.xOnly();
+      }
     }
-    render(){
-        let {center, parentId, vOffset, hOffset, flip, ...props} = this.props;
-        return (<text ref={this.node} {...props}>{this.props.children}</text>);
+    if (flip) {
+      output.transform = nodeBbox.center().rotateAboutStr(180);
+    } 
+    // Apply offset
+    if (hOffset) {
+      const off = hOffset;
+      if (off > 0) {
+        output.offset.x = parentBbox.right + off - nodeBbox.pos.x;
+      } else {
+        output.offset.x = parentBbox.left + off - nodeBbox.dims.x - nodeBbox.pos.x;
+      }
     }
+    if (vOffset) {
+      const off = vOffset;
+      if (off > 0) {
+        output.offset.y = parentBbox.bottom + off - nodeBbox.pos.y;
+      } else {
+        output.offset.y = parentBbox.top + off - nodeBbox.dims.y - nodeBbox.pos.y;
+      }
+    }
+    return output;
+  }
+
+  render() {
+    const {
+      center, parentId, vOffset, hOffset, flip, referenceRect, ...props
+    } = this.props;
+    if (referenceRect && this.state.ownRect) {
+      const layout = this.calcLayout(BBox.fromObj(this.state.ownRect), BBox.fromObj(referenceRect));
+      props.transform = layout.offset.translateStr() + ' ' + layout.transform;
+    }
+    return (<text ref={this.node} {...props}>{this.props.children}</text>);
+  }
 }
 
 SvgText.propTypes = {
-    center: PropTypes.oneOf(['b','v','h','both','vertical','horizontal']),
-    hOffset: PropTypes.number,
-    vOffset: PropTypes.number,
-    flip: PropTypes.bool
-}
+  center: PropTypes.oneOf(['b', 'v', 'h', 'both', 'vertical', 'horizontal']),
+  hOffset: PropTypes.number,
+  vOffset: PropTypes.number,
+  flip: PropTypes.bool,
+};
 
-export default SvgText;
+export default withSvgContext(SvgText);

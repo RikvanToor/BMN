@@ -19,6 +19,11 @@ export default class SvgNode {
     return 0;
   }
 
+  find(query) {
+    if (!this.node) return null;
+    return new SvgNode(this.node.querySelector(query));
+  }
+
   set transform(val) {
     this.setAttr('transform', val);
   }
@@ -26,6 +31,10 @@ export default class SvgNode {
   set pos(val) {
     this.x = val.x;
     this.y = val.y;
+  }
+
+  get clientRect() {
+    return BBox.fromObj(this.node.getBoundingClientRect());
   }
 
   get pos() {

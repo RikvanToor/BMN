@@ -42,8 +42,20 @@ export default class Vector {
     return format('rotate({0},{1},{2})', rotate, this.x, this.y);
   }
 
+  static fromObj(obj) {
+    return new Vector(obj.x, obj.y);
+  }
+
   static origin() {
     return new Vector(0, 0);
+  }
+
+  static xDir(value = 1) {
+    return new Vector(value, 0);
+  }
+
+  static yDir(value = 1) {
+    return new Vector(0, value);
   }
 
   static fromMouseClient(e) {
@@ -120,6 +132,51 @@ export class BBox {
     this.dims = new Vector(width, height);
   }
 
+  get width() {
+    return this.dims.x;
+  }
+
+  get height() {
+    return this.dims.y;
+  }
+
+  merge(otherBox) {
+    this.pos.x = Math.min(this.pos.x, otherBox.pos.x);
+    this.pos.y = Math.min(this.pos.y, otherBox.pos.y);
+    const right = Math.max(this.right, otherBox.right);
+    const bottom = Math.max(this.bottom, otherBox.bottom);
+    this.dims = (new Vector(right, bottom)).sub(this.pos);
+  }
+
+  addPoint(vec) {
+    const hDist = this.horizontalDist(vec.x);
+    if (hDist < 0) {
+      this.pos.x += hDist;
+      this.dims.x -= hDist;
+    } else {
+      this.dims.x += hDist;
+    }
+    const vDist = this.verticalDist(vec.y);
+    if (vDist < 0) {
+      this.pos.y += vDist;
+      this.dims.y -= vDist;
+    } else {
+      this.dims.y += vDist;
+    }
+  }
+
+  verticalDist(y) {
+    if (y < this.top) return y - this.top; // Negative distance
+    if (y > this.bottom) return y - this.bottom;
+    return 0;
+  }
+
+  horizontalDist(x) {
+    if (x < this.x) return x - this.x;
+    if (x > this.right) return x - this.right;
+    return 0;
+  }
+
   get left() {
     return this.pos.x;
   }
@@ -138,6 +195,10 @@ export class BBox {
 
   center() {
     return this.pos.add(this.dims.scale(0.5));
+  }
+
+  static fromDims(dims) {
+    return new BBox(0, 0, dims.x, dims.y);
   }
 
   static fromObj(obj) {

@@ -1,216 +1,284 @@
-import React, { Component } from 'react';
-import {
-  ToggleButtonGroup, ToggleButton, Button, Popover, OverlayTrigger, ButtonGroup,
-} from 'react-bootstrap';
-import SvgVector from '@Components/StageplanComponents/SvgVector.js';
-import Form, { FormField, SubmitButton } from '@Components/Form.jsx';
-import SvgContext from '@Components/StageplanComponents/SvgContext.js';
-import GeometryManipulator, { ManipulateModes } from '@Components/StageplanComponents/GeometryManipulator.js';
-import StagePosition from '@Models/StagePlan/StagePosition.js';
-import Instrument from '@Models/StagePlan/Instrument.js';
-import Geometry from './Geometry.js';
-import StageplanCanvas from './StageplanCanvas.jsx';
+import React, { Component, PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { Dispatcher } from 'flux';
 
 // Models
+import StagePosition from '@Models/Stageplan/StagePosition.js';
+import Instrument from '@Models/Stageplan/Instrument.js';
+import Geometry from '@Models/Stageplan/Geometry.js';
 
-// Icons
-import RotateIcon from './Assets/Icons/rotate.svg';
-import SelectIcon from './Assets/Icons/select.svg';
-import ScaleIcon from './Assets/Icons/scale.svg';
-import TranslateIcon from './Assets/Icons/translate.svg';
-import CrosshairIcon from './Assets/Icons/crosshair.svg';
+// Manipulation
+import GeometryManipulator from './Manipulation/GeometryManipulator';
+import ManipulateModes from './Manipulation/ManipulateModes';
+import SelectionHandler from './Manipulation/SelectionHandler';
+import OrderManipulator from './Manipulation/OrderManipulator';
+import { Map, List, Record } from 'immutable';
 
-/**
- * Instrument names. Key should mimic supported elements in
- * StageplanCanvas's "componentMap".
- */
-const instruments = {
-  keys: 'Keys',
-  guitar: 'Gitaar',
-  bass: 'Bas',
-  acousticGuitar: 'Akoestische gitaar',
-  violin: 'Viool',
-  trumpet: 'Trompet',
-  saxophone: 'Saxofoon',
-  amp: 'Amp',
-  drums: 'Drums',
-  monitor: 'Monitor',
-  elevation: 'Verhoging',
+// UI
+import {Modal} from 'react-bootstrap';
+import StageplanCanvas from './StageplanCanvas.jsx';
+import StageplanToolbar from './StageplanToolbar.jsx';
+import {ButtonGroup, Button} from 'react-bootstrap';
+// SVG components
+import SvgContext from './SvgContext.js';
+import SvgMenu from './SvgMenu.jsx';
+
+// Models
+const hotkeyMap = {
+  s: ManipulateModes.SCALE,
+  q: ManipulateModes.SELECT,
+  r: ManipulateModes.ROTATE,
+  t: ManipulateModes.TRANSLATE,
+  p: ManipulateModes.PLACE_MARKER,
 };
 
+const modals = {
+  DELETE_ELEMENT: 0,
+  CHANGE_NAME: 1,
+  ADD_ROLE: 2,
+};
+
+// eslint-disable-next-line react/no-multi-comp
 class StageplanViewer extends Component {
   constructor(props) {
     super(props);
-    this.test = 2;
 
-    // Outside state to avoid updating all children
-    this.prevPos = new SvgVector();
-    this.selection = null;
-    this.manipulating = false;
+    this.svg = React.createRef();
 
-    this.geomManip = new GeometryManipulator(ManipulateModes.SELECT);
+    // Selection handler
+    this.selectHandler = new SelectionHandler(ManipulateModes.SELECT);
+    // Geomery manipulation handler
+    this.geomManip = new GeometryManipulator(ManipulateModes.SELECT, this.selectHandler, this.commitManipulation.bind(this));
+
+    // Order manipulator
+    this.orderManpulator = new OrderManipulator(this.selectHandler, {
+      openMenu: (pos, items) => {
+        this.setState({ menu: { name: 'context', items, pos } });
+      },
+      closeMenu: () => this.setState({ menu: null }),
+      addOrderAction: (action) => {
+        const ordering = this.state.ordering;
+        ordering.applyOrderAction(action);
+        this.setState({ changedOrder: this.state.changedOrder.push(action), ordering });
+      },
+    });
+
+
     this.state = {
       showNames: false,
       manipulationMode: ManipulateModes.SELECT,
-      members: {},
-      instruments: {},
-      activeManip: this.geomManip,
-      selectionName: '',
-      selectionId: '',
+      selected: {},
+      selectedIds: [],
+      dirtyElements: new Map(),
+      ordering: props.ordering,
+      // Saved order actions
+      changedOrder: new List(),
+      menu: null,
+      modal: -1,
     };
 
+
     // Manipulation handlers
-    this.onMove = this.onMove.bind(this);
-    this.onDown = this.onDown.bind(this);
-    this.onUp = this.onUp.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
+    this.handlers = {
+      onMouseMove: (e) => {
+        this.geomManip.onMove(e);
+      },
+      onMouseDown: (e) => {
+        this.geomManip.onDown(e);
+      },
+      onMouseUp: (e) => {
+        this.geomManip.onUp(e);
+      },
+      onKeyUp: (e) => {
+        if (e.key in hotkeyMap) {
+          this.changeMode(hotkeyMap[e.key]);
+        }
+      },
+      onClick: (e) => {
+        this.orderManpulator.onClick(e);
+      },
+      onContextMenu: (e) => {
+        // Disable browser contextmenu on the SVG element
+        e.preventDefault();
+        this.orderManpulator.onContextMenu(e);
+      },
+    };
 
     // Actions
-    this.addBandMember = this.addBandMember.bind(this);
+    this.addStagePosition = this.addStagePosition.bind(this);
     this.addInstrument = this.addInstrument.bind(this);
     this.changeMode = this.changeMode.bind(this);
-
-
-    this.layoutListeners = [];
+    this.saveChanges = this.saveChanges.bind(this);
+    this.onElementClick = this.onElementClick.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.cancelModal = this.cancelModal.bind(this);
+    this.finishDelete = this.finishDelete.bind(this);
   }
 
-  getUniqueInstrumentId(prefix) {
-    let id = prefix;
-    if (id in this.state.instruments) {
-      let cnt = 0;
-      id = prefix + cnt;
-      // Bruteforce search
-      while (id in this.state.instruments) {
-        cnt++;
-        id = prefix + cnt;
-      }
+  cancelModal(){
+    this.setState({modal:-1});
+  }
+
+  finishDelete(){
+    const ordering = this.state.ordering;
+    ordering.delete(this.selectHandler.selectionIds[0]);
+    this.setState({ordering});
+    this.props.deleteElement(this.selectHandler.selectionIds[0]);
+    this.cancelModal();
+  }
+
+  onDelete(){
+    if(this.selectHandler.hasSelection()){
+      this.setState({modal: modals.DELETE_ELEMENT});
     }
-    return id;
+  }
+
+  // eslint-disable-next-line react/sort-comp
+  commitManipulation(id, geometry) {
+    this.setState({ dirtyElements: this.state.dirtyElements.set(id, geometry) });
+  }
+
+  /**
+   * Save geometry changes by invoking the 'saveGeometry' callback
+   * property. Clears all changes from local state.
+   */
+  saveChanges() {
+    if (this.state.dirtyElements.size > 0) {
+      this.props.saveGeometry(this.state.dirtyElements);
+    }
+    if (this.state.changedOrder.size > 0){
+      this.props.saveOrder(this.state.ordering);
+    }
+
+    // Clear dirty elements
+    this.setState({ dirtyElements: new Map(), changedOrder: new List() });
   }
 
   /**
      * Changes the manipulation mode of the GeometryManipulator
      * @param {integer} newMode One of the ManipulateModes.
      */
+  // eslint-disable-next-line react/sort-comp
   changeMode(newMode) {
     this.setState({ manipulationMode: newMode });
     this.geomManip.mode = newMode;
+    this.selectHandler.mode = newMode;
   }
 
   addInstrument(formData) {
-    console.log(formData);
-    const id = this.getUniqueInstrumentId(formData.instrument.value);
-    const instruments = this.state.instruments;
-    instruments[id] = new Instrument(formData.name.value, id, formData.instrument.value, Geometry.translate(20, 50));
-    console.log(instruments);
-    this.setState({ instruments });
+    const instrument = new Instrument(formData.name.value, -2, formData.instrument.value, Geometry.translation(20, 50));
+    this.props.addElement(instrument);
   }
 
-  addBandMember(formData) {
+  addStagePosition(formData) {
     const name = formData.bandmemberName.value;
-    const member = new StagePosition(name, Geometry.translate(20, 50));
-    if (!(name in this.state.members)) {
-      const set = this.state.members;
+    const member = new StagePosition(name, Geometry.translation(20, 50));
+    if (!(name in this.state.positions)) {
+      const set = this.state.positions;
       set[name] = member;
       this.setState({ members: set });
     }
   }
 
-  registerLayoutListener(listener) {
-    this.layoutListeners.push(listener);
-  }
-
-  setDragableSelection(e, node) {
-    if (this.state.activeManip.setSelection(node, e)) {
-      this.setState({ selectionId: node.props.id, selectionName: node.props.name });
+  onElementClick(e, id, node) {
+    if (this.selectHandler.setSelection(node, id, e)) {
+      e.stopPropagation();
+      this.setState({ selected: this.selectHandler.selected, selectedIds: this.selectHandler.selectionIds });
       return true;
     }
     return false;
   }
 
-  componentDidMount() {
-    // Trigger layout
-    this.layoutListeners.forEach((l) => {
-      l(this);
-    });
-  }
+  renderModals(){
+    const {modal} = this.state;
+    const { elements } = this.props;
 
-  onKeyUp(e) {
-    const key = e.key;
-    if (key === 's') {
-      this.changeMode(ManipulateModes.SCALE);
-    } else if (key === 'r') {
-      this.changeMode(ManipulateModes.ROTATE);
-    } else if (key === 't') {
-      this.changeMode(ManipulateModes.TRANSLATE);
-    } else if (key === 'q') {
-      this.changeMode(ManipulateModes.SELECT);
+    if(modal === -1) return null;
+    if(modal === modals.DELETE_ELEMENT){
+      return (<Modal show={true}>
+          <Modal.Header>Verwijder element</Modal.Header>
+          <Modal.Body>
+            <p>Weet je zeker dat je {elements.get(this.selectHandler.selectionIds[0]).name} wilt verwijderen?</p>
+            <ButtonGroup>
+              <Button bsStyle="primary" onClick={this.finishDelete}>Ja</Button>
+              <Button bsStyle="danger" onClick={this.cancelModal}>Nee</Button>
+            </ButtonGroup>
+          </Modal.Body>
+        </Modal>);
+    }
+    if(modal === modals.ADD_ROLE){
+      return (
+        <Modal show={true}>
+          <Modal.Header>Voeg een rol toe</Modal.Header>
+          <Modal.Body>
+            
+          </Modal.Body>
+        </Modal>
+      );
     }
   }
 
-  onUp(e) {
-    this.state.activeManip.onUp(e);
-  }
-
-  onDown(e) {
-    this.state.activeManip.onDown(e);
-  }
-
-  onMove(e) {
-    this.state.activeManip.onMove(e);
+  componentDidUpdate(prevProps, prevState) {
+    // Assign ordering
+    if (prevProps.ordering !== this.props.ordering) {
+      this.setState({ordering: this.props.ordering});
+    }
   }
 
   render() {
-    const instrumentOpts = Object.keys(instruments).map(el => ({ name: instruments[el], value: el }));
-
-    const addBandMemberForm = (
-      <Popover id="addBandMemberPopover">
-        <Form onSubmit={this.addBandMember}>
-          <FormField label="Bandlid naam" id="bandmemberName" />
-          <SubmitButton>Voeg toe</SubmitButton>
-        </Form>
-      </Popover>
-    );
-    const addInstrumentForm = (
-      <Popover id="addBandMemberPopover">
-        <Form onSubmit={this.addInstrument}>
-          <FormField label="Naam" id="name" type="text" />
-          <FormField label="Instrument" id="instrument" type="select" options={instrumentOpts} />
-          <SubmitButton>Voeg instrument toe</SubmitButton>
-        </Form>
-      </Popover>
-    );
-
+    const { positions, elements, roles } = this.props;
+    const {
+      selectedIds, selected, menu, dirtyElements, manipulationMode, changedOrder, modal
+    } = this.state;
     return (
       <React.Fragment>
-        <div style={{ marginBottom: '15px' }}>
-          <ButtonGroup>
-            <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={addBandMemberForm}>
-              <Button>Voeg bandlid toe</Button>
-            </OverlayTrigger>
-            <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={addInstrumentForm}>
-              <Button>Voeg instrument toe</Button>
-            </OverlayTrigger>
-          </ButtonGroup>
-        </div>
-        <ToggleButtonGroup type="radio" name="mode" value={this.state.manipulationMode} onChange={this.changeMode}>
-          <ToggleButton value={ManipulateModes.SELECT}><SelectIcon /></ToggleButton>
-          <ToggleButton value={ManipulateModes.TRANSLATE}><TranslateIcon /></ToggleButton>
-          <ToggleButton value={ManipulateModes.ROTATE}><RotateIcon /></ToggleButton>
-          <ToggleButton value={ManipulateModes.SCALE}><ScaleIcon /></ToggleButton>
-          <ToggleButton value={5}><CrosshairIcon /></ToggleButton>
-        </ToggleButtonGroup>
+        <StageplanToolbar
+          manipulationMode={manipulationMode}
+          changeMode={this.changeMode}
+          addPosition={this.addStagePosition}
+          addElement={this.addInstrument}
+          hasChange={dirtyElements.size > 0 || changedOrder.size > 0}
+          onSave={this.saveChanges}
+          onDelete={this.onDelete}
+        />
         <div style={{ display: 'inlineBlock' }}>
-          <span style={{ fontWeight: 'bold' }}> Geselecteerd: ID: {this.state.selectionId} , Naam: {this.state.selectionName}</span>
+          {selectedIds.length > 0 ? (
+            <span style={{ fontWeight: 'bold' }}>
+              {`Geselecteerd: ID: ${selectedIds[0]}`}
+            </span>
+          ) : null
+          }
         </div>
-        <div tabIndex="0" onKeyUp={this.onKeyUp} onMouseDown={this.onDown} onMouseUp={this.onUp} onMouseMove={this.onMove}>
+        <div tabIndex="0" role="presentation" {...this.handlers}>
           <SvgContext.Provider value={this}>
-            <StageplanCanvas width="100%" height="480" members={Object.values(this.state.members)} instruments={Object.values(this.state.instruments)} />
+            <StageplanCanvas
+              width="100%"
+              height="480"
+              svgRef={this.svg}
+              selected={selected}
+              positions={positions}
+              elements={elements}
+              locations={dirtyElements}
+              onElementClick={this.onElementClick}
+              drawOrder={this.state.ordering.indToId}
+            >
+              {menu ? (<SvgMenu name={menu.name} pos={menu.pos} items={menu.items} padding={5} />) : null}
+            </StageplanCanvas>
           </SvgContext.Provider>
         </div>
+        {this.renderModals()}
       </React.Fragment>
     );
   }
 }
+
+StageplanViewer.propTypes = {
+  stageplanId: PropTypes.number.isRequired,
+  addElement: PropTypes.func.isRequired,
+  elements: PropTypes.instanceOf(Map).isRequired,
+  positions: PropTypes.array.isRequired,
+  roles: PropTypes.array.isRequired,
+  saveGeometry: PropTypes.func.isRequired,
+};
 
 export default StageplanViewer;
