@@ -3,6 +3,7 @@ import * as ApiActions from '@Actions/ApiActions.js';
 export const SongActions = {
   GET_SONGS: 'GET_SONGS',
   GET_SONG: 'GET_SONG',
+  GET_SUGGESTIONS: 'GET_SUGGESTIONS',
   UPDATE_SONG: 'UPDATE_SONG',
   UPDATE_SONGS: 'UPDATE_SONGS',
   UPDATE_ERROR: 'UPDATE_ERROR',
@@ -25,6 +26,10 @@ export function addSongAction(song) {
 
 export function getSongsAction() {
   return { action: SongActions.GET_SONGS };
+}
+
+export function getSuggestionsAction() {
+  return { action: SongActions.GET_SUGGESTIONS };
 }
 
 export function getSongAction(id) {

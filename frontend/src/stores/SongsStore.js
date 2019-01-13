@@ -9,7 +9,8 @@ import {withKeys} from '@Utils/ObjectUtils.js';
 
 const Endpoints = {
   getSongs: 'songs/mineAndAll',
-  getSong: id => 'songs/' + id + '/withusers'
+  getSong: id => 'songs/' + id + '/withusers',
+  getSuggestions: 'songs/suggestions'
 };
 
 /**
@@ -24,6 +25,8 @@ class SongsStore extends Store {
     this.songs = new List();
     //Songs the current user plays
     this.mySongs = new List();
+    //All suggestions
+    this.suggestions = new List();
     //One specific song
     this.song = new Song;
 
@@ -57,11 +60,21 @@ class SongsStore extends Store {
           },
         );
         break;
+      case SongActions.GET_SUGGESTIONS:
+        AppDispatcher.dispatchPromisedFn(
+          ApiService.readAuthenticatedData(Endpoints.getSuggestions, {}),
+          data => updateSongsAction(data),
+          (errData) => {
+            this.error = errData;
+          },
+        );
+        break;
       case SongActions.UPDATE_SONGS:
         if (payload.songs) {
           this.error = undefined;
           this.songs = new List(payload.songs.allSongs);
           this.mySongs = new List(payload.songs.mySongs);
+          this.suggestions = new List(payload.songs.suggestions);
           this.__emitChange();
         }
         break;
