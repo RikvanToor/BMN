@@ -7,10 +7,12 @@ import AppDispatcher from '@Services/AppDispatcherClass.js';
 
 //Add middleware
 import dispatchRemote from '@Services/dispatcherMiddleware/dispatchRemote.js';
+import logAction from '@Services/dispatcherMiddleware/logAction.js';
 
 // Global singleton
 let appDispatcher = new AppDispatcher();
 appDispatcher.addMiddleWare(dispatchRemote);
+appDispatcher.addMiddleWare(logAction);
 
 export function deferredDispatch(action) {
   setTimeout(() => {

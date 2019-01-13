@@ -100,7 +100,7 @@ class SongsController extends Controller {
      * Show all suggestions
      */
     public function showSuggestions() {
-        $songs = Song::where('is_setlist', false)->get();
+        $songs = Song::where('is_setlist', false)->with('suggester')->get();
         return response()->json($songs, 200);
     }
 
