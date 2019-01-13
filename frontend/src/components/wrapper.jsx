@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-//UI
-import Footer from "./footer.jsx";
+// UI
 import { BrowserRouter, Route } from "react-router-dom";
 import {Redirect} from 'react-router';
 import { Grid, Row } from 'react-bootstrap';
@@ -23,6 +22,7 @@ import ConditionalComponent from '@Components/ConditionalComponent.jsx';
 import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
 import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 import CheckAvailability from '@Routes/CheckAvailability.jsx';
+import StageplanEditorPage from '@Routes/StageplanEditorPage.jsx';
 
 
 /**
@@ -30,86 +30,86 @@ import CheckAvailability from '@Routes/CheckAvailability.jsx';
  */
 import Home from '@Routes/Home.jsx';
 import SuggestionList from '@Routes/SuggestionList.jsx';
+import Footer from "./footer.jsx";
 
 const Roles = {
-    GUEST : 'guest',
-    USER: 'user',
-    COMMITTEE: 'committee'
+  GUEST: 'guest',
+  USER: 'user',
+  COMMITTEE: 'committee',
 };
 
-function withRole(role, routes){
-    return routes.map((route)=>Object.assign(route,{role:role}));
+function withRole(role, routes) {
+  return routes.map(route => Object.assign(route, { role }));
 }
 
-//Routes in the app
+// Routes in the app
 const routes = [].concat(
-    withRole(Roles.GUEST, [
-        {target:'/home',                   component:Home},
-        {target:'/login',                  component:LoginContainer},
-        {target:'/wachtwoordreset',        component:PasswordResetPage},
-        {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
-    ]),
-    withRole(Roles.USER, [
-        {target:'/rooster',         component:RehearsalContainer},
-        {target:'/homeParticipant', component:ParticipantHome},
-        {target:'/aanwezigheid',    component:AvailabilityContainer},
-        {target:'/account',         component:AccountPage},
-        {target:'/nummers',         component:SongsContainer},
-        {target:'/nummer/:id',      component:SongContainer},
-        {target:'/nieuws',          component:NewsContainer},
-    ]),
-    withRole(Roles.COMMITTEE, [
-        {target:'/suggesties',        component:SuggestionList},
-        {target:'/roosterAanpassen',  component:RehearsalEditPage},
-        {target:'/gebruikersbeheer',  component:UsersPage},
-        {target:'/setlist',           component:SetlistEditPage},
-        {target:'/beschikbaarheden',  component:CheckAvailability}
-    ]) 
+  withRole(Roles.GUEST, [
+    { target: '/home', component: Home },
+    { target: '/login', component: LoginContainer },
+    { target: '/wachtwoordreset', component: PasswordResetPage },
+    { target: '/nieuwwachtwoord/:token', component: ChangePasswordPage },
+  ]),
+  withRole(Roles.USER, [
+    { target: '/rooster', component: RehearsalContainer },
+    { target: '/homeParticipant', component: ParticipantHome },
+    { target: '/aanwezigheid', component: AvailabilityContainer },
+    { target: '/account', component: AccountPage },
+    { target: '/nummers', component: SongsContainer },
+    { target: '/nummer/:id', component: SongContainer },
+    { target: '/nieuws', component: NewsContainer },
+  ]),
+  withRole(Roles.COMMITTEE, [
+    { target: '/suggesties', component: SuggestionList },
+    { target: '/roosterAanpassen', component: RehearsalEditPage },
+    { target: '/gebruikersbeheer', component: UsersPage },
+    { target: '/setlist', component: SetlistEditPage },
+    { target: '/beschikbaarheden', component: CheckAvailability },
+    { target: '/stageplan', component: StageplanEditorPage },
+  ]),
 );
 
 class Wrapper extends Component {
-    render() {
-      //Wait until we are ready to render
-      if(!this.props.ReadyToRender) return null;
-      
-      //Setup roles
-      let roles = {};
-      roles.guest = true;
-      roles.user = this.props.user.isLoggedIn;
-      roles.committee = roles.user && this.props.user.isCommittee;
-      
-      //Redirect target
-      const redirectTarget = '/login';
-            
-      //Route creation function
-      let exactRouteFn = (routeObj,redirect)=>{
-        //The component to render
-        let Comp = routeObj.component;
-        //Render function, taking into account the role of the user, redirects if the 
-        //role is not present
-        let renderFn = (props) =>{
-          return (
+  render() {
+    // Wait until we are ready to render
+    if (!this.props.ReadyToRender) return null;
+
+    // Setup roles
+    const roles = {};
+    roles.guest = true;
+    roles.user = this.props.user.isLoggedIn;
+    roles.committee = roles.user && this.props.user.isCommittee;
+
+    // Redirect target
+    const redirectTarget = '/login';
+
+    // Route creation function
+    const exactRouteFn = (routeObj, redirect) => {
+      // The component to render
+      const Comp = routeObj.component;
+      // Render function, taking into account the role of the user, redirects if the
+      // role is not present
+      const renderFn = (props) => (
           <ConditionalComponent condition={roles[routeObj.role]} otherwise={(<Redirect to={redirect}/>)}>
           <Comp {...props}/>
           </ConditionalComponent>);
-        };
-        return (<Route key={routeObj.target} exact path={routeObj.target} render={renderFn}/>);
-      };
-      
-      return (
-          <BrowserRouter>
-              <div className="bg-light">
-                  <NavigationContainer />
-                  <Grid>
-                      <Row>
-                          {routes.map((el)=>exactRouteFn(el, redirectTarget))}
+      return (<Route key={routeObj.target} exact path={routeObj.target} render={renderFn} />);
+    };
+
+    return (
+        <BrowserRouter>
+            <div className="bg-light">
+                <NavigationContainer />
+                <Grid>
+                    <Row>
+                        {routes.map(el => exactRouteFn(el, redirectTarget))}
                       </Row>
                   </Grid>
-                  <Footer />
+                <Footer />
               </div>
           </BrowserRouter>
-        );
-    }
-};
+    );
+  }
+}
 
 export default Wrapper;
