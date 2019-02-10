@@ -16,10 +16,10 @@ class Carousel extends Component {
           <img className="d-block w-100" src={bg1} alt="First slide" />
         </CarouselComp.Item>
         <CarouselComp.Item>
-          <img className="d-block w-100" src={bg2} alt="First slide" />
+          <img className="d-block w-100" src={bg2} alt="Second slide" />
         </CarouselComp.Item>
         <CarouselComp.Item>
-          <img className="d-block w-100" src={bg3} alt="First slide" />
+          <img className="d-block w-100" src={bg3} alt="Third slide" />
         </CarouselComp.Item>
       </CarouselComp>
     );
