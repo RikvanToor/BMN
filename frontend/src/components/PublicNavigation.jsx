@@ -18,7 +18,7 @@ const links = {
 /**
  * Navigation class, rendered as a menubar at the top of the site
  */
-class Navigation extends PureComponent {
+class PublicNavigation extends PureComponent {
   constructor(props) {
     super(props);
     this.state = { active: this.props.active };
@@ -45,7 +45,7 @@ class Navigation extends PureComponent {
     navs = navs.concat(publicLinks);
 
     return (
-      <Navbar inverse collapseOnSelect inner>
+      <Navbar className="navbar-fixed-top collapseOnSelect">
         <Navbar.Header>
           <Navbar.Brand>
             <LinkContainer to="/">
@@ -54,7 +54,6 @@ class Navigation extends PureComponent {
               </NavItem>
             </LinkContainer>
           </Navbar.Brand>
-          <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>{navs}</Nav>
@@ -64,4 +63,4 @@ class Navigation extends PureComponent {
   }
 }
 
-export default Navigation;
+export default PublicNavigation;

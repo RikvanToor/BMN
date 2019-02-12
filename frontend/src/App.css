@@ -2,8 +2,18 @@ html {
   font-size: 16px;
 }
 
-.navbar-inner {
-  background:transparent;
+.logo-style {
+  height: 65vh;
+  opacity: .65;
+}
+
+.info-style {
+  margin: auto;
+  width: 75vw;
+}
+
+.carousel-style{
+  height: 100vh;
 }
 
 .bg-dark {
