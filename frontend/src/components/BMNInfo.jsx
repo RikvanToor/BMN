@@ -19,7 +19,7 @@ class BMNInfo extends Component {
             mooi om te zien dat wij als echte bèta-vereniging naast onze exacte kwaliteiten ook ons van een een andere kant kunnen laten zien. 
           </p>
           <p>
-            De zevende editie van de BMN vindt plaats op 5 juni 2019 in de Helling, Utrecht. Houdt onze <a href="">Facebookpagina</a> goed in de gaten voor de laatste nieuwtjes.
+            De zevende editie van de BMN vindt plaats op 5 juni 2019 in de Helling, Utrecht. Houdt onze <a href="https://www.facebook.com/BetaMusicNight/" target="_blank">Facebookpagina</a> goed in de gaten voor de laatste nieuwtjes.
           </p>
         </div>
       </div>

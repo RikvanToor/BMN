@@ -2,14 +2,34 @@ html {
   font-size: 16px;
 }
 
+.footer-logos {
+  width: 75vw;
+  height: 25vh;
+  margin: auto;
+}
+
+.gallery-style {
+  width: 90vw;
+  margin: auto;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.padding-0 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
 .logo-style {
-  height: 65vh;
-  opacity: .65;
+  height: 50vh;
+  opacity: .4;
 }
 
 .info-style {
   margin: auto;
   width: 75vw;
+  padding-top: 2vh;
+  padding-bottom: 5vh;
 }
 
 .carousel-style{
