@@ -2,10 +2,16 @@ html {
   font-size: 16px;
 }
 
+.sponsor {
+  height: 15vh;
+  width: auto;
+}
+
 .footer-logos {
-  width: 75vw;
   height: 25vh;
+  width: 75vw;
   margin: auto;
+  padding-top: 5vh;
 }
 
 .gallery-style {
