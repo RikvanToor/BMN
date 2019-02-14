@@ -13,7 +13,7 @@ import { Table, Tooltip, OverlayTrigger, Button, ButtonGroup, PageHeader } from 
 class Photos extends Component {
   render() {
     return (
-      <div className="bg-dark text-center">
+      <div id="fotos" className="bg-dark text-center">
         <div className="gallery-style"> 
           <PageHeader>Foto's</PageHeader>
 

@@ -4,7 +4,7 @@ import { PageHeader } from 'react-bootstrap';
 class BMNInfo extends Component {
   render() {
     return (
-      <div className="info-style text-center">
+      <div id="info" className="info-style text-center">
         <PageHeader>Wat is de Bèta Music Night?</PageHeader>
         <div>
           <p>

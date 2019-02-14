@@ -10,9 +10,6 @@ const links = {
   'Home': '',
   'Info': 'info',
   'Foto\'s': 'fotos',
-  'Tickets': 'tickets',
-  'Facebook': 'facebook',
-  'Youtube': 'youtube'
 };
 
 /**
@@ -26,7 +23,7 @@ class PublicNavigation extends PureComponent {
 
   createLink(address, text) {
     return (
-      <LinkContainer key={address} to={"/" + address}>
+      <LinkContainer key={address} to={"/#" + address}>
         <NavItem key={address} href="#">
           {text}
         </NavItem>
