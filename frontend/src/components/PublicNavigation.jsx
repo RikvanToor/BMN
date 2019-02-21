@@ -7,7 +7,7 @@ import { dispatch } from "@Services/AppDispatcher.js";
 import { logOut } from "@Actions/UserActions.js";
 
 const links = {
-  'Home': '',
+  'Home': 'root',
   'Info': 'info',
   'Foto\'s': 'fotos',
 };
@@ -23,7 +23,7 @@ class PublicNavigation extends PureComponent {
 
   createLink(address, text) {
     return (
-      <LinkContainer key={address} to={"/#" + address}>
+      <LinkContainer key={address} to={"#" + address}>
         <NavItem key={address} href="#">
           {text}
         </NavItem>
