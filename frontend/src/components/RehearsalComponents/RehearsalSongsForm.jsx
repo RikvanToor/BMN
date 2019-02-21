@@ -10,12 +10,15 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import {pullBottomStyle} from '@Components/UiHelpers.js';
 import * as typeChecks from '@Utils/TypeChecks.js';
 import ColorRanges from '@Components/ColorRanges.jsx';
-import {IntegerTime, IntegerTimeInterval} from '@Utils/DateTimeUtils.js';
 import SongTimeSlider, {SongEditStyles as EditStyles} from '@Components/RehearsalComponents/SongTimeSlider.jsx';
 import TimeSelector, {TimeParts} from '@Components/TimeSelector.jsx';
 
 //Property checking
 import PropTypes from 'prop-types';
+
+//Utils
+import IntegerTime from '@Utils/IntegerTime.js';
+import IntegerTimeInterval from '@Utils/IntegerTimeInterval.js';
 
 //Data imports
 import {Record, Map, fromJS, List, Set as ImmutableSet} from 'immutable';

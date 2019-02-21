@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import PropTypes from 'prop-types';
 import {FormControl, Form, FormGroup, HelpBlock} from 'react-bootstrap';
 import {isUndefined, isNumber} from '@Utils/TypeChecks.js';
-import {IntegerTime} from '@Utils/DateTimeUtils.js';
+import IntegerTime from '@Utils/IntegerTime.js';
 
 export const TimeParts = {
   HOURS: 'hours',

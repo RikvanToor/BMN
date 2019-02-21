@@ -32,39 +32,49 @@ export default class SortableTable extends Component{
             });
         }
     }
+    sort(data,sorters, order){
+        //ASC: 1, DESC: -1. Used in the sorting
+        let mod = 1 - 2 * this.state.sortMode;
+        
+        let col = this.state.sortColumn;
+        if(TypeChecks.isString(sorters[col])){
+            let key = sorters[col];
+            //Assume simple comparability
+            order.sort((a,b)=>{
+                const aVal = data[a][key];
+                const bVal = data[b][key];
+                if(aVal < bVal){
+                    return -mod;
+                }
+                else if(aVal > bVal){
+                    return mod;
+                }
+                return 0;
+            });
+        }
+        //Sorter function should always return ASC!
+        else if(TypeChecks.isFunction(sorters[col])){
+            order.sort((a,b)=>{
+                let val = sorters[col](data[a], data[b]);
+                if(val < 0) return -mod;
+                if(val > 0) return mod;
+                return 0;
+            });
+        }
+        return order;
+    }
     render(){
-        let {sorters, data, headers, ...props} = this.props;
+        let {sorters, data, icons, headers, filter, ...props} = this.props;
         //Get children as array.
         let children = React.Children.toArray(this.props.children);
         let order = intRange(0, children.length);
-        //ASC: 1, DESC: -1. Used in the sorting
-        let mod = 1 - 2 * this.state.sortMode;
+
+        //Filter data if applicable
+        if(filter){
+            order = order.filter((i)=>filter(data[i]));
+        }
         if(this.state.sortColumn != -1){
-            let col = this.state.sortColumn;
-            if(TypeChecks.isString(sorters[col])){
-                let key = sorters[col];
-                //Assume simple comparability
-                order.sort((a,b)=>{
-                    const aVal = data[a][key];
-                    const bVal = data[b][key];
-                    if(aVal < bVal){
-                        return -mod;
-                    }
-                    else if(aVal > bVal){
-                        return mod;
-                    }
-                    return 0;
-                });
-            }
-            //Sorter function should always return ASC!
-            else if(TypeChecks.isFunc(sorters[col])){
-                order.sort((a,b)=>{
-                    let val = sorters[col](data[a], data[b]);
-                    if(val < 0) return -mod;
-                    if(val > 0) return mod;
-                    return 0;
-                });
-            }
+            order = this.sort(data, sorters, order);
         }
 
         return(
@@ -72,12 +82,12 @@ export default class SortableTable extends Component{
                 <thead>
                     <tr>
                     {headers.map((el,i)=>{
-                        let glyph = '';
-                        if(this.props.sorters[i]){
-                            glyph = 'stop';
+                        if(!this.props.sorters[i]){
+                          return (<th key={el}>{el}</th>);
                         }
+                        let glyph = icons.neutral;
                         if(this.state.sortColumn == i){
-                            glyph = this.state.sortMode == SortModes.ASC ? 'chevron-down': 'chevron-up';
+                            glyph = this.state.sortMode == SortModes.ASC ? icons.ascending: icons.descending;
                         }
                         return (
                         <th className="sortable" key={el} data-ind={i} onClick={()=>this.toggleSort(i)}>
@@ -104,5 +114,16 @@ SortableTable.propTypes = {
     data: PropTypes.array.isRequired,
     //Headers to use in the table
     headers: PropTypes.array.isRequired,
+    //Filter function
+    filter: PropTypes.func
     //Children: rendered children, should be <tr> elements with proper amount of <td> cells
+};
+
+SortableTable.defaultProps = {
+    //Glyphicon icons to use for a sortable column
+    icons : {
+        ascending: 'chevron-down', //Data is ascending, so ''lowest'' value is at top
+        descending: 'chevron-up',
+        neutral: 'stop'
+    }
 };

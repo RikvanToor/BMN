@@ -24,7 +24,8 @@ import {List} from 'immutable';
 //Utils
 import * as typeChecks from '@Utils/TypeChecks.js';
 //Datetime formatting functions
-import { readableDate, readableTime, IntegerTime } from '@Utils/DateTimeUtils.js';
+import { readableDate, readableTime } from '@Utils/DateTimeUtils.js';
+import IntegerTime from '@Utils/IntegerTime.js';
 
 
 

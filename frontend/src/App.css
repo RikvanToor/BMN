@@ -155,6 +155,7 @@ footer {
 * Style sortable table headers
 */
 th.sortable:hover {
-  background-color: rgb(205, 205, 205);
+  background-color: #337ab7;
+  color: white;
   cursor: pointer;
 }
