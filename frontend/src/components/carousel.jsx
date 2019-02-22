@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import bg1 from "../images/bg_1.jpg";
-import bg2 from "../images/bg_2.jpg";
-import bg3 from "../images/bg_3.jpg";
+import foto1 from "../images/foto1.jpg";
+import foto2 from "../images/foto2.jpg";
+import foto3 from "../images/foto3.jpg";
+import logo from "../images/logogroot.png";
 import CarouselComp from 'react-bootstrap/lib/Carousel';
 
 class Carousel extends Component {
@@ -12,14 +13,23 @@ class Carousel extends Component {
   render() {
     return (
       <CarouselComp>
-        <CarouselComp.Item>
-          <img className="d-block w-100" src={bg1} alt="First slide" />
+        <CarouselComp.Item className="carousel-style">
+          <img className="d-block w-100 fluid" src={foto1} alt="First slide"/>
+          <CarouselComp.Caption>
+            <img className="d-block w-100 logo-style fluid" src={logo} alt="Logo"/>
+          </CarouselComp.Caption>
         </CarouselComp.Item>
-        <CarouselComp.Item>
-          <img className="d-block w-100" src={bg2} alt="First slide" />
+        <CarouselComp.Item className="carousel-style">
+          <img className="d-block w-100 fluid" src={foto2} alt="Second slide" />
+          <CarouselComp.Caption>
+            <img className="d-block w-100 logo-style fluid" src={logo} alt="Logo"/>
+          </CarouselComp.Caption>
         </CarouselComp.Item>
-        <CarouselComp.Item>
-          <img className="d-block w-100" src={bg3} alt="First slide" />
+        <CarouselComp.Item className="carousel-style">
+          <img className="d-block w-100 fluid" src={foto3} alt="Third slide" />
+          <CarouselComp.Caption>
+            <img className="d-block w-100 logo-style fluid" src={logo} alt="Logo" />
+          </CarouselComp.Caption>
         </CarouselComp.Item>
       </CarouselComp>
     );
