@@ -25,13 +25,7 @@ const config = {
         }
     },
     module: {
-        rules: [
-	    {
-		test: /\.(png|jpg)$/,
-		use: [{
-		    loader: 'url-loader'
-		}]
-	    },
+        rules: [      
 	    {
 		test: /\.css$/,
 		use: ["style-loader", "css-loader"]
