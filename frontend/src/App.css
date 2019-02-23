@@ -15,19 +15,21 @@ html {
 }
 
 .gallery-style {
-  width: 90vw;
+  max-width: 90vw;
   margin: auto;
   padding-top: 2vh;
   padding-bottom: 2vh;
 }
 
 .padding-0 {
+  max-width: 31vw;
   padding-right: 0;
   padding-left: 0;
 }
 
 .logo-style {
-  height: 50vh;
+  max-height: 50vh;
+  max-width: 30vw;
   opacity: .4;
 }
 
@@ -39,7 +41,8 @@ html {
 }
 
 .carousel-style{
-  height: 100vh;
+  max-height: 100vh;
+  width: 100vw;
 }
 
 .bg-dark {
