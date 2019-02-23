@@ -20,6 +20,16 @@ const config = {
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 query: { presets: ['es2015', 'react'] }
+            },
+            {
+                test: /\.(png|jp(e*)g|svg)$/,  
+                use: [{
+                    loader: 'url-loader',
+                    options: { 
+                        limit: 8192, // Convert images < 8kb to base64 strings
+                        name: 'images/[hash]-[name].[ext]'
+                    } 
+                }]
             }
         ]
     },
