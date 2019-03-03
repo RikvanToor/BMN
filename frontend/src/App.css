@@ -2,16 +2,22 @@ html {
   font-size: 16px;
 }
 
-.sponsor {
-  height: 15vh;
-  width: auto;
+.footer-style {
+  padding-top: 20px;
 }
 
-.footer-logos {
-  height: 25vh;
-  width: 75vw;
-  margin: auto;
-  padding-top: 5vh;
+.sponsor {
+  padding: 20px;
+  height: auto;
+  width: 20vw;
+  max-width: 20vw;
+}
+
+.sponsor-uu {
+  padding: 20px;
+  height: auto;
+  width: 30vw;
+  max-width: 30vw;
 }
 
 .gallery-style {
