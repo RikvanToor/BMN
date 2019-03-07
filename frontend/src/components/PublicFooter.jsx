@@ -16,11 +16,11 @@ class PublicFooter extends Component {
   render() {
     return (   
       <div>
-        <div className="row row-no-gutters text-center"> 
-          <div className="d-inline-block">
-          <a href="https://www.dehelling.nl/" target="_blank"><img id="l1" className="sponsor" /></a>
-          <a href="https://www.uu.nl/organisatie/alumni/utrechts-universiteitsfonds" target="_blank"><img id="l2" className="sponsor-uu" /></a>
-          <a href="https://www.a-eskwadraat.nl/Home" target="_blank">  <img id="l3" className="sponsor" /></a>
+        <div className="row row-no-gutters logos"> 
+          <div className="d-inline-block logos">
+            <a href="https://www.dehelling.nl/" target="_blank"><img id="l1" className="sponsor" /></a>
+            <a href="https://www.uu.nl/organisatie/alumni/utrechts-universiteitsfonds" target="_blank"><img id="l2" className="sponsor-uu" /></a>
+            <a href="https://www.a-eskwadraat.nl/Home" target="_blank">  <img id="l3" className="sponsor" /></a>
           </div>
         </div>
         <div className="text-center">
