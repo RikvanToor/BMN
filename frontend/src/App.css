@@ -3,7 +3,14 @@ html {
 }
 
 .footer-style {
+  width: 100vw;
   padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.logos {
+  width: 75vw;
+  margin: auto;
 }
 
 .sponsor {

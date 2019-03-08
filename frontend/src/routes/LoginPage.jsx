@@ -29,7 +29,7 @@ class LoginPage extends PureComponent {
     render() {
         //If the user is already logged in, redirect
         if (this.props.isLoggedIn) {
-            return (<Redirect to='/homeParticipant' />);
+            return (<Redirect to='/nieuws' />);
         }
         //Otherwise, render the login page
         return (
