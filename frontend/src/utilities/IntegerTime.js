@@ -1,3 +1,4 @@
+import * as typeChecks from './TypeChecks.js';
 
 function clamp(val, min, max){
   if(val < min) return min;
