@@ -1,11 +1,11 @@
-import {toPhpString} from '@Utils/DateTimeUtils.js';
-import {isPOJO, isArray, isDate} from '@Utils/TypeChecks.js';
+import { toPhpString } from '@Utils/DateTimeUtils.js';
+import { isPOJO, isArray, isDate } from '@Utils/TypeChecks.js';
 /**
  * Class for distinguishing errors originating from the ApiService class.
  * @type type
  */
 class JSONRequestError {
-  constructor(message, httpCode, data={}) {
+  constructor(message, httpCode, data = {}) {
     // Error message
     this.message = message;
     // Possible HTTP request status code, or -1 if not relevant
@@ -20,28 +20,28 @@ class JSONRequestError {
  * @param {object} obj The data object to encode in the FormData object
  * @param {string} prefix Prefix for the keys of the object.
  */
-function objectToFormData(formDataObj, obj, prefix=''){
+function objectToFormData(formDataObj, obj, prefix = '') {
   const hasPrefix = prefix.length !== 0;
-  let newKeyName = (name)=>hasPrefix ? '[' + name + ']' : name;
-  
-  //Handle object
-  if(isPOJO(obj)){
-    Object.keys(obj).forEach((key)=>{
-      objectToFormData(formDataObj, obj[key],prefix+newKeyName(key));
+  const newKeyName = name => (hasPrefix ? '[' + name + ']' : name);
+
+  // Handle object
+  if (isPOJO(obj)) {
+    Object.keys(obj).forEach((key) => {
+      objectToFormData(formDataObj, obj[key], prefix + newKeyName(key));
     });
   }
-  //Handle array element
-  else if(isArray(obj)){
-    for(let i =0; i < obj.length; i++){
-      objectToFormData(formDataObj, obj[i],prefix+'['+i+']');
+  // Handle array element
+  else if (isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      objectToFormData(formDataObj, obj[i], `${prefix}[${i}]`);
     }
   }
-  //Convert date to usable PHP string
-  else if(isDate(obj)){
+  // Convert date to usable PHP string
+  else if (isDate(obj)) {
     formDataObj.append(prefix, toPhpString(obj));
   }
-  //Just set the value
-  else{
+  // Just set the value
+  else {
     formDataObj.append(prefix, obj);
   }
 }
@@ -73,8 +73,8 @@ class JSONRequest {
      * @returns {FormData} The FormData object to send.
      */
   static getUrlParameters(paramObject) {
-    let data = new FormData();
-    objectToFormData(data,paramObject,'');
+    const data = new FormData();
+    objectToFormData(data, paramObject, '');
     return data;
   }
 
@@ -97,14 +97,14 @@ class JSONRequest {
     // a Promise is available
     req.onload = () => {
       // Check the status code, since this is called on all responses.
-      let statusCodeOrder = Math.floor(req.status/100);
-      
-      //Any 2XX codes should be fine
+      const statusCodeOrder = Math.floor(req.status / 100);
+
+      // Any 2XX codes should be fine
       if (statusCodeOrder === 2) {
         try {
           // Parse JSON automatically.
           const data = JSON.parse(req.response);
-          
+
           this.resolve(data);
         } catch (e) {
           this.reject(new JSONRequestError('Failed to decode response', -1));
@@ -112,15 +112,17 @@ class JSONRequest {
       } else {
         // Otherwise reject with the status text
         // which will hopefully be a meaningful error
-        let data ={};
+        let data = {};
         try {
           // Parse JSON automatically.
           data = JSON.parse(req.response);
+        } catch (e) {
+          this.reject({ data: 'Failed to parse JSON data from request' });
         }
-        catch(e){
-          
-        }
-        this.reject({statusText: req.statusText,statusCode: req.status, data: data});
+        console.log('REJECTING');
+        console.log(req.response);
+        console.log(data);
+        this.reject({ statusText: req.statusText, statusCode: req.status, data });
       }
     };
 
@@ -140,15 +142,14 @@ class JSONRequest {
     return new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
-      try{
+      try {
         if (Object.keys(this.params).length > 0) {
           const data = JSONRequest.getUrlParameters(this.params);
           request.send(data);
         } else {
           request.send();
         }
-      }
-      catch(e){
+      } catch (e) {
         this.reject(e);
       }
     });

@@ -4,6 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Tymon\JWTAuth\JWTAuth as JWTAuth;
+use Tymon\JWTAuth\Claims\Expiration as Expiration;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException as TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\JWTException as JWTException;
+use Tymon\JWTAuth\JWT as JWT;
 
 class Authenticate {
     /**
@@ -14,13 +19,19 @@ class Authenticate {
     protected $auth;
 
     /**
+     * @var \Tymon\JWTAuth\JWT
+     */
+    protected $jwt;
+
+    /**
      * Create a new middleware instance.
      *
      * @param  \Illuminate\Contracts\Auth\Factory  $auth
      * @return void
      */
-    public function __construct(Auth $auth) {
+    public function __construct(Auth $auth, JWT $jwt) {
         $this->auth = $auth;
+        $this->jwt = $jwt;
     }
 
     /**
@@ -32,8 +43,19 @@ class Authenticate {
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null) {
+        //Apparently, we are not logged in
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            $this->jwt->setRequest($request);
+            try{
+                $payload = $this->jwt->getPayload();
+            }
+            catch(TokenExpiredException $e){
+                return response(array('msg'=>'Token expired'), 401);
+            }
+            catch(JWTException $e){
+                return response(array('msg'=>'Unauthorized.'), 401);    
+            }
+            return response(array('msg'=>'Unauthorized.'), 401);
         }
 
         return $next($request);

@@ -44,7 +44,12 @@ class ApiService {
     }
   }
 
-  reset(){
+  /**
+   * Resets the api service. Clears the token from the object
+   * and the local sesion storage
+   * @memberof ApiService
+   */
+  reset() {
     window.sessionStorage.removeItem(JWT_TOKEN);
     this.jwtToken = '';
   }

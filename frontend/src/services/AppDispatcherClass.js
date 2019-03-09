@@ -1,29 +1,31 @@
 import { Dispatcher } from 'flux';
 
 import ApiService from '@Services/ApiService.js';
-import {expectHasKeys} from '@Utils/TypeChecks.js';
+import { expectHasKeys } from '@Utils/TypeChecks.js';
 
 export default class AppDispatcher extends Dispatcher {
-  constructor(){
+  constructor() {
     super();
     this.middleware = [];
   }
-  addMiddleWare(middelwareFn){
+
+  addMiddleWare(middelwareFn) {
     this.middleware.push(middelwareFn);
   }
-  
-  dispatch(action){
-    //Try to handle the action in middleware
-    let dispatchFn = this.dispatch.bind(this);
-    for(let i = 0; i < this.middleware.length; i++){
-      //Middleware handled dispatch: we are done
-      if(this.middleware[i](dispatchFn, action)){
+
+  dispatch(action) {
+    // Try to handle the action in middleware
+    const dispatchFn = this.dispatch.bind(this);
+    for (let i = 0; i < this.middleware.length; i++) {
+      // Middleware handled dispatch: we are done
+      if (this.middleware[i](dispatchFn, action)) {
         return;
       }
     }
-    //Middleware did not handle action: dispatch the action regularly
+    // Middleware did not handle action: dispatch the action regularly
     super.dispatch(action);
   }
+
   /**
      * Respond to a promise with an action. All resolved data of the promise will be added to the payload.
      * Note that we can call this is the __onDispatch functions of stores, since Promises resolve

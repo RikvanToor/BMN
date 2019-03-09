@@ -1,4 +1,4 @@
-import {createAuth} from '@Actions/ApiActions.js';
+import { createAuth } from '@Actions/ApiActions.js';
 
 export const UserActions = {
   LOG_IN: 'LOG_IN',
@@ -10,18 +10,33 @@ export const UserActions = {
   UPDATE_PASSWORD: 'UPDATE_PASSWORD',
   CREATE_USER: 'CREATE_USER',
   USER_CREATE_FAILED: 'USER_CREATE_FAILED',
-  LOG_OUT:'LOG_OUT',
-  IMPORT_USERS: 'IMPORT_USERS'
+  LOG_OUT: 'LOG_OUT',
+  IMPORT_USERS: 'IMPORT_USERS',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
 };
 
-//API endpoints
+// API endpoints
 const Endpoints = {
-  createUser : 'users/create',
-  importUsers: 'users/importcsv'
+  createUser: 'users/create',
+  importUsers: 'users/importcsv',
 };
 
-export function logOut(){
-  return {action : UserActions.LOG_OUT};
+/**
+ * Expires the token of the user. Asks the user to login again.
+ * @export
+ * @returns Token expiration action object
+ */
+export function expireToken() {
+  return { action: UserActions.TOKEN_EXPIRED };
+}
+
+/**
+ * Logs out the user
+ * @export
+ * @returns Logout action object.
+ */
+export function logOut() {
+  return { action: UserActions.LOG_OUT };
 }
 
 export function logInAction(userName, password) {
@@ -32,13 +47,13 @@ export function loggedInAction(userName, name, id, isCommittee) {
     action: UserActions.LOGGED_IN, userName, name, id, isCommittee,
   };
 }
-export function importUsers(file, nameCol, emailCol){
+export function importUsers(file, nameCol, emailCol) {
   return createAuth({
     action: UserActions.IMPORT_USERS,
     nameColumn: nameCol,
     emailColumn: emailCol,
-    usersFile: file
-  },Endpoints.importUsers);
+    usersFile: file,
+  }, Endpoints.importUsers);
 }
 
 export function checkLoginAction() {
@@ -53,8 +68,9 @@ export function updateKnownUsersAction(usersList) {
 export function logInFailAction(reason) {
   return { action: UserActions.LOG_IN_FAIL, msg: reason };
 }
-export function createUser(userObject){
+export function createUser(userObject) {
   return createAuth(
-          {action:UserActions.CREATE_USER, errAction:UserActions.USER_CREATE_FAILED, ...userObject}
-          , Endpoints.createUser );
+    { action: UserActions.CREATE_USER, errAction: UserActions.USER_CREATE_FAILED, ...userObject },
+    Endpoints.createUser,
+  );
 }

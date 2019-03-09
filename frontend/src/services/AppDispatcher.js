@@ -1,17 +1,18 @@
 import { Dispatcher } from 'flux';
 
 import ApiService from '@Services/ApiService.js';
-import {expectHasKeys} from '@Utils/TypeChecks.js';
+import { expectHasKeys } from '@Utils/TypeChecks.js';
 
 import AppDispatcher from '@Services/AppDispatcherClass.js';
 
-//Add middleware
+// Add middleware
 import dispatchRemote from '@Services/dispatcherMiddleware/dispatchRemote.js';
 import logAction from '@Services/dispatcherMiddleware/logAction.js';
-
+import { expireToken } from '@Actions/UserActions.js';
 // Global singleton
-let appDispatcher = new AppDispatcher();
-appDispatcher.addMiddleWare(dispatchRemote);
+const appDispatcher = new AppDispatcher();
+// Setup remote dispatcher with custom token expiration action to send
+appDispatcher.addMiddleWare(dispatchRemote(expireToken()));
 appDispatcher.addMiddleWare(logAction);
 
 export function deferredDispatch(action) {
