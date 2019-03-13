@@ -38,7 +38,7 @@ class ApiService {
     // API basepath, will be processed by webpack accordingly
     if (process.env.NODE_ENV === 'production') {
       // this.basePath = "https://bmn.a-eskwadraat.nl/api/";
-      this.basePath = 'https://betamusicnight.nl/public/api/';
+      this.basePath = '/api/';
     } else {
       this.basePath = 'http://localhost:9000/api/';
     }
