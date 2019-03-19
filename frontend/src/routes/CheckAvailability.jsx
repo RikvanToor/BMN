@@ -23,6 +23,7 @@ class CheckAvailabilityPage extends Component {
   componentDidMount() {
     deferredDispatch(getAllAvailabilities());
   }
+
   getAvailabilitiesPerUser(availabilities){
     let users = {};
     availabilities.forEach((el)=>{
@@ -53,8 +54,14 @@ class CheckAvailabilityPage extends Component {
                 Object.keys(availPerUser).map((key)=>{
                   let av = availPerUser[key];
                   let str = av.map((el)=>{
-                    return printTime(el.start)+'-'+printTime(el.end);
-                  }).join(', ');
+                        let now = new Date();
+                        if(el.start < now) {
+                          return (el.reason);
+                        } else {
+                          return printTime(el.start)+'-'+printTime(el.end);
+                        }
+                      }).join(', ');
+                  
                   return(
                     <tr key={av[0].name}>
                       <td>{av[0].name}</td>
