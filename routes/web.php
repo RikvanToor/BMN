@@ -25,6 +25,7 @@
 $indexRoutes = [
     '/',
     '/home',
+    '/nieuws',
     '/nummers',
     '/suggesties',
     '/roosterAanpassen',

@@ -13,9 +13,10 @@ class SetlistController extends Controller {
             'title'        => 'required',
             'artist'       => 'required',
         ]);
-
-        $request->is_setlist = true;
-        $song = Song::create($request->all());
+        
+        $data = $request->all();
+        $data['is_setlist'] = true;
+        $song = Song::create($data);
 
         // Need to retrieve it from the database again because of some typing issues
         // Likely a bug in Lumen/Eloquent

@@ -175,7 +175,7 @@ class SetlistEditPage extends Component{
         }
 
         return (
-            <React.Fragment key={song.title}>
+            <React.Fragment key={song.id}>
             {ui}
             {editForm}
             </React.Fragment>
