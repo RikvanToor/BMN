@@ -16,7 +16,10 @@ appDispatcher.addMiddleWare(logAction);
 
 export function deferredDispatch(action) {
   setTimeout(() => {
-    appDispatcher.dispatch(action);
+    if(process.env.NODE_ENV === 'development') {
+      // Logs every action if the server is not running in production mode
+      appDispatcher.dispatch(action);
+    }
   });
 }
 /**
