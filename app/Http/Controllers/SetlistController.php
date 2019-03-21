@@ -14,11 +14,14 @@ class SetlistController extends Controller {
             'artist'       => 'required',
         ]);
 
+        $request->is_setlist = true;
         $song = Song::create($request->all());
-        $song->is_setlist = true;
-        $song->save();
+
+        // Need to retrieve it from the database again because of some typing issues
+        // Likely a bug in Lumen/Eloquent
+        $song2 = Song::with('players')->find($song->id);
         
-        return response()->json($song, 201);
+        return response()->json($song2, 201);
     }
 
     /**

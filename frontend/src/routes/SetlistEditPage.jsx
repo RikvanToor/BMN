@@ -98,6 +98,9 @@ class SetlistEditPage extends Component{
             return accum;
         },[]);
 
+        if(unpublished.length === 0)
+            return;
+
         //Ask user whether these songs should all be published.
         let modal = {
             body: (<React.Fragment>
@@ -193,31 +196,6 @@ class SetlistEditPage extends Component{
         deferredDispatch(addSetlistSong(song));
     }
     
-    /**
-     * Displays a modal
-     * @param {string} title 
-     * @param {React element} body 
-     * @param {function} onCancel 
-     * @param {function} onAccept 
-     */
-    displayModal(title, body, onCancel, onAccept){
-        return (
-            <Modal show={true}>
-                <Modal.Header>
-                    <Modal.Title>{title}</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    {body}
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button bsStyle="primary" onClick={onAccept}>Ja</Button>
-                    <Button onClick={onCancel}>Nee</Button>
-                </Modal.Footer>
-            </Modal>
-        );
-    }
     renderPlayerStatistics(){
         //Accumulate player statistics from the setlist
         let playerStats = this.props.players.reduce((accum,player)=>{
