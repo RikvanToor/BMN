@@ -8,8 +8,9 @@ Prerequisites:
 * PHP
 * MySQL
 * Composer
+* NPM
 
-PHP en MySQL zijn op Windows het makkelijkst te verkrijgen via [XAMPP](https://www.apachefriends.org/download.html). Zorg dat je `PATH` environment variable zowel `C:\XAMPP\PHP` als `C:\XAMPP\MySQL\bin` bevat. Op Linux zijn alle packages makkelijker te verkrijgen via de package manager van je distributie.
+PHP en MySQL zijn op Windows het makkelijkst te verkrijgen via [XAMPP](https://www.apachefriends.org/download.html). Zorg dat je `PATH` environment variable zowel `C:\XAMPP\PHP` als `C:\XAMPP\MySQL\bin` bevat. NPM krijg je het makkelijkst door [NodeJS](https://nodejs.org/en/download/) te installeren. Op Linux zijn alle packages makkelijker te verkrijgen via de package manager van je distributie.
 
 Okay, tijd voor het
 
