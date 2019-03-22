@@ -84,7 +84,7 @@ class RehearsalStore extends Store {
         //Retrieve availability 
       case RehearsalActions.GET_ALL_AVAILABILITIES:
         this.allAvailabilities = payload.responseData.map((rehearsal)=>{
-          let newRehearsal = withKeys(rehearsal, ['id','location','start','end', 'reason']);
+          let newRehearsal = withKeys(rehearsal, ['id','location','start','end','boefjes']);
           newRehearsal.start = new Date(newRehearsal.start);
           newRehearsal.end = new Date(newRehearsal.end);
           //Create the availabilities in a compact manner.

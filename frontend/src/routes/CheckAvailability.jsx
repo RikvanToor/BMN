@@ -1,22 +1,14 @@
 //React library imports
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 
 //UI imports
-import Carousel from "../components/carousel.jsx";
-import ConditionalComponent from '@Components/ConditionalComponent.jsx';
-import ConditionalComponet from '@Components/ConditionalComponent.jsx';
-import { ButtonToolbar, ButtonGroup, Button, Glyphicon, Table, Checkbox } from 'react-bootstrap';
-import RehearsalForm from '@Components/RehearsalComponents/RehearsalForm.jsx';
-import RehearsalSongsForm from '@Components/RehearsalComponents/RehearsalSongsForm.jsx';
+import { Table } from 'react-bootstrap';
 
 //Data imports
 import { Container } from 'flux/utils';
-import UserStore from '@Stores/UserStore.js';
-import { deferredDispatch, dispatch } from '@Services/AppDispatcher.js';
-import RehearsalManipulationStore, { loadAllRehearsals } from '@Stores/RehearsalManipulationStore.js';
+import { deferredDispatch } from '@Services/AppDispatcher.js';
 import RehearsalStore from '@Stores/RehearsalStore.js';
-import { getScheduleAction, createRehearsals, deleteRehearsals, getAllAvailabilities } from '@Actions/RehearsalActions.js';
+import { getAllAvailabilities } from '@Actions/RehearsalActions.js';
 import {printTime} from '../GeneralExtensions.js';
 
 class CheckAvailabilityPage extends Component {
@@ -34,6 +26,7 @@ class CheckAvailabilityPage extends Component {
     });
     return users;
   }
+  
   renderAvailabilities(rehearsalObj){
     let startTime = new Date(rehearsalObj.start);
     let endTime = new Date(rehearsalObj.end);
@@ -42,6 +35,8 @@ class CheckAvailabilityPage extends Component {
       <div key={rehearsalObj.location+rehearsalObj.start}>
         <h3>{startTime.toLocaleDateString('nl-nl', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
         <h4>{printTime(startTime)}-{printTime(endTime)} @ {rehearsalObj.location}</h4>
+        <h4>Boefjes</h4>
+        {(rehearsalObj.boefjes.map((x) => x.name)).join(', ')}
         <Table striped bordered condensed hover responsive style={{ marginTop: '10px' }}>
           <thead>
             <tr>

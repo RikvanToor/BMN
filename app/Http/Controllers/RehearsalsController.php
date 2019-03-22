@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rehearsal;
 use App\Models\Song;
+use App\Models\User;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 
@@ -110,8 +111,15 @@ class RehearsalsController extends Controller {
         $rehearsals = Rehearsal::inFuture(); //Use scope
         $rehearsals = $rehearsals->with(['availabilities'])->get(array('*'));
         $result = $rehearsals->map(function ($x){
-            return $x->schedule();
+            $schedule = $x->schedule();
+            $rehearsalid = $x->id;
+            $boefjes = User::whereDoesntHave('availabilities', function($q) use ($rehearsalid) {
+                $q->where('rehearsal_id', $rehearsalid);
+            })->get();
+            $schedule['boefjes'] = $boefjes;
+            return $schedule;
         });
+        
         return response()->json($result, 200);
     }
 
