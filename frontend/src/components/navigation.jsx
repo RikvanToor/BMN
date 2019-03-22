@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import Logo from "../images/bmnlogo.png";
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap/lib";
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { Redirect } from "react-router";
 import { LinkContainer } from "react-router-bootstrap";
 import { dispatch } from "@Services/AppDispatcher.js";

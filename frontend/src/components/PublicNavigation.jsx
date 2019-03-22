@@ -1,10 +1,7 @@
 import React, { PureComponent } from "react";
 import Logo from "../images/bmnlogo.png";
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap/lib";
-import { Redirect } from "react-router";
+import { Navbar, Nav, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { dispatch } from "@Services/AppDispatcher.js";
-import { logOut } from "@Actions/UserActions.js";
 
 const links = {
   'Home': 'root',
@@ -42,7 +39,7 @@ class PublicNavigation extends PureComponent {
     navs = navs.concat(publicLinks);
 
     return (
-      <Navbar className="navbar-fixed-top collapseOnSelect">
+      <Navbar fixedTop collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
             <LinkContainer to="/">
@@ -51,6 +48,7 @@ class PublicNavigation extends PureComponent {
               </NavItem>
             </LinkContainer>
           </Navbar.Brand>
+          <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>{navs}</Nav>

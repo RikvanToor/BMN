@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Singer from "./singer.jsx";
-import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
+import { ButtonGroup } from 'react-bootstrap';
 
 class Singers extends Component {
   constructor(props) {

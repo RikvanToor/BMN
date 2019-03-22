@@ -8,23 +8,17 @@ html {
   padding-bottom: 20px;
 }
 
+footer.public {
+  padding-bottom: 50px;
+}
+
 .logos {
-  width: 75vw;
   margin: auto;
 }
 
 .sponsor {
-  padding: 20px;
-  height: auto;
-  width: 20vw;
-  max-width: 20vw;
-}
-
-.sponsor-uu {
-  padding: 20px;
-  height: auto;
-  width: 30vw;
-  max-width: 30vw;
+  max-width:100%;
+  max-height:98px;
 }
 
 .gallery-style {
@@ -35,9 +29,12 @@ html {
 }
 
 .padding-0 {
-  max-width: 31vw;
   padding-right: 0;
   padding-left: 0;
+}
+
+.w-100 {
+  width: 100%;
 }
 
 .logo-style {
@@ -89,6 +86,18 @@ footer {
   .navbar-brand img{
     height:50px;
     padding:3px;
+  }
+}
+
+/**
+ * For Bootstrapś SM size and up
+ */
+@media(min-width:577px) {
+  .sm-align-right {
+    text-align: right;
+  }
+  .sm-align-left {
+    text-align: left;
   }
 }
 
