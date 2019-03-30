@@ -1,11 +1,12 @@
 import { Store } from 'flux/utils';
 import ApiService from '@Services/ApiService.js';
-import AppDispatcher from '@Services/AppDispatcher.js';
+import AppDispatcher, {deferredDispatch} from '@Services/AppDispatcher.js';
 import { List, Record } from 'immutable';
 
 import {SetlistActions } from '@Actions/SetlistActions.js';
 import SetlistSong from '@Models/SetlistSong.js';
 import {withKeys} from '@Utils/ObjectUtils.js';
+import { getSetlistSongs } from '../actions/SetlistActions';
 
 /** 
  * Stores retrieved data with respect to rehearsals
@@ -70,6 +71,9 @@ class SetlistStore extends Store {
         case SetlistActions.REMOVE_SETLIST_SONG:
             this.setlist = this.setlist.filter((val)=>val.id != payload.id);
             this.__emitChange();
+            break;
+        case SetlistActions.PUBLISH_SETLIST_SONGS:
+            deferredDispatch(getSetlistSongs());
             break;
       default:
         break;
