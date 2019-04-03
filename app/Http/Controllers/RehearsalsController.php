@@ -98,7 +98,7 @@ class RehearsalsController extends Controller {
      * for the current user for those rehearsals
      */
     public function showFutureRehearsalsOwnAvailabilities(Request $request) {
-        $rehearsals = Rehearsal::where('start', '>=', date('Y-m-d H:i:s'));
+        $rehearsals = Rehearsal::orderBy('start', 'ASC')->where('start', '>=', date('Y-m-d H:i:s'));
         $userid = $request->user()->id;
         $result = $rehearsals->with(['availabilities' => function ($a) use ($userid) {
             $a->where('user_id', $userid);
