@@ -30,7 +30,6 @@ import CheckAvailability from '@Routes/CheckAvailability.jsx';
  */
 import Home from '@Routes/Home.jsx';
 import SuggestionList from '@Routes/SuggestionList.jsx';
-import TicketPurchaseLanding from "../routes/TicketPurchaseLanding.jsx";
 
 const Roles = {
     GUEST : 'guest',
@@ -49,7 +48,6 @@ const routes = [].concat(
         {target:'/login',                  component:LoginContainer},
         {target:'/wachtwoordreset',        component:PasswordResetPage},
         {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
-        {target:'/bevestiging',            component:TicketPurchaseLanding},
     ]),
     withRole(Roles.USER, [
         {target:'/rooster',         component:RehearsalContainer},

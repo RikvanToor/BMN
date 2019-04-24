@@ -8,6 +8,7 @@ import { checkLoginAction } from '@Actions/UserActions.js'
 import { Router, Route, Switch } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 import CSS from './App.css';
+import TicketPurchaseLanding from "./components/TicketPurchaseLanding.jsx";
 
 const browserHistory = createBrowserHistory();
 
@@ -55,6 +56,7 @@ class App extends Component {
       <Route path='*'>
         <Switch>
           <Route key='public' exact path='(|/public)' render={() => <Public />} />
+          <Route key='public' exact path='(|/bevestiging)' render={() => <TicketPurchaseLanding/>} />
           <Route key='private' path='*' render={() => <Wrapper ReadyToRender={this.state.doneFetchingUser} user={this.state.user} />} />
         </Switch>
       </Route>
