@@ -9,6 +9,7 @@ import { Router, Route, Switch } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 import CSS from './App.css';
 import TicketPurchaseLanding from "./components/TicketPurchaseLanding.jsx";
+import TicketPage from "./routes/TicketPage.jsx";
 
 const browserHistory = createBrowserHistory();
 
@@ -57,6 +58,7 @@ class App extends Component {
         <Switch>
           <Route key='public' exact path='(|/public)' render={() => <Public />} />
           <Route key='public' exact path='(|/bevestiging)' render={() => <TicketPurchaseLanding/>} />
+          <Route key='public' exact path='(|/tickets)' render={() => <TicketPage/>} />
           <Route key='private' path='*' render={() => <Wrapper ReadyToRender={this.state.doneFetchingUser} user={this.state.user} />} />
         </Switch>
       </Route>

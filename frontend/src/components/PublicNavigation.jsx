@@ -31,6 +31,16 @@ class PublicNavigation extends PureComponent {
     );
   }
 
+  createPageLink(address, text) {
+    return (
+      <LinkContainer key={address} to={address}>
+        <NavItem key={address} href="#">
+          {text}
+        </NavItem>
+      </LinkContainer>
+    );
+  }
+
   render() {
     var navs = [];
 
@@ -39,7 +49,9 @@ class PublicNavigation extends PureComponent {
       this.createLink(links[key], key)
     );
 
-    navs = navs.concat(publicLinks);
+    var tickets = this.createPageLink('tickets', 'Tickets');
+
+    navs = navs.concat(publicLinks, tickets);
 
     return (
       <Navbar className="navbar-fixed-top collapseOnSelect">
