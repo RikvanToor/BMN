@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Song from "./song.jsx";
-import Table from 'react-bootstrap/lib/Table';
+import { Table } from 'react-bootstrap';
 
 class SongTable extends Component {
   render() {
