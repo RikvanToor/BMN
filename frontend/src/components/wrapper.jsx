@@ -24,6 +24,8 @@ import ChangePasswordPage from '@Routes/ChangePasswordPage.jsx';
 import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 import AddSuggestionPage from '@Routes/AddSuggestionPage.jsx';
 import CheckAvailability from '@Routes/CheckAvailability.jsx';
+import TicketPage from '@Routes/TicketPage.jsx';
+import TicketSuccessPage from '@Routes/TicketSuccessPage.jsx';
 
 /**
  * Main routes in the application
@@ -48,6 +50,7 @@ const routes = [].concat(
         {target:'/login',                  component:LoginContainer},
         {target:'/wachtwoordreset',        component:PasswordResetPage},
         {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
+        {target:'/tickets',                component:TicketPage},
     ]),
     withRole(Roles.USER, [
         {target:'/rooster',         component:RehearsalContainer},

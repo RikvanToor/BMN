@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Modal} from 'react-bootstrap';
+import React from 'react';
+import {Modal, Button} from 'react-bootstrap';
 
 
 export function yesNoModal(title, body, onYes, onNo, yesLabel="Ja", noLabel="Nee"){
@@ -23,7 +23,7 @@ export function yesNoModal(title, body, onYes, onNo, yesLabel="Ja", noLabel="Nee
 
 export function yesNoModalFromObj(obj){
   if('yesLabel' in obj && 'noLabel' in obj){
-    return yesNoModal(obj.title, obj.body, obj.onYes, obj.onNo, obj.yesLabe, obj.noLabel );
+    return yesNoModal(obj.title, obj.body, obj.onYes, obj.onNo, obj.yesLabel, obj.noLabel );
   }
   return yesNoModal(obj.title, obj.body, obj.onYes, obj.onNo);
 }

@@ -12,11 +12,14 @@ import logAction from '@Services/dispatcherMiddleware/logAction.js';
 // Global singleton
 let appDispatcher = new AppDispatcher();
 appDispatcher.addMiddleWare(dispatchRemote);
-appDispatcher.addMiddleWare(logAction);
+if(process.env.NODE_ENV === 'development') {
+  // Logs every action if the server is not running in production mode
+  appDispatcher.addMiddleWare(logAction);
+}
 
 export function deferredDispatch(action) {
   setTimeout(() => {
-    appDispatcher.dispatch(action);
+      appDispatcher.dispatch(action);
   });
 }
 /**
