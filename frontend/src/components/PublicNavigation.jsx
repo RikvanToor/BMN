@@ -33,11 +33,9 @@ class PublicNavigation extends PureComponent {
 
   createPageLink(address, text) {
     return (
-      <LinkContainer key={address} to={address}>
-        <NavItem key={address} href="#">
+        <NavItem key={address} href={address}>
           {text}
         </NavItem>
-      </LinkContainer>
     );
   }
 
@@ -49,7 +47,7 @@ class PublicNavigation extends PureComponent {
       this.createLink(links[key], key)
     );
 
-    var tickets = this.createPageLink('tickets', 'Tickets');
+    var tickets = this.createPageLink('https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1', 'Tickets');
 
     navs = navs.concat(publicLinks, tickets);
 
