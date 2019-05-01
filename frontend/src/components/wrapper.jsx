@@ -25,7 +25,7 @@ import SetlistEditPage from '@Routes/SetlistEditPage.jsx';
 import AddSuggestionPage from '@Routes/AddSuggestionPage.jsx';
 import CheckAvailability from '@Routes/CheckAvailability.jsx';
 import TicketPage from '@Routes/TicketPage.jsx';
-import TicketSuccessPage from '@Routes/TicketSuccessPage.jsx';
+import SuperSecretCode from '@Routes/SuperSecretCode.jsx';
 
 /**
  * Main routes in the application
@@ -61,6 +61,7 @@ const routes = [].concat(
         {target:'/nummer/:id',             component:SongContainer},
         {target:'/nieuws',                 component:NewsContainer},
         {target:'/suggestieToevoegen',     component:AddSuggestionPage},
+        {target:'/superGeheimeCode', component:SuperSecretCode},
 
     ]),
     withRole(Roles.COMMITTEE, [

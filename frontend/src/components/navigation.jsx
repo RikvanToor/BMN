@@ -12,7 +12,8 @@ const userLinks = {
   'Nummers': 'nummers',
   'Aanwezigheid': 'aanwezigheid',
   'Account': 'account',
-  'Suggesties': 'suggestieToevoegen'
+  'Suggesties': 'suggestieToevoegen',
+  'Code' : 'superGeheimeCode'
 };
 const committeeLinks = {
   Suggesties: "suggesties",
