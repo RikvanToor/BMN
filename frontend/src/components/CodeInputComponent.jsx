@@ -40,6 +40,8 @@ export default class CodeInputComponent extends Component {
         let groupCode = this.state.code;
         if (group in [1, 2, 3, 4]) {
             switch (group) {
+                // Arya vermoord de Night King in episode 3 season 8.
+                // Ant man expand niet in Thanos zn anus
                 case "1":
                     if (groupCode == "8943") {
                         this.setState({codeValid:'jaaa!'});
