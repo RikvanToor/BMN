@@ -44,9 +44,10 @@ class PublicNavigation extends PureComponent {
       this.createLink(links[key], key)
     );
 
-    var tickets = this.createPageLink('https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1', 'Tickets');
+    //var tickets = this.createPageLink('https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1', 'Tickets');
+    var audities = this.createPageLink('https://forms.gle/WHw2E7YFE8Tv1iX7A', 'Audities');
 
-    navs = navs.concat(publicLinks, tickets);
+    navs = navs.concat(publicLinks, audities);
 
     return (
       <Navbar fixedTop collapseOnSelect>

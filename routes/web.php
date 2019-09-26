@@ -23,7 +23,7 @@
  * Router. 
  */
 $indexRoutes = [
-    '/',
+    '/',    
     '/home',
     '/nieuws',
     '/nummers',
@@ -38,9 +38,9 @@ $indexRoutes = [
     '/beschikbaarheden',
     '/suggestieToevoegen',
     '/tickets',
-    '/success',
-    '/superGeheimeCode'
+    '/success'
 ];
+
 getMultiple( $router, $indexRoutes, function() use($router){
     return view('index');
 } );
@@ -50,6 +50,9 @@ $router->get('/login', ['as'=>'login', function () use ($router) {
 $router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use ($router){
     return view('index');
 }]);
+$router->get('/audities', function () {
+    return redirect()->to('https://forms.gle/WHw2E7YFE8Tv1iX7A');
+});
 
 /**
  * API routing
