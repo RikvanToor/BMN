@@ -4,7 +4,7 @@
     </IfModule>
 
     Redirect /tickets https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1
-    Redirect /audities https://forms.gle/WHw2E7YFE8Tv1iX7A
+    Redirect /audities https://forms.gle/g66d8TLx1Y5d6k3v7
 
     RewriteEngine On
 
