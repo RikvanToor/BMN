@@ -22,7 +22,7 @@ class AuditionsPage extends Component {
 
     return (
         <div> 
-            <object type="text/html" data="https://forms.gle/WHw2E7YFE8Tv1iX7A" width="100%" height="700px" style={ticketStyle}>
+            <object type="text/html" data="https://forms.gle/g66d8TLx1Y5d6k3v7" width="100%" height="700px" style={ticketStyle}>
             </object>
         </div>
     );
