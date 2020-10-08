@@ -51,7 +51,7 @@ $router->get('/nieuwwachtwoord/{token}',['as'=>'newPasswordSet', function() use 
     return view('index');
 }]);
 $router->get('/audities', function () {
-    return redirect()->to('https://forms.gle/WHw2E7YFE8Tv1iX7A');
+    return redirect()->to('https://forms.gle/g66d8TLx1Y5d6k3v7');
 });
 
 /**
