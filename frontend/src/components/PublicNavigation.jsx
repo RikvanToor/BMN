@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import Logo from "../images/bmnlogo.png";
+import Logo from "../images/BMN2021.png";
 import { Navbar, Nav, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
@@ -30,7 +30,7 @@ class PublicNavigation extends PureComponent {
 
   createPageLink(address, text) {
     return (
-        <NavItem key={address} href={address}>
+        <NavItem key={address} href={address} target="_blank">
           {text}
         </NavItem>
     );
@@ -45,7 +45,7 @@ class PublicNavigation extends PureComponent {
     );
 
     //var tickets = this.createPageLink('https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1', 'Tickets');
-    var audities = this.createPageLink('https://forms.gle/WHw2E7YFE8Tv1iX7A', 'Audities');
+    var audities = this.createPageLink('https://forms.gle/g66d8TLx1Y5d6k3v7', 'Audities');
 
     navs = navs.concat(publicLinks, audities);
 

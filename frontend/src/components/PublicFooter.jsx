@@ -25,7 +25,7 @@ class PublicFooter extends Component {
           </div>
         </div>
         <div className="text-center">
-          <h3>&copy; Bèta Music Night 2020</h3>
+          <h3>&copy; Bèta Music Night 2021</h3>
           <a href="https://www.betamusicnight.nl/login">Deelnemers</a> - <a href="mailto:bmn@a-eskwadraat.nl">Contact</a>
         </div>
       </footer>
