@@ -67,10 +67,12 @@ class RehearsalsPage extends PureComponent {
                 else if (pstart <= endTime && pend >= startTime) {
                     pstart = Math.max(pstart, startTime);
                     pend = Math.min(pend, endTime);
-                    success = true;
-                    classname = 'text-warning';
-                    tooltip = player.name + ' is beschikbaar tussen ' + printTime(new Date(pstart)) + ' en ' + printTime(new Date(pend));
-                    break;
+                    if (pstart != pend) {
+                        success = true;
+                        classname = 'text-warning';
+                        tooltip = player.name + ' is beschikbaar tussen ' + printTime(new Date(pstart)) + ' en ' + printTime(new Date(pend));
+                        break;
+                    }
                 }
             }
             // The player is not available
