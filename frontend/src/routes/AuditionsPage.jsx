@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { draftToMarkdown } from 'markdown-draft-js';
 import RichEditor from '@Components/RichEditor.jsx';
-import CodeInputComponent from "@Components/CodeInputComponent.jsx";
-
-// Not used
 
 const styles = {
   editor: {
@@ -12,19 +9,24 @@ const styles = {
   }
 };
 
-class SuperSecretCode extends Component {
+class AuditionsPage extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    var ticketStyle = {
+        overflow: 'auto',
+        //border: '5px ridge blue'
+    };
+
     return (
-        <div>
-            <h3>Vul de code in</h3>
-            <CodeInputComponent onSubmit={this.checkCode} inline/>
+        <div> 
+            <object type="text/html" data="https://forms.gle/g66d8TLx1Y5d6k3v7" width="100%" height="700px" style={ticketStyle}>
+            </object>
         </div>
     );
   }
 }
 
-export default SuperSecretCode;
+export default AuditionsPage;

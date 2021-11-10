@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import Logo from "../images/bmnlogo.png";
+import Logo from "../images/BMN2021.png";
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { Redirect } from "react-router";
 import { LinkContainer } from "react-router-bootstrap";
@@ -13,7 +13,6 @@ const userLinks = {
   'Aanwezigheid': 'aanwezigheid',
   'Account': 'account',
   'Suggesties': 'suggestieToevoegen',
-  'Code' : 'superGeheimeCode'
 };
 const committeeLinks = {
   Suggesties: "suggesties",
