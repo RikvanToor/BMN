@@ -8,7 +8,7 @@ class TicketSuccessPage extends Component {
       <div className="text-light success-wrapper" style={{backgroundImage: `url(${background})`}}>
         <div className="text-center">
           <h2>Aankoop geslaagd!</h2>
-          <h2>We kijken er naar uit u te verwelkomen op 5 juni in de Helling.</h2>
+          <h2>We kijken er naar uit u te verwelkomen op 24 November in de Helling.</h2>
           <h2>U zult snel een bevestiging ontvangen.</h2>
           <LinkContainer key="home" to="">
             <a href="#">
