@@ -3,6 +3,8 @@ import { draftToMarkdown } from 'markdown-draft-js';
 import RichEditor from '@Components/RichEditor.jsx';
 import CodeInputComponent from "@Components/CodeInputComponent.jsx";
 
+// Not used
+
 const styles = {
   editor: {
     border: '1px solid gray',
