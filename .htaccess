@@ -1,0 +1,13 @@
+Redirect /youtube https://www.youtube.com/channel/UCsHuiV64Gses_L1erlV1ghA
+Redirect /tickets https://www.a-eskwadraat.nl/Activiteiten/bmn/8581/BtaMusicNight2021/KaartjeKopen
+
+RewriteEngine On
+
+RewriteCond %{ENV:HTTPS} !on
+
+RewriteRule ^(.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ./public/* - [L]
+RewriteRule (.*) ./public/$1 [L]

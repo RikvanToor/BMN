@@ -33,6 +33,7 @@ import SuperSecretCode from '@Routes/SuperSecretCode.jsx';
  */
 import Home from '@Routes/Home.jsx';
 import SuggestionList from '@Routes/SuggestionList.jsx';
+import AuditionsPage from '@Routes/AuditionsPage.jsx';
 
 const Roles = {
     GUEST : 'guest',
@@ -52,6 +53,7 @@ const routes = [].concat(
         {target:'/wachtwoordreset',        component:PasswordResetPage},
         {target:'/nieuwwachtwoord/:token', component:ChangePasswordPage},
         {target:'/tickets',                component:TicketPage},
+        {target:'/audities',               component:AuditionsPage},
     ]),
     withRole(Roles.USER, [
         {target:'/rooster',         component:RehearsalContainer},
@@ -62,7 +64,7 @@ const routes = [].concat(
         {target:'/nummer/:id',             component:SongContainer},
         {target:'/nieuws',                 component:NewsContainer},
         {target:'/suggestieToevoegen',     component:AddSuggestionPage},
-        {target:'/superGeheimeCode', component:SuperSecretCode},
+        //{target:'/superGeheimeCode', component:SuperSecretCode},
 
     ]),
     withRole(Roles.COMMITTEE, [

@@ -22,7 +22,7 @@ class TicketPage extends Component {
 
     return (
         <div> 
-            <object type="text/html" data="https://www.a-eskwadraat.nl/Activiteiten/bmn/7693/BtaMusicNight2019/KaartjeKopen?cleanhtml=1" width="800px" height="600px" style={ticketStyle}>
+            <object type="text/html" data="https://www.a-eskwadraat.nl/Activiteiten/bmn/8581/BtaMusicNight2021/KaartjeKopen?cleanhtml=1" width="800px" height="600px" style={ticketStyle}>
             </object>
         </div>
     );
